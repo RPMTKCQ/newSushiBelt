@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="14" nextobjectid="212">
+ <tileset firstgid="1" source="mainSet.tsx"/>
+ <tileset firstgid="1025" source="objects.tsx"/>
+ <tileset firstgid="1281" source="NEWMain_Spritesheet.tsx"/>
+ <tileset firstgid="2305" source="New Object.tsx"/>
+ <layer id="3" name="floors &amp; walls" width="30" height="20">
+  <data encoding="csv">
+1286,1286,1287,1288,1291,1292,1289,1290,1287,1288,1291,1292,1293,1294,1291,1292,1287,1287,1287,1287,1287,1287,1289,1290,1291,1292,1287,1287,2147484934,2147484934,
+1284,1286,1319,1320,1323,1324,1321,1322,1319,1320,1323,1324,1325,1326,1323,1324,1319,1319,1319,1319,1319,1319,1321,1322,1323,1324,1319,1319,2147484934,1284,
+1284,1286,1351,1352,1355,1356,1353,1354,1351,1352,1355,1356,1357,1358,1355,1356,1351,1351,1351,1351,1351,1351,1353,1354,1355,1356,1351,1351,2147484934,1284,
+1284,1286,1383,1384,1387,1388,1385,1386,1383,1384,1387,1388,1389,1390,1387,1388,1383,1383,1383,1383,1383,1383,1385,1386,1387,1388,1383,1383,2147484934,1284,
+1284,1286,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,2147484934,1284,
+1284,1286,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,2147484934,1284,
+1284,1286,1547,1548,1547,1548,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,2147484934,1284,
+1284,1286,1579,1580,1579,1580,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,2147484934,1284,
+1284,1286,1611,1612,1611,1612,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,2147484934,1284,
+1284,1286,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,2147484934,1284,
+1284,1286,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,2147484934,1284,
+1284,1286,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,2147484934,1284,
+1284,1286,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,2147484934,1284,
+1284,1286,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,2147484934,1284,
+1284,1286,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,2147484934,1284,
+1284,1286,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,2147484934,1284,
+1284,1286,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,2147484934,1284,
+1284,1286,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,1379,1380,2147484934,1284,
+1284,1286,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,1347,1348,2147484934,1284,
+1286,1286,1286,1286,1286,1286,1286,1286,1286,1286,1286,1286,1286,1286,1286,1286,1286,1286,1286,1286,1286,1286,1286,1286,1286,1286,1286,1286,1286,1286
+</data>
+ </layer>
+ <objectgroup id="9" name="furniture">
+  <object id="136" gid="2348" x="320" y="144" width="32" height="32">
+   <properties>
+    <property name="atlasAsset" value="OBJECTS"/>
+    <property name="friction" type="float" value="0"/>
+   </properties>
+  </object>
+  <object id="137" gid="2347" x="288" y="144" width="32" height="32">
+   <properties>
+    <property name="atlasAsset" value="OBJECTS"/>
+    <property name="friction" type="float" value="0"/>
+   </properties>
+  </object>
+  <object id="138" gid="2347" x="256" y="144" width="32" height="32">
+   <properties>
+    <property name="atlasAsset" value="OBJECTS"/>
+    <property name="friction" type="float" value="0"/>
+   </properties>
+  </object>
+  <object id="139" gid="2347" x="224" y="144" width="32" height="32">
+   <properties>
+    <property name="atlasAsset" value="OBJECTS"/>
+    <property name="friction" type="float" value="0"/>
+   </properties>
+  </object>
+  <object id="140" gid="2347" x="192" y="144" width="32" height="32">
+   <properties>
+    <property name="atlasAsset" value="OBJECTS"/>
+    <property name="friction" type="float" value="0"/>
+   </properties>
+  </object>
+  <object id="141" gid="2346" x="160" y="144" width="32" height="32">
+   <properties>
+    <property name="atlasAsset" value="OBJECTS"/>
+    <property name="friction" type="float" value="0"/>
+   </properties>
+  </object>
+  <object id="142" type="Prop" gid="2362" x="160" y="176" width="32" height="32">
+   <properties>
+    <property name="atlasAsset" value="OBJECTS"/>
+    <property name="friction" type="float" value="0"/>
+    <property name="restitution" type="float" value="1"/>
+   </properties>
+  </object>
+  <object id="143" gid="2378" x="160" y="208" width="32" height="32">
+   <properties>
+    <property name="atlasAsset" value="OBJECTS"/>
+    <property name="friction" type="float" value="0"/>
+   </properties>
+  </object>
+  <object id="144" gid="2379" x="192" y="208" width="32" height="32">
+   <properties>
+    <property name="atlasAsset" value="OBJECTS"/>
+    <property name="friction" type="float" value="0"/>
+   </properties>
+  </object>
+  <object id="146" gid="2379" x="224" y="208" width="32" height="32">
+   <properties>
+    <property name="atlasAsset" value="OBJECTS"/>
+    <property name="friction" type="float" value="0"/>
+   </properties>
+  </object>
+  <object id="147" type="Prop" gid="2379" x="256" y="208" width="32" height="32">
+   <properties>
+    <property name="atlasAsset" value="OBJECTS"/>
+    <property name="friction" type="float" value="0"/>
+   </properties>
+  </object>
+  <object id="148" type="Prop" gid="2379" x="288" y="208" width="32" height="32">
+   <properties>
+    <property name="atlasAsset" value="OBJECTS"/>
+    <property name="friction" type="float" value="0"/>
+   </properties>
+  </object>
+  <object id="149" gid="2380" x="320" y="208" width="32" height="32">
+   <properties>
+    <property name="atlasAsset" value="OBJECTS"/>
+    <property name="friction" type="float" value="0"/>
+   </properties>
+  </object>
+  <object id="150" gid="2364" x="320" y="176" width="32" height="32">
+   <properties>
+    <property name="atlasAsset" value="OBJECTS"/>
+    <property name="friction" type="float" value="0"/>
+   </properties>
+  </object>
+  <object id="151" gid="2343" x="290.505" y="208" width="32" height="32"/>
+  <object id="152" gid="2343" x="219.386" y="208" width="32" height="32"/>
+  <object id="153" gid="2359" x="320" y="224" width="32" height="32"/>
+  <object id="154" gid="2360" x="256" y="224" width="32" height="32"/>
+  <object id="155" gid="2359" x="160" y="224" width="32" height="32"/>
+  <object id="156" gid="2359" x="176" y="160" width="32" height="32"/>
+  <object id="157" gid="2359" x="304" y="160" width="32" height="32"/>
+  <object id="158" gid="2345" x="319.582" y="179.341" width="32" height="32"/>
+  <object id="162" gid="2345" x="317.912" y="146.505" width="32" height="32"/>
+  <object id="163" gid="2356" x="425" y="191" width="32" height="32"/>
+  <object id="165" gid="2356" x="425.667" y="144.333" width="32" height="32"/>
+  <object id="166" gid="2358" x="424.333" y="166.667" width="32" height="32">
+   <properties>
+    <property name="density" type="float" value="0.5"/>
+    <property name="resitution" type="float" value="1"/>
+   </properties>
+  </object>
+  <object id="167" gid="2357" x="424" y="254.667" width="32" height="32"/>
+  <object id="168" gid="2357" x="368" y="304" width="32" height="32"/>
+  <object id="169" gid="2338" x="249.333" y="286" width="32" height="32">
+   <properties>
+    <property name="atlasAsset" value="OBJECTS"/>
+   </properties>
+  </object>
+  <object id="170" gid="2338" x="184" y="286.333" width="32" height="32">
+   <properties>
+    <property name="atlasAsset" value="OBJECTS"/>
+   </properties>
+  </object>
+  <object id="171" gid="2354" x="265" y="295" width="32" height="32">
+   <properties>
+    <property name="atlasAsset" value="OBJECTS"/>
+   </properties>
+  </object>
+  <object id="172" gid="2354" x="232.667" y="293.667" width="32" height="32">
+   <properties>
+    <property name="atlasAsset" value="OBJECTS"/>
+   </properties>
+  </object>
+  <object id="173" gid="2354" x="200.333" y="294.333" width="32" height="32">
+   <properties>
+    <property name="atlasAsset" value="OBJECTS"/>
+   </properties>
+  </object>
+  <object id="174" gid="2354" x="168.333" y="294" width="32" height="32">
+   <properties>
+    <property name="atlasAsset" value="OBJECTS"/>
+   </properties>
+  </object>
+  <object id="175" gid="2337" x="32" y="272" width="32" height="32">
+   <properties>
+    <property name="atlasAsset" value="OBJECTS"/>
+   </properties>
+  </object>
+  <object id="176" gid="2337" x="64" y="272" width="32" height="32">
+   <properties>
+    <property name="atlasAsset" value="OBJECTS"/>
+   </properties>
+  </object>
+  <object id="177" gid="2337" x="32" y="208" width="32" height="32">
+   <properties>
+    <property name="atlasAsset" value="OBJECTS"/>
+   </properties>
+  </object>
+  <object id="178" gid="2337" x="64" y="208" width="32" height="32">
+   <properties>
+    <property name="atlasAsset" value="OBJECTS"/>
+   </properties>
+  </object>
+  <object id="179" gid="2353" x="32" y="288" width="32" height="32">
+   <properties>
+    <property name="atlasAsset" value="OBJECTS"/>
+   </properties>
+  </object>
+  <object id="180" gid="2353" x="64" y="288" width="32" height="32">
+   <properties>
+    <property name="atlasAsset" value="OBJECTS"/>
+   </properties>
+  </object>
+  <object id="181" gid="2353" x="32" y="264.667" width="32" height="32">
+   <properties>
+    <property name="atlasAsset" value="OBJECTS"/>
+   </properties>
+  </object>
+  <object id="182" gid="2353" x="63" y="264.333" width="32" height="32">
+   <properties>
+    <property name="atlasAsset" value="OBJECTS"/>
+   </properties>
+  </object>
+  <object id="183" gid="2353" x="32" y="224" width="32" height="32">
+   <properties>
+    <property name="atlasAsset" value="OBJECTS"/>
+   </properties>
+  </object>
+  <object id="184" gid="2353" x="64" y="224" width="32" height="32">
+   <properties>
+    <property name="atlasAsset" value="OBJECTS"/>
+   </properties>
+  </object>
+  <object id="185" gid="2353" x="32" y="200.667" width="32" height="32">
+   <properties>
+    <property name="atlasAsset" value="OBJECTS"/>
+   </properties>
+  </object>
+  <object id="186" gid="2353" x="63.6667" y="201.333" width="32" height="32">
+   <properties>
+    <property name="atlasAsset" value="OBJECTS"/>
+   </properties>
+  </object>
+  <object id="187" gid="2341" x="32" y="64" width="32" height="32"/>
+  <object id="188" gid="2342" x="64" y="64" width="32" height="32"/>
+  <object id="189" gid="2355" x="128" y="64" width="32" height="32"/>
+  <object id="190" gid="2360" x="160" y="80" width="32" height="32"/>
+  <object id="191" gid="2360" x="224" y="80" width="32" height="32"/>
+  <object id="192" gid="2358" x="256" y="80" width="32" height="32"/>
+  <object id="193" gid="2340" x="384" y="64" width="32" height="32"/>
+  <object id="194" gid="2339" x="416" y="64" width="32" height="32"/>
+  <object id="195" gid="2355" x="272" y="64" width="32" height="32"/>
+  <object id="196" gid="2355" x="288" y="64" width="32" height="32"/>
+  <object id="197" gid="2355" x="304" y="64" width="32" height="32"/>
+  <object id="198" gid="2355" x="320" y="64" width="32" height="32"/>
+  <object id="200" name="player" gid="2313" x="122.667" y="174.667" width="32" height="32">
+   <properties>
+    <property name="controller" type="bool" value="true"/>
+    <property name="friction" type="float" value="1"/>
+    <property name="speed" type="float" value="4"/>
+   </properties>
+  </object>
+  <object id="201" gid="2314" x="29.1364" y="174.772" width="32" height="32"/>
+  <object id="202" gid="2315" x="372" y="106.667" width="32" height="32"/>
+ </objectgroup>
+</map>
