@@ -4,7 +4,7 @@ size: 1024, 1024
 format: RGBA8888
 filter: Nearest, Nearest
 repeat: none
-newMAIN/Main_Spritesheet
+interior/interior
   rotate: false
   xy: 2, 2
   size: 512, 512
@@ -13,21 +13,133 @@ newMAIN/Main_Spritesheet
   index: -1
 
 objects2.png
-size: 1024, 1024
+size: 256, 128
 format: RGBA8888
 filter: Nearest, Nearest
 repeat: none
-oldMAIN/Main_Spritesheet32x32
+Player/idle_left
+  rotate: false
+  xy: 2, 70
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 0
+Player/idle_left
+  rotate: false
+  xy: 2, 36
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 1
+Player/idle_left
+  rotate: false
+  xy: 36, 70
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 2
+Player/idle_right
   rotate: false
   xy: 2, 2
-  size: 512, 512
-  orig: 512, 512
+  size: 32, 32
+  orig: 32, 32
   offset: 0, 0
-  index: -1
-oldMAIN/Main_SpritesheetTRY
+  index: 0
+Player/idle_right
   rotate: false
-  xy: 2, 2
-  size: 512, 512
-  orig: 512, 512
+  xy: 36, 36
+  size: 32, 32
+  orig: 32, 32
   offset: 0, 0
-  index: -1
+  index: 1
+Player/idle_right
+  rotate: false
+  xy: 70, 70
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 2
+Player/walk_left
+  rotate: false
+  xy: 36, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 0
+Player/walk_left
+  rotate: false
+  xy: 70, 36
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 1
+Player/walk_left
+  rotate: false
+  xy: 104, 70
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 2
+Player/walk_left
+  rotate: false
+  xy: 70, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 3
+Player/walk_left
+  rotate: false
+  xy: 104, 36
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 4
+Player/walk_left
+  rotate: false
+  xy: 138, 70
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 5
+Player/walk_right
+  rotate: false
+  xy: 104, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 0
+Player/walk_right
+  rotate: false
+  xy: 138, 36
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 1
+Player/walk_right
+  rotate: false
+  xy: 172, 70
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 2
+Player/walk_right
+  rotate: false
+  xy: 138, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 3
+Player/walk_right
+  rotate: false
+  xy: 172, 36
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 4
+Player/walk_right
+  rotate: false
+  xy: 206, 70
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 5

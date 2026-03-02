@@ -13,6 +13,7 @@ import com.sushi.game.asset.AssetService;
 import com.sushi.game.asset.MapAsset;
 import com.sushi.game.input.GameControllerState;
 import com.sushi.game.input.KeyboardController;
+import com.sushi.game.system.AnimationSystem;
 import com.sushi.game.system.ControllerSystem;
 import com.sushi.game.system.MoveSystem;
 import com.sushi.game.system.RenderSystem;
@@ -41,6 +42,7 @@ public class GameScreen extends ScreenAdapter {
 
         this.engine.addSystem(new ControllerSystem());
         this.engine.addSystem(new MoveSystem());
+        this.engine.addSystem(new AnimationSystem(game.getAssetService()));
         this.engine.addSystem( new RenderSystem(game.getBatch(), game.getViewport(), game.getCamera()));
 
     }
@@ -69,14 +71,13 @@ public class GameScreen extends ScreenAdapter {
     public void render(float delta) {
         delta = Math.min(delta, 1/30f);
         this.engine.update(delta);
-
     }
 
     @Override
     public  void dispose() {
         for (EntitySystem system : this.engine.getSystems()) {
-            if(system instanceof Disposable disposableSytstem){
-                disposableSytstem.dispose();
+            if(system instanceof Disposable disposableSystem){
+                disposableSystem.dispose();
             }
         }
 
