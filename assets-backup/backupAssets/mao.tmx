@@ -235,7 +235,7 @@
   <object id="196" gid="2355" x="288" y="64" width="32" height="32"/>
   <object id="197" gid="2355" x="304" y="64" width="32" height="32"/>
   <object id="198" gid="2355" x="320" y="64" width="32" height="32"/>
-  <object id="200" name="player" gid="2313" x="124" y="196" width="32" height="32">
+  <object id="200" name="player" gid="2313" x="116" y="192" width="32" height="32">
    <properties>
     <property name="controller" type="bool" value="true"/>
     <property name="friction" type="float" value="1"/>
