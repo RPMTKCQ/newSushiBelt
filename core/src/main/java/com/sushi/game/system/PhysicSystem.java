@@ -39,6 +39,7 @@ public class PhysicSystem extends IteratingSystem implements EntityListener {
     @Override
     public void entityAdded(Entity entity) {
         // Logic for when an entity is added (if needed)
+//        System.out.println("This shit fucking works");
     }
 
     @Override

@@ -22,7 +22,7 @@ public class FacingSystem extends IteratingSystem {
         Facing facing = Facing.MAPPER.get(entity);
         if (moveDirection.x > 0f) {
             facing.setDirection(Facing.FacingDirection.RIGHT);
-        } else {
+        } else if (moveDirection.x < 0f) {
             facing.setDirection(Facing.FacingDirection.LEFT);
         }
     }

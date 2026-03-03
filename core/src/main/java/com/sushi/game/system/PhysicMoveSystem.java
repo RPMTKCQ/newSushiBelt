@@ -10,8 +10,7 @@ import com.sushi.game.component.Physic;
 import com.sushi.game.component.Transform;
 
 public class PhysicMoveSystem extends IteratingSystem {
-    private final Vector2 normalizedDirection = new Vector2();
-
+    private static final Vector2 TMP_VEC2 = new Vector2();
 
     public PhysicMoveSystem() {
         super(Family.all(Physic.class, Move.class).get());
@@ -20,16 +19,16 @@ public class PhysicMoveSystem extends IteratingSystem {
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
         Move move = Move.MAPPER.get(entity);
-        Body body = Physic.MAPPER.get(entity).getBody();
-        if(move.isRooted() || move.getDirection().isZero()){
-            body.setLinearVelocity(0f,0f);
+        Physic physic = Physic.MAPPER.get(entity);
+        Body body = physic.getBody();
+        if (move.isRooted() || move.getDirection().isZero()) {
+            // no direction given or rooted -> stop movement
+            body.setLinearVelocity(0f, 0f);
             return;
         }
 
-        normalizedDirection.set(move.getDirection()).nor();
-        body.setLinearVelocity(
-             move.getMaxSpeed() * normalizedDirection.x,
-             move.getMaxSpeed() * normalizedDirection.y
-        );
+        float maxSpeed = move.getMaxSpeed();
+        TMP_VEC2.set(move.getDirection()).nor();
+        body.setLinearVelocity(maxSpeed * TMP_VEC2.x, maxSpeed * TMP_VEC2.y);
     }
 }

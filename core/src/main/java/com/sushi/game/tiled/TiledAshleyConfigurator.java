@@ -18,12 +18,14 @@ import com.sushi.game.SushiGame;
 import com.sushi.game.asset.AssetService;
 import com.sushi.game.asset.AtlasAsset;
 import com.sushi.game.component.*;
+
 import static com.badlogic.gdx.graphics.g2d.Animation.*;
+
 import com.sushi.game.component.*;
 import com.sushi.game.component.Transform;
 
 public class TiledAshleyConfigurator {
-    private static final Vector2 DEFAULT_PHYSIC_SCALING = new Vector2(1f,1f);
+    private static final Vector2 DEFAULT_PHYSIC_SCALING = new Vector2(1f, 1f);
 
     private final Engine engine;
     private final AssetService assetService;
@@ -38,7 +40,7 @@ public class TiledAshleyConfigurator {
     public void onLoadTile(TiledMapTile tiledMapTile, float x, float y) {
         createBody(
             tiledMapTile.getObjects(),
-            new Vector2(x,y),
+            new Vector2(x, y),
             DEFAULT_PHYSIC_SCALING,
             BodyDef.BodyType.StaticBody,
             Vector2.Zero,
@@ -76,27 +78,28 @@ public class TiledAshleyConfigurator {
         TextureRegion textureRegion = getTextureRegion(tile);
         int z = tile.getProperties().get("z", 1, Integer.class);
 
-        entity.add(new Graphic(Color.WHITE.cpy(), textureRegion));
+
         addEntityTransform(
             tileMapObject.getX(), tileMapObject.getY(), z,
             textureRegion.getRegionWidth(), textureRegion.getRegionHeight(),
             tileMapObject.getScaleX(), tileMapObject.getScaleY(),
             entity);
-        addEntityController(tileMapObject, entity);
-        addEntityMove(tile, entity);
+        BodyDef.BodyType bodyType = getObjectType(tile);
+        addEntityPhysic(tile.getObjects(), bodyType, Vector2.Zero, entity);
         addEntityAnimation(tile, entity);
+        addEntityMove(tile, entity);
+        addEntityController(tileMapObject, entity);
         entity.add(new Facing(Facing.FacingDirection.RIGHT));
         entity.add(new Fsm(entity));
-        BodyDef.BodyType bodyType = getObjectType(tile);
-        addEntityPhysic(tile.getObjects(),bodyType,Vector2.Zero,entity);
-        entity.add(new Fsm(entity));
+        entity.add(new Graphic(Color.WHITE.cpy(), textureRegion));
 
         this.engine.addEntity(entity);
     }
 
+    // make sure tiled sprites has prop class or everything fucking slides
     private BodyDef.BodyType getObjectType(TiledMapTile tile) {
         String classType = tile.getProperties().get("type", "", String.class);
-        if("Prop".equals(classType)) {
+        if ("Prop".equals(classType)) {
             return BodyDef.BodyType.StaticBody;
         }
         return BodyDef.BodyType.DynamicBody;
@@ -104,7 +107,7 @@ public class TiledAshleyConfigurator {
     }
 
     private void addEntityPhysic(MapObjects objects, BodyDef.BodyType bodyType, Vector2 relativeTo, Entity entity) {
-        if(objects.getCount()==0) return;
+        if (objects.getCount() == 0) return;
 
         Transform transform = Transform.MAPPER.get(entity);
         Body body = createBody(objects, transform.getPosition(), transform.getScaling(), bodyType, relativeTo, entity);
@@ -126,14 +129,14 @@ public class TiledAshleyConfigurator {
 
     private void addEntityMove(TiledMapTile tile, Entity entity) {
         float speed = tile.getProperties().get("speed", 0f, Float.class);
-        if(speed == 0f) return;
+        if (speed == 0f) return;
 
         entity.add(new Move(speed));
     }
 
     private void addEntityController(TiledMapTileMapObject tileMapObject, Entity entity) {
         boolean controller = tileMapObject.getProperties().get("controller", false, Boolean.class);
-        if(!controller) return;
+        if (!controller) return;
 
         entity.add(new Controller());
     }
@@ -161,7 +164,7 @@ public class TiledAshleyConfigurator {
         FileTextureData textureData = (FileTextureData) tile.getTextureRegion().getTexture().getTextureData();
         String atlasKey = textureData.getFileHandle().nameWithoutExtension();
         TextureAtlas.AtlasRegion region = textureAtlas.findRegion(atlasKey + "/" + atlasKey);
-        if(region != null) {
+        if (region != null) {
             return region;
         }
 

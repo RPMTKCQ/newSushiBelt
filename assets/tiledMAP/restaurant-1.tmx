@@ -110,6 +110,8 @@
    <properties>
     <property name="animationSpeed" type="float" value="2"/>
     <property name="controller" type="bool" value="true"/>
+    <property name="friction" type="float" value="2"/>
+    <property name="speed" type="float" value="5"/>
    </properties>
   </object>
  </objectgroup>

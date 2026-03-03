@@ -10,6 +10,9 @@
    <property name="friction" type="float" value="1"/>
    <property name="speed" type="float" value="4"/>
   </properties>
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="9.63636" y="24" width="12" height="6.72727"/>
+  </objectgroup>
   <animation>
    <frame tileid="0" duration="200"/>
    <frame tileid="1" duration="200"/>
