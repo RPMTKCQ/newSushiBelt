@@ -3,12 +3,16 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "C:/Users/Wyshcen/Documents/Java/newSushiBelt/assets-backup/backupAssets/mao.tmx",
+    "activeFile": "Player.tsx",
     "expandedProjectPaths": [
         "."
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
+        "C:/Users/Wyshcen/Documents/Java/SushiBeltBackup/assets/tiledMAP/New Object.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
         "C:/Users/Wyshcen/Documents/Java/SushiBeltBackup/assets/tiledMAP/mainSet.tsx": {
             "scaleInDock": 1,
             "scaleInEditor": 1
@@ -50,13 +54,14 @@
         },
         "Interior.tsx": {
             "scaleInDock": 1,
-            "scaleInEditor": 1
+            "scaleInEditor": 1.5
         },
         "Main_Spritesheet.tsx": {
             "scaleInDock": 1,
             "scaleInEditor": 1
         },
         "Player.tsx": {
+            "dynamicWrapping": false,
             "scaleInDock": 1,
             "scaleInEditor": 1
         },
@@ -64,22 +69,22 @@
             "expandedObjectLayers": [
                 2
             ],
-            "scale": 4,
+            "scale": 3,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 142.625,
-                "y": 226.875
+                "x": 241.83333333333334,
+                "y": 247.16666666666669
             }
         },
         "restaurant.tmx": {
             "expandedObjectLayers": [
                 3
             ],
-            "scale": 2,
+            "scale": 1.5,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 240.25,
-                "y": 159.75
+                "x": 231,
+                "y": 176.99999999999997
             }
         }
     },
@@ -90,25 +95,23 @@
     "map.lastUsedFormat": "tmx",
     "map.width": 15,
     "openFiles": [
-        "restaurant-1.tmx",
-        "C:/Users/Wyshcen/Documents/Java/newSushiBelt/assets-backup/backupAssets/Main_Spritesheet.tsx",
-        "C:/Users/Wyshcen/Documents/Java/newSushiBelt/assets-backup/backupAssets/mao.tmx"
+        "Player.tsx"
     ],
     "project": "sushiBelt.tiled-project",
-    "property.type": "float",
+    "property.type": "string",
     "recentFiles": [
+        "Player.tsx",
+        "restaurant-1.tmx",
+        "C:/Users/Wyshcen/Documents/Java/SushiBeltBackup/assets/tiledMAP/New Object.tsx",
+        "Interior.tsx",
         "C:/Users/Wyshcen/Documents/Java/SushiBeltBackup/assets/tiledMAP/objects.tsx",
         "C:/Users/Wyshcen/Documents/Java/SushiBeltBackup/assets/tiledMAP/mainSet.tsx",
         "C:/Users/Wyshcen/Documents/Java/newSushiBelt/assets-backup/backupAssets/mao.tmx",
         "C:/Users/Wyshcen/Documents/Java/newSushiBelt/assets-backup/backupAssets/Main_Spritesheet.tsx",
-        "restaurant-1.tmx",
         "restaurant.tmx",
         "C:/Users/Wyshcen/Documents/Java/newSushiBelt/assets-backup/backupAssets/New Object.tsx",
         "C:/Users/Wyshcen/Documents/Java/newSushiBelt/assets-backup/backupAssets/NEWMain_Spritesheet.tsx",
-        "C:/Users/Wyshcen/Documents/Java/newSushiBelt/assets-backup/backupAssets/mainSet.tsx",
-        "Player.tsx",
-        "Interior.tsx",
-        "Main_Spritesheet.tsx"
+        "C:/Users/Wyshcen/Documents/Java/newSushiBelt/assets-backup/backupAssets/mainSet.tsx"
     ],
     "tileset.lastUsedFilter": "Tiled tileset files (*.tsx *.xml)",
     "tileset.lastUsedFormat": "tsx"
