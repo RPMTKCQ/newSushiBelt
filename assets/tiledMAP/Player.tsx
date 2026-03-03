@@ -6,6 +6,7 @@
    <property name="animation" value="IDLE"/>
    <property name="animationSpeed" type="float" value="1"/>
    <property name="atlasAsset" value="OBJECTS"/>
+   <property name="camFollow" type="bool" value="true"/>
    <property name="controller" type="bool" value="true"/>
    <property name="friction" type="float" value="1"/>
    <property name="speed" type="float" value="4"/>

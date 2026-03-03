@@ -86,6 +86,7 @@ public class TiledAshleyConfigurator {
             entity);
         BodyDef.BodyType bodyType = getObjectType(tile);
         addEntityPhysic(tile.getObjects(), bodyType, Vector2.Zero, entity);
+        addEntityCameraFollow(tileMapObject, entity);
         addEntityAnimation(tile, entity);
         addEntityMove(tile, entity);
         addEntityController(tileMapObject, entity);
@@ -95,6 +96,14 @@ public class TiledAshleyConfigurator {
 
         this.engine.addEntity(entity);
     }
+
+    private void addEntityCameraFollow(TiledMapTileMapObject tileMapObject, Entity entity) {
+        Boolean camFollow = tileMapObject.getProperties().get("camFollow", false, Boolean.class);
+        if (!camFollow) return;
+
+        entity.add(new CameraFollow());
+    }
+
 
     // make sure tiled sprites has prop class or everything fucking slides
     private BodyDef.BodyType getObjectType(TiledMapTile tile) {
