@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tileset version="1.10" tiledversion="1.11.2" name="Player" tilewidth="32" tileheight="32" tilecount="18" columns="9">
  <image source="Player.png" width="288" height="64"/>
- <tile id="0">
+ <tile id="0" type="GameObject">
   <properties>
    <property name="animation" value="IDLE"/>
    <property name="animationSpeed" type="float" value="1"/>

@@ -15,10 +15,11 @@ public class PhysicDebugRenderSystem extends EntitySystem implements Disposable 
         this.box2DDebugRenderer = new Box2DDebugRenderer();
         this.physicWorld = physicWorld;
         this.camera = camera;
+        //setProcessing(false);
     }
 
     @Override
-    public void update(float deltaTime){
+    public void update(float deltaTime) {
         this.box2DDebugRenderer.render(physicWorld, camera.combined);
     }
 

@@ -61,8 +61,11 @@ public class AnimationSystem extends IteratingSystem {
             if(regions.isEmpty()){
                 throw new GdxRuntimeException("No regions found for key: " + combinedKey);
             }
-            return new Animation<>(FRAME_DURATION, regions);
+            return new Animation<>(animation2D.getFRAME_DURATION(), regions);
         });
+
+        animation.setFrameDuration(animation2D.getFRAME_DURATION());
+
         animation2D.setAnimation(animation, facingDirection);
     }
 

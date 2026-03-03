@@ -21,7 +21,6 @@ public class TiledService {
     private Consumer<TiledMapTileMapObject> loadObjectConsumer;
     private LoadTileConsumer loadTileConsumer;
 
-
     public TiledService(AssetService assetService) {
         this.assetService = assetService;
         this.mapChangeConsumer = null;
@@ -40,12 +39,12 @@ public class TiledService {
 
     public void setMap(TiledMap map) {
         if (this.currentMap != null) {
-            this.assetService.unload(this.currentMap.getProperties().get("mapAsset",MapAsset.class));
+            this.assetService.unload(this.currentMap.getProperties().get("mapAsset", MapAsset.class));
         }
 
         this.currentMap = map;
         loadMapObjects(map);
-        if(this.mapChangeConsumer != null) {
+        if (this.mapChangeConsumer != null) {
             this.mapChangeConsumer.accept(map);
         }
 
@@ -53,7 +52,7 @@ public class TiledService {
 
     private void loadMapObjects(TiledMap tiledMap) {
         for (MapLayer layer : tiledMap.getLayers()) {
-            if("objects".equals(layer.getName())) {
+            if ("objects".equals(layer.getName())) {
                 loadingObjectLayer(layer);
             } else if (layer instanceof TiledMapTileLayer tileLayer) {
                 loadTileLayer(tileLayer);
@@ -71,13 +70,13 @@ public class TiledService {
                 TiledMapTileLayer.Cell cell = tileLayer.getCell(x, y);
                 if (cell == null) continue;
 
-                loadTileConsumer.accept(cell.getTile(),x,y);
+                loadTileConsumer.accept(cell.getTile(), x, y);
             }
         }
     }
 
     private void loadingObjectLayer(MapLayer objectLayer) {
-        if(loadObjectConsumer == null) return;
+        if (loadObjectConsumer == null) return;
 
         for (MapObject mapObject : objectLayer.getObjects()) {
             if (mapObject instanceof TiledMapTileMapObject tileMapObject) {
@@ -105,6 +104,6 @@ public class TiledService {
 
     @FunctionalInterface
     public interface LoadTileConsumer {
-        void accept(TiledMapTile tile, float x , float y);
+        void accept(TiledMapTile tile, float x, float y);
     }
 }

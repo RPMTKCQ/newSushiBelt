@@ -21,6 +21,7 @@ public class Animation2D implements Component {
     private float stateTime;
     private Animation<TextureRegion> animation;
     private boolean dirty;
+    private float FRAME_DURATION = 1 / 5f;
 
     public Animation2D(AtlasAsset atlasAsset,
                        String atlasKey,
@@ -36,6 +37,18 @@ public class Animation2D implements Component {
         this.speed = speed;
         this.stateTime = 0f;
         this.animation = null;
+    }
+
+    public float getFRAME_DURATION() {
+        return switch(this.type) {
+            case WALK -> 0.1f;
+            case IDLE -> 0.2f;
+            default -> 0.15f;
+        };
+    }
+
+    public void setFRAME_DURATION(float FRAME_DURATION) {
+        this.FRAME_DURATION = FRAME_DURATION;
     }
 
     public void setAnimation(Animation<TextureRegion> animation, FacingDirection direction) {

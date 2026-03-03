@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
 import com.sushi.game.SushiGame;
 import com.sushi.game.asset.MapAsset;
+import com.sushi.game.component.Facing;
 import com.sushi.game.input.GameControllerState;
 import com.sushi.game.input.KeyboardController;
 import com.sushi.game.system.*;
@@ -41,10 +42,14 @@ public class GameScreen extends ScreenAdapter {
 
 
         this.engine.addSystem(new ControllerSystem());
+        this.engine.addSystem(new FsmSystem());
+        this.engine.addSystem(new FacingSystem());
         this.engine.addSystem(new PhysicMoveSystem());
         this.engine.addSystem(new PhysicSystem(this.physicWorld, 1 / 60f));
         this.engine.addSystem(new AnimationSystem(game.getAssetService()));
+        this.engine.addSystem(new AnimationSystem(game.getAssetService()));
         this.engine.addSystem(new RenderSystem(game.getBatch(), game.getViewport(), game.getCamera()));
+        this.engine.addSystem(new PhysicDebugRenderSystem(physicWorld, game.getCamera()));
 
     }
 

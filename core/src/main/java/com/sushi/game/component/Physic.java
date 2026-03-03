@@ -12,16 +12,16 @@ public class Physic implements Component {
     private final Body body;
     private final Vector2 prevPosition;
 
-    public Physic(Body body, Vector2 prevPosition){
+    public Physic(Body body, Vector2 prevPosition) {
         this.body = body;
         this.prevPosition = prevPosition;
     }
 
-    public Body getBody(){
+    public Body getBody() {
         return body;
     }
 
-    public Vector2 getPrevPosition(){
+    public Vector2 getPrevPosition() {
         return prevPosition;
     }
 }

@@ -10,13 +10,14 @@ import com.sushi.game.ai.AnimationState;
 public class Fsm implements Component {
     public static final ComponentMapper<Fsm> MAPPER = ComponentMapper.getFor(Fsm.class);
 
-    private final DefaultStateMachine<Entity>, AnimationState> animationFsm;
+    private final DefaultStateMachine<Entity, AnimationState> animationFsm;
 
     public Fsm(Entity owner) {
-        this.animationFsm = new DefaultStateMachine<Entity, Animation>(owner, AnimationState.IDLE);
+        this.animationFsm = new DefaultStateMachine<Entity, AnimationState>(owner, AnimationState.IDLE);
     }
 
     public DefaultStateMachine<Entity, AnimationState> getAnimationFsm() {
         return animationFsm;
     }
 }
+

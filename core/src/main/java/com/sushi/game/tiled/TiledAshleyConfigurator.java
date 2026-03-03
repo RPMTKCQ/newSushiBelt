@@ -86,8 +86,10 @@ public class TiledAshleyConfigurator {
         addEntityMove(tile, entity);
         addEntityAnimation(tile, entity);
         entity.add(new Facing(Facing.FacingDirection.RIGHT));
+        entity.add(new Fsm(entity));
         BodyDef.BodyType bodyType = getObjectType(tile);
         addEntityPhysic(tile.getObjects(),bodyType,Vector2.Zero,entity);
+        entity.add(new Fsm(entity));
 
         this.engine.addEntity(entity);
     }

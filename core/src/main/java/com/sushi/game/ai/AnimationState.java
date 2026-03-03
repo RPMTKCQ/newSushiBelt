@@ -47,7 +47,7 @@ public enum AnimationState implements State<Entity> {
         @Override
         public void update(Entity entity) {
             Move move = Move.MAPPER.get(entity);
-            if (move == null || move.getDirection().isZero() || move.isRooted() {
+            if (move == null || move.getDirection().isZero() || move.isRooted()) {
                 Fsm.MAPPER.get(entity).getAnimationFsm().changeState(IDLE);
             }
         }
