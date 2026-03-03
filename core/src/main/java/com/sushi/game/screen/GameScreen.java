@@ -2,17 +2,13 @@ package com.sushi.game.screen;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.EntitySystem;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
 import com.sushi.game.SushiGame;
 import com.sushi.game.asset.MapAsset;
-import com.sushi.game.component.Facing;
 import com.sushi.game.input.GameControllerState;
 import com.sushi.game.input.KeyboardController;
 import com.sushi.game.system.*;
@@ -36,10 +32,10 @@ public class GameScreen extends ScreenAdapter {
 
     public GameScreen(SushiGame game) {
         this.game = game;
-        this.tiledService = new TiledService(game.getAssetService());
-        this.engine = new Engine();
         this.physicWorld = new World(Vector2.Zero, true);
         this.physicWorld.setAutoClearForces(false);
+        this.tiledService = new TiledService(game.getAssetService(), this.physicWorld);
+        this.engine = new Engine();
         this.tiledAshleyConfigurator = new TiledAshleyConfigurator(this.engine, game.getAssetService(), physicWorld);
         this.keyboardController = new KeyboardController(GameControllerState.class, engine);
 
@@ -54,6 +50,7 @@ public class GameScreen extends ScreenAdapter {
         this.engine.addSystem(new RenderSystem(game.getBatch(), game.getViewport(), game.getCamera()));
         this.engine.addSystem(new PhysicDebugRenderSystem(physicWorld, game.getCamera()));
 
+        game.getCamera().zoom = 2f;
     }
 
     @Override
@@ -62,7 +59,8 @@ public class GameScreen extends ScreenAdapter {
         keyboardController.setActiveState(GameControllerState.class);
 
         Consumer<TiledMap> renderConsumer = this.engine.getSystem(RenderSystem.class)::setMap;
-        this.tiledService.setMapChangeConsumer(renderConsumer);
+        Consumer<TiledMap> cameraConsumer = this.engine.getSystem(CameraSystem.class)::setMap;
+        this.tiledService.setMapChangeConsumer(renderConsumer.andThen(cameraConsumer));
         this.tiledService.setLoadObjectConsumer(this.tiledAshleyConfigurator::onLoadObject);
         this.tiledService.setLoadTileConsumer(tiledAshleyConfigurator::onLoadTile);
 
