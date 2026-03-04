@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.profiling.GLProfiler;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.viewport.*;
 import com.sushi.game.asset.AssetService;
+import com.sushi.game.audio.AudioService;
 import com.sushi.game.screen.GameScreen;
 import com.sushi.game.screen.LoadingScreen;
 
@@ -31,6 +32,7 @@ public class SushiGame extends Game {
     private GLProfiler glProfiler;
     private FPSLogger fpsLogger;
     private InputMultiplexer inputMultiplexer;
+    private AudioService audioService;
 
     private final Map<Class<? extends Screen>, Screen> screenCache = new HashMap<>();
 
@@ -47,6 +49,7 @@ public class SushiGame extends Game {
         this.glProfiler = new GLProfiler(Gdx.graphics);
         this.glProfiler.enable();
         this.fpsLogger = new FPSLogger();
+        this.audioService = new AudioService(assetService);
 
 
         addScreen(new LoadingScreen(this, assetService));
@@ -124,6 +127,8 @@ public class SushiGame extends Game {
         }
     }
 
-
+    public AudioService getAudioService() {
+        return audioService;
+    }
 
 }

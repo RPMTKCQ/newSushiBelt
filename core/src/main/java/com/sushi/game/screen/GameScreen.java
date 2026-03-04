@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
 import com.sushi.game.SushiGame;
 import com.sushi.game.asset.MapAsset;
+import com.sushi.game.audio.AudioService;
 import com.sushi.game.input.GameControllerState;
 import com.sushi.game.input.KeyboardController;
 import com.sushi.game.system.*;
@@ -28,6 +29,7 @@ public class GameScreen extends ScreenAdapter {
     private final KeyboardController keyboardController;
     private final SushiGame game;
     private final World physicWorld;
+    private final AudioService audioService;
 
 
     public GameScreen(SushiGame game) {
@@ -38,9 +40,11 @@ public class GameScreen extends ScreenAdapter {
         this.engine = new Engine();
         this.tiledAshleyConfigurator = new TiledAshleyConfigurator(this.engine, game.getAssetService(), physicWorld);
         this.keyboardController = new KeyboardController(GameControllerState.class, engine);
+        this.audioService = game.getAudioService();
 
 
-        this.engine.addSystem(new ControllerSystem());
+
+        this.engine.addSystem(new ControllerSystem(game.getAudioService()));
         this.engine.addSystem(new FsmSystem());
         this.engine.addSystem(new FacingSystem());
         this.engine.addSystem(new PhysicMoveSystem());
@@ -60,7 +64,9 @@ public class GameScreen extends ScreenAdapter {
 
         Consumer<TiledMap> renderConsumer = this.engine.getSystem(RenderSystem.class)::setMap;
         Consumer<TiledMap> cameraConsumer = this.engine.getSystem(CameraSystem.class)::setMap;
-        this.tiledService.setMapChangeConsumer(renderConsumer.andThen(cameraConsumer));
+        Consumer<TiledMap> audioConsumer = audioService::setMap;
+
+        this.tiledService.setMapChangeConsumer(renderConsumer.andThen(cameraConsumer).andThen(audioConsumer));
         this.tiledService.setLoadObjectConsumer(this.tiledAshleyConfigurator::onLoadObject);
         this.tiledService.setLoadTileConsumer(tiledAshleyConfigurator::onLoadTile);
 

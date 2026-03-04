@@ -5,6 +5,7 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.sushi.game.SushiGame;
 import com.sushi.game.asset.AssetService;
 import com.sushi.game.asset.AtlasAsset;
+import com.sushi.game.asset.SoundAsset;
 
 public class LoadingScreen extends ScreenAdapter {
 
@@ -20,6 +21,9 @@ public class LoadingScreen extends ScreenAdapter {
     public void show() {
         for (AtlasAsset atlas : AtlasAsset.values()) {
             assetService.queue(atlas);
+        }
+        for (SoundAsset sound : SoundAsset.values()) {
+            assetService.queue(sound);
         }
     }
 
