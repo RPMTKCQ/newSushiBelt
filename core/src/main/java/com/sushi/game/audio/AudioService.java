@@ -7,7 +7,7 @@ import com.sushi.game.asset.AssetService;
 import com.sushi.game.asset.MusicAsset;
 import com.sushi.game.asset.SoundAsset;
 
-public class AudioService {
+public class  AudioService {
 
     private final AssetService assetService;
     private Music currentMusic;
