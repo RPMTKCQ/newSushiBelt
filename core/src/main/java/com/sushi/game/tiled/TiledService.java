@@ -16,6 +16,7 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.sushi.game.SushiGame;
 import com.sushi.game.asset.AssetService;
 import com.sushi.game.asset.MapAsset;
+import com.badlogic.gdx.maps.objects.PointMapObject;
 
 import java.util.function.Consumer;
 
@@ -144,6 +145,8 @@ public class TiledService {
         for (MapObject mapObject : objectLayer.getObjects()) {
             if (mapObject instanceof TiledMapTileMapObject tileMapObject) {
                 loadObjectConsumer.accept(tileMapObject);
+            } else if (mapObject instanceof PointMapObject) {
+                //skip
             } else {
                 throw new GdxRuntimeException("unsupported Object: " + mapObject.getClass().getSimpleName());
             }

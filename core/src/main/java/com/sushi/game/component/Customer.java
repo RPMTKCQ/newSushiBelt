@@ -1,9 +1,12 @@
 package com.sushi.game.component;
 
 import com.badlogic.ashley.core.Component;
+import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.gdx.math.Vector2;
 
 public class Customer implements Component {
+    public static final ComponentMapper<Customer> MAPPER = ComponentMapper.getFor(Customer.class);
+
     public enum CustomerState { WAITING, SEATING, ORDERING, EATING, LEAVING }
 
     public CustomerState state = CustomerState.WAITING;

@@ -118,7 +118,9 @@
   <properties>
    <property name="atlasAsset" value="OBJECTS"/>
    <property name="restitution" type="float" value="1"/>
+   <property name="seats" type="int" value="4"/>
    <property name="sensor" type="bool" value="true"/>
+   <property name="tableId" type="int" value="0"/>
   </properties>
   <objectgroup draworder="index" id="2">
    <object id="1" x="1" y="11.75" width="30" height="17.25"/>
@@ -128,7 +130,9 @@
   <properties>
    <property name="atlasAsset" value="OBJECTS"/>
    <property name="restitution" type="float" value="1"/>
+   <property name="seats" type="int" value="2"/>
    <property name="sensor" type="bool" value="true"/>
+   <property name="tableId" type="int" value="0"/>
   </properties>
   <objectgroup draworder="index" id="2">
    <object id="1" x="7" y="14.125" width="18" height="14.875"/>

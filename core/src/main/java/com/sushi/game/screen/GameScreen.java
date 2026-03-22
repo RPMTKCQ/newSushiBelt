@@ -2,8 +2,11 @@ package com.sushi.game.screen;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.EntitySystem;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
@@ -12,8 +15,12 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sushi.game.SushiGame;
+import com.sushi.game.asset.AtlasAsset;
 import com.sushi.game.asset.MapAsset;
 import com.sushi.game.audio.AudioService;
+import com.sushi.game.factory.CustomerFactory;
+import com.sushi.game.system.CustomerSpawner;
+import com.sushi.game.factory.TableManager;
 import com.sushi.game.input.GameControllerState;
 import com.sushi.game.input.KeyboardController;
 import com.sushi.game.system.*;
@@ -34,8 +41,11 @@ public class GameScreen extends ScreenAdapter {
     private final SushiGame game;
     private final World physicWorld;
     private final AudioService audioService;
-    private final Stage  stage;
+    private final Stage stage;
     private final Viewport uiViewport;
+    private final TableManager tableManager;
+    private final CustomerFactory customerFactory;
+    private final CustomerSpawner customerSpawner;
 
     public GameScreen(SushiGame game) {
         this.game = game;
@@ -44,12 +54,16 @@ public class GameScreen extends ScreenAdapter {
         this.tiledService = new TiledService(game.getAssetService(), this.physicWorld);
         this.engine = new Engine();
         this.tiledAshleyConfigurator = new TiledAshleyConfigurator(this.engine, game.getAssetService(), physicWorld);
+        this.tableManager = new TableManager();
+        this.customerFactory = new CustomerFactory(engine, physicWorld, game.getAssetService());
+        this.customerSpawner = new CustomerSpawner(customerFactory, tableManager, engine);
+        this.engine.addSystem(new CustomerSystem(physicWorld, tableManager, engine));
         this.keyboardController = new KeyboardController(GameControllerState.class, engine);
         this.audioService = game.getAudioService();
         this.uiViewport = new FitViewport(320f, 180f);
         this.stage = new Stage(uiViewport, game.getBatch());
 
-        this.engine.addSystem(new ControllerSystem(game.getAudioService()));
+        this.engine.addSystem(new ControllerSystem(game.getAudioService(), this.physicWorld)); // added this.physic world, might break, might change
         this.engine.addSystem(new FsmSystem());
         this.engine.addSystem(new FacingSystem());
         this.engine.addSystem(new PhysicMoveSystem());
@@ -86,6 +100,22 @@ public class GameScreen extends ScreenAdapter {
         TiledMap tiledMap = this.tiledService.loadMap(MapAsset.MAIN);
         this.tiledService.setMap(tiledMap);
 
+        // load tables and spawn points from the objects layer
+        MapLayer objectLayer = tiledMap.getLayers().get("objects");
+        if (objectLayer != null) {
+            tableManager.loadTables(objectLayer.getObjects());
+            customerSpawner.loadSpawnPoints(objectLayer.getObjects());
+//            customerSpawner.addSpawnPoint(304f, 312f);
+        }
+
+        //get regions
+        for (TextureAtlas.AtlasRegion r : game.getAssetService().get(AtlasAsset.OBJECTS).getRegions()) {
+            Gdx.app.log("ATLAS", r.name);
+        }
+
+        //temp logs
+        Gdx.app.log("TABLES", "loaded tables: " + tableManager.getTableCount());
+
     }
 
     @Override
@@ -97,12 +127,14 @@ public class GameScreen extends ScreenAdapter {
     @Override
     public void render(float delta) {
         delta = Math.min(delta, 1 / 30f);
+        customerSpawner.update(delta); // new
         this.engine.update(delta);
 
         uiViewport.apply();
         stage.getBatch().setColor(Color.WHITE);
         stage.act(delta);
         stage.draw();
+
     }
 
     @Override
