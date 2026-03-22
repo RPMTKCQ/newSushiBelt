@@ -72,7 +72,9 @@
  <tile id="48" type="Prop">
   <properties>
    <property name="restitution" type="float" value="1"/>
+   <property name="seatIndex" type="int" value="0"/>
    <property name="sensor" type="bool" value="true"/>
+   <property name="tableId" type="int" value="0"/>
   </properties>
   <objectgroup draworder="index" id="2">
    <object id="1" x="0" y="14" width="32" height="10"/>
@@ -82,7 +84,9 @@
   <properties>
    <property name="atlasAsset" value="OBJECTS"/>
    <property name="restitution" type="float" value="1"/>
+   <property name="seatIndex" type="int" value="0"/>
    <property name="sensor" type="bool" value="true"/>
+   <property name="tableId" type="int" value="0"/>
   </properties>
   <objectgroup draworder="index" id="2">
    <object id="1" x="8" y="14.125" width="16" height="10"/>

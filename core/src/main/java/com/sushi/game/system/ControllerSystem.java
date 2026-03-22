@@ -3,6 +3,7 @@ package com.sushi.game.system;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.sushi.game.asset.SoundAsset;
@@ -25,20 +26,23 @@ public class ControllerSystem extends IteratingSystem {
     }
 
     private void startGiveFood(Entity playerEntity) {
+        Gdx.app.log("INTERACT", "startGiveFood called");
         Physic physic = Physic.MAPPER.get(playerEntity);
         if (physic == null) return;
 
         // get player position in world units
         Vector2 playerPos = physic.getBody().getPosition();
-        float range = 1.2f; // interaction range in world units — tweak this
+        float range = 1.2f; // interaction range in world units
 
         // query a box around the player for any nearby interactable
         world.QueryAABB(fixture -> {
+                Gdx.app.log("QUERY", "hit fixture: " + fixture.getBody().getUserData()); // temp log
                 Object userData = fixture.getBody().getUserData();
                 if (!(userData instanceof Entity)) return true; // keep searching
 
                 Entity nearby = (Entity) userData;
                 Interactable interactable = Interactable.MAPPER.get(nearby);
+                Gdx.app.log("QUERY", "interactable: " + (interactable != null));
                 if (interactable == null) return true; // not interactable, keep searching
 
                 Customer customer = Customer.MAPPER.get(nearby);
@@ -52,15 +56,14 @@ public class ControllerSystem extends IteratingSystem {
                     } // nothing to do in other states
                 }
 
-                return false; // stop querying, found one
+                return false; // found
             },
             playerPos.x - range, playerPos.y - range,
             playerPos.x + range, playerPos.y + range);
     }
 
     private void seatCustomer(Entity customerEntity, Customer customer) {
-        // CustomerSystem will handle the actual transition
-        // just flag it here
+
         customer.state = Customer.CustomerState.SEATING;
         customer.stateTimer = 0f;
         customer.clickable = false;
@@ -68,7 +71,6 @@ public class ControllerSystem extends IteratingSystem {
 
     private void deliverFood(Entity customerEntity, Customer customer, Entity playerEntity) {
         // check player is actually carrying food first
-        // for now just transition — inventory check comes later
         customer.state = Customer.CustomerState.EATING;
         customer.stateTimer = 0f;
     }
@@ -81,6 +83,7 @@ public class ControllerSystem extends IteratingSystem {
         }
 
         for (Command command : controller.getPressedCommands()) {
+            Gdx.app.log("CMD", "processing: " + command); // temp logs
             switch (command) {
                 case UP -> moveEntity(entity, 0f, 1f);
                 case DOWN -> moveEntity(entity, 0f, -1f);

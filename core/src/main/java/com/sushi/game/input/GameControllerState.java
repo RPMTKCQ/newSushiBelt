@@ -6,6 +6,8 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.sushi.game.component.Controller;
 
+import java.util.List;
+
 
 public class GameControllerState implements ControllerState {
 
@@ -18,7 +20,10 @@ public class GameControllerState implements ControllerState {
     @Override
     public void keyDown(Command command) {
         for (Entity entity : controllerEntities) {
-            Controller.MAPPER.get(entity).getPressedCommands().add(command);
+            List<Command> pressed = Controller.MAPPER.get(entity).getPressedCommands();
+            if (!pressed.contains(command)) { // only add if not already there
+                pressed.add(command);
+            }
         }
     }
 

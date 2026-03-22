@@ -6,7 +6,7 @@ public class SeatData {
     public final int tableId;
     public final int seatIndex;
     public final Vector2 position;
-    public boolean isOcuupied = false;
+    public boolean isOccupied = false;
 
     public SeatData(int tableId, int seatIndex, Vector2 position) {
         this.tableId = tableId;

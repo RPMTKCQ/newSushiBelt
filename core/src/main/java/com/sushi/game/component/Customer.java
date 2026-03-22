@@ -3,6 +3,7 @@ package com.sushi.game.component;
 import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.gdx.math.Vector2;
+import com.sushi.game.model.SeatData;
 
 public class Customer implements Component {
     public static final ComponentMapper<Customer> MAPPER = ComponentMapper.getFor(Customer.class);
@@ -16,6 +17,7 @@ public class Customer implements Component {
     public String orderItemId;        // e.g. "tuna_roll"
     public float stateTimer = 0f;
     public boolean clickable = true;
+    public SeatData claimedSeat = null;
 
     public void reset() {
         state = CustomerState.WAITING;

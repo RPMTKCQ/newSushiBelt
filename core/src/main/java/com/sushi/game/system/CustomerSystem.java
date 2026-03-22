@@ -3,11 +3,16 @@ package com.sushi.game.system;
 import com.badlogic.ashley.core.*;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.ashley.utils.ImmutableArray;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.sushi.game.component.*;
 import com.sushi.game.factory.TableManager;
+import com.sushi.game.model.SeatData;
 import com.sushi.game.model.TableData;
+import com.sushi.game.ui.RecipeQueueUI;
+import com.sushi.game.ui.model.RecipeQueue;
 
 public class CustomerSystem extends IteratingSystem {
     private static final float ORDER_DELAY = 5f;  // seconds after sitting to order
@@ -21,18 +26,22 @@ public class CustomerSystem extends IteratingSystem {
     private final World world;
     private final TableManager tableManager;
     private final Engine engine;
+    private final RecipeQueueUI recipeQueueUI;
 
-    public CustomerSystem(World world, TableManager tableManager, Engine engine) {
+    public CustomerSystem(World world, TableManager tableManager, Engine engine, RecipeQueueUI recipeQueueUI) {
         super(Family.all(Customer.class, Transform.class).get());
         this.world = world;
         this.tableManager = tableManager;
         this.engine = engine;
+        this.recipeQueueUI = recipeQueueUI;
     }
 
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
         Customer customer = Customer.MAPPER.get(entity);
-        customer.stateTimer += deltaTime;
+        if (customer.state != Customer.CustomerState.WAITING) {
+            customer.stateTimer += deltaTime;
+        }
 
         switch (customer.state) {
             case WAITING:
@@ -71,22 +80,37 @@ public class CustomerSystem extends IteratingSystem {
                 customer.state = Customer.CustomerState.WAITING;
                 customer.clickable = true;
                 customer.stateTimer = 0f;
+                Gdx.app.log("SEATING", "no free table!");
                 return;
             }
+            Gdx.app.log("SEATING", "table found, seats: " + table.seats.size());
 
             // assign table
             customer.tableId = table.tableId;
             customer.tablePosition.set(table.position);
 
-            // teleport to table position
-            Transform transform = Transform.MAPPER.get(entity);
-            transform.getPosition().set(table.position);
+            for (SeatData seat : table.seats) {
+                Gdx.app.log("SEATING", "seat isOccupied: " + seat.isOccupied);
+                if (!seat.isOccupied) {
+                    seat.isOccupied = true;
+                    customer.claimedSeat = seat;
+                    customer.tablePosition.set(seat.position);
+                    customer.tableId = table.tableId;
 
-            // move physics body too
-            Physic physic = Physic.MAPPER.get(entity);
-            if (physic != null && physic.getBody() != null) {
-                physic.getBody().setTransform(table.position, 0f);
+
+                    // teleport to table position
+                    Transform transform = Transform.MAPPER.get(entity);
+                    transform.getPosition().set(seat.position);
+
+                    // move physics body too
+                    Physic physic = Physic.MAPPER.get(entity);
+                    if (physic != null && physic.getBody() != null) {
+                        physic.getBody().setTransform(seat.position, 0f);
+                    }
+                    break;
+                }
             }
+
 
             // assign a random order
             customer.orderItemId = POSSIBLE_ORDERS[MathUtils.random(0, POSSIBLE_ORDERS.length - 1)];
@@ -96,7 +120,7 @@ public class CustomerSystem extends IteratingSystem {
         if (customer.stateTimer >= ORDER_DELAY) {
             customer.state = Customer.CustomerState.ORDERING;
             customer.stateTimer = 0f;
-            // order ticket spawning will go here later
+            recipeQueueUI.addOrder(customer.orderItemId, String.valueOf(customer.tableId));
         }
     }
 
@@ -104,6 +128,11 @@ public class CustomerSystem extends IteratingSystem {
         // vacate the table
         if (customer.tableId != -1) {
             tableManager.vacateTable(customer.tableId);
+        }
+
+        //free the seat
+        if (customer.claimedSeat != null) {
+            customer.claimedSeat.isOccupied = false;
         }
 
         // destroy physics body

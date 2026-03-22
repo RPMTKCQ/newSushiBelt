@@ -11,76 +11,104 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sushi.game.SushiGame;
 import com.sushi.game.asset.AtlasAsset;
 import com.sushi.game.asset.MapAsset;
+import com.sushi.game.asset.SkinAsset;
 import com.sushi.game.audio.AudioService;
 import com.sushi.game.factory.CustomerFactory;
-import com.sushi.game.system.CustomerSpawner;
 import com.sushi.game.factory.TableManager;
 import com.sushi.game.input.GameControllerState;
 import com.sushi.game.input.KeyboardController;
 import com.sushi.game.system.*;
-import com.sushi.game.system.AnimationSystem;
-import com.sushi.game.system.ControllerSystem;
-import com.sushi.game.system.RenderSystem;
 import com.sushi.game.tiled.TiledAshleyConfigurator;
 import com.sushi.game.tiled.TiledService;
+import com.sushi.game.ui.GameScreenUI;
+import com.sushi.game.ui.RecipeQueueUI;
+import com.sushi.game.ui.model.RecipeQueue;
 
 import java.util.function.Consumer;
 
-
 public class GameScreen extends ScreenAdapter {
-    private final Engine engine;
-    private final TiledService tiledService;
-    private final TiledAshleyConfigurator tiledAshleyConfigurator;
-    private final KeyboardController keyboardController;
+
+    // ── core ─────────────────────────────────────────────────────────────────
     private final SushiGame game;
+    private final Engine engine;
     private final World physicWorld;
     private final AudioService audioService;
-    private final Stage stage;
-    private final Viewport uiViewport;
+
+    // ── tiled ────────────────────────────────────────────────────────────────
+    private final TiledService tiledService;
+    private final TiledAshleyConfigurator tiledAshleyConfigurator;
+
+    // ── input ────────────────────────────────────────────────────────────────
+    private final KeyboardController keyboardController;
+
+    // ── factory / spawning ───────────────────────────────────────────────────
     private final TableManager tableManager;
     private final CustomerFactory customerFactory;
     private final CustomerSpawner customerSpawner;
 
+    // ── ui ───────────────────────────────────────────────────────────────────
+    private final Skin skin;
+    private final Viewport uiViewport;
+    private final Stage stage;
+    private final RecipeQueue recipeQueue;
+    private final RecipeQueueUI recipeQueueUI;
+    private final GameScreenUI gameScreenUI;
+
+    // ── systems (kept as references for cross-system calls) ──────────────────
+    private final PowerUpSystem powerUpSystem;
+
     public GameScreen(SushiGame game) {
         this.game = game;
+
+        // ── core ─────────────────────────────────────────────────────────────
         this.physicWorld = new World(Vector2.Zero, true);
         this.physicWorld.setAutoClearForces(false);
-        this.tiledService = new TiledService(game.getAssetService(), this.physicWorld);
+        this.audioService = game.getAudioService();
         this.engine = new Engine();
+
+        // ── tiled ─────────────────────────────────────────────────────────────
+        this.tiledService = new TiledService(game.getAssetService(), this.physicWorld);
         this.tiledAshleyConfigurator = new TiledAshleyConfigurator(this.engine, game.getAssetService(), physicWorld);
+
+        // ── input ─────────────────────────────────────────────────────────────
+        this.keyboardController = new KeyboardController(GameControllerState.class, engine);
+
+        // ── factory / spawning ────────────────────────────────────────────────
         this.tableManager = new TableManager();
         this.customerFactory = new CustomerFactory(engine, physicWorld, game.getAssetService());
         this.customerSpawner = new CustomerSpawner(customerFactory, tableManager, engine);
-        this.engine.addSystem(new CustomerSystem(physicWorld, tableManager, engine));
-        this.keyboardController = new KeyboardController(GameControllerState.class, engine);
-        this.audioService = game.getAudioService();
-        this.uiViewport = new FitViewport(320f, 180f);
+
+        // ── ui ────────────────────────────────────────────────────────────────
+        this.skin = game.getAssetService().get(SkinAsset.DEFAULT);
+        this.uiViewport = new FitViewport(1920f, 1080f);
         this.stage = new Stage(uiViewport, game.getBatch());
+        this.recipeQueue = new RecipeQueue();
+        this.recipeQueueUI = new RecipeQueueUI(uiViewport, recipeQueue, skin);
+        this.gameScreenUI = new GameScreenUI(stage, skin);
 
-        this.engine.addSystem(new ControllerSystem(game.getAudioService(), this.physicWorld)); // added this.physic world, might break, might change
-        this.engine.addSystem(new FsmSystem());
-        this.engine.addSystem(new FacingSystem());
-        this.engine.addSystem(new PhysicMoveSystem());
-        this.engine.addSystem(new PhysicSystem(this.physicWorld, 1 / 60f));
-        this.engine.addSystem(new AnimationSystem(game.getAssetService()));
-        this.engine.addSystem(new CameraSystem(game.getCamera()));
-        this.engine.addSystem(new RenderSystem(game.getBatch(), game.getViewport(), game.getCamera()));
-        this.engine.addSystem(new PhysicDebugRenderSystem(physicWorld, game.getCamera()));
+        // ── systems ───────────────────────────────────────────────────────────
+        this.powerUpSystem = new PowerUpSystem(engine);
 
-        // adjust camera distance
+        engine.addSystem(new CustomerSystem(physicWorld, tableManager, engine, recipeQueueUI));
+        engine.addSystem(powerUpSystem);
+        engine.addSystem(new ControllerSystem(game.getAudioService(), this.physicWorld));
+        engine.addSystem(new FsmSystem());
+        engine.addSystem(new FacingSystem());
+        engine.addSystem(new PhysicMoveSystem());
+        engine.addSystem(new PhysicSystem(this.physicWorld, 1 / 60f));
+        engine.addSystem(new AnimationSystem(game.getAssetService()));
+        engine.addSystem(new CameraSystem(game.getCamera()));
+        engine.addSystem(new RenderSystem(game.getBatch(), game.getViewport(), game.getCamera()));
+        engine.addSystem(new PhysicDebugRenderSystem(physicWorld, game.getCamera()));
+
         game.getCamera().zoom = 1f;
-    }
-
-    @Override
-    public void resize(int width, int height) {
-        super.resize(width, height);
-        this.uiViewport.update(width, height, true);
     }
 
     @Override
@@ -88,100 +116,71 @@ public class GameScreen extends ScreenAdapter {
         game.setInputProcessors(keyboardController, stage);
         keyboardController.setActiveState(GameControllerState.class);
 
-        Consumer<TiledMap> renderConsumer = this.engine.getSystem(RenderSystem.class)::setMap;
-        Consumer<TiledMap> cameraConsumer = this.engine.getSystem(CameraSystem.class)::setMap;
-        Consumer<TiledMap> audioConsumer = audioService::setMap;
+        Consumer<TiledMap> renderConsumer = engine.getSystem(RenderSystem.class)::setMap;
+        Consumer<TiledMap> cameraConsumer = engine.getSystem(CameraSystem.class)::setMap;
+        Consumer<TiledMap> audioConsumer  = audioService::setMap;
 
-        this.tiledService.setMapChangeConsumer(renderConsumer.andThen(cameraConsumer).andThen(audioConsumer));
-        this.tiledService.setLoadObjectConsumer(this.tiledAshleyConfigurator::onLoadObject);
-        this.tiledService.setLoadTileConsumer(tiledAshleyConfigurator::onLoadTile);
+        tiledService.setMapChangeConsumer(renderConsumer.andThen(cameraConsumer).andThen(audioConsumer));
+        tiledService.setLoadObjectConsumer(tiledAshleyConfigurator::onLoadObject);
+        tiledService.setLoadTileConsumer(tiledAshleyConfigurator::onLoadTile);
 
+        TiledMap tiledMap = tiledService.loadMap(MapAsset.MAIN);
+        tiledService.setMap(tiledMap);
 
-        TiledMap tiledMap = this.tiledService.loadMap(MapAsset.MAIN);
-        this.tiledService.setMap(tiledMap);
-
-        // load tables and spawn points from the objects layer
         MapLayer objectLayer = tiledMap.getLayers().get("objects");
         if (objectLayer != null) {
             tableManager.loadTables(objectLayer.getObjects());
             customerSpawner.loadSpawnPoints(objectLayer.getObjects());
-//            customerSpawner.addSpawnPoint(304f, 312f);
         }
 
-        //get regions
+        // temp atlas log
         for (TextureAtlas.AtlasRegion r : game.getAssetService().get(AtlasAsset.OBJECTS).getRegions()) {
             Gdx.app.log("ATLAS", r.name);
         }
-
-        //temp logs
         Gdx.app.log("TABLES", "loaded tables: " + tableManager.getTableCount());
-
-    }
-
-    @Override
-    public void hide() {
-        this.engine.removeAllEntities();
-        this.stage.clear();
     }
 
     @Override
     public void render(float delta) {
         delta = Math.min(delta, 1 / 30f);
-        customerSpawner.update(delta); // new
-        this.engine.update(delta);
 
+        // ── game logic ────────────────────────────────────────────────────────
+        customerSpawner.update(delta);
+        engine.update(delta);
+
+        // ── ui ────────────────────────────────────────────────────────────────
         uiViewport.apply();
         stage.getBatch().setColor(Color.WHITE);
         stage.act(delta);
         stage.draw();
 
+        // recipe queue draws outside stage (uses its own ShapeRenderer + batch)
+        recipeQueueUI.update(delta);
+        game.getBatch().begin();
+        recipeQueueUI.draw(game.getBatch());
+        game.getBatch().end();
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        uiViewport.update(width, height, true);
+    }
+
+    @Override
+    public void hide() {
+        engine.removeAllEntities();
+        stage.clear();
     }
 
     @Override
     public void dispose() {
-        for (EntitySystem system : this.engine.getSystems()) {
-            if (system instanceof Disposable disposableSystem) {
-                disposableSystem.dispose();
+        for (EntitySystem system : engine.getSystems()) {
+            if (system instanceof Disposable disposable) {
+                disposable.dispose();
             }
         }
-        this.physicWorld.dispose();
-        this.stage.dispose();
-
-
-//        stage = new Stage(new ScreenViewport());
-//        skin = new Skin(Gdx.files.internal("skin.json"));
-//        Gdx.input.setInputProcessor(stage);
-//
-//        Table table = new Table();
-//        table.setFillParent(true);
-//
-//        table.add();
-//
-//        table.add();
-//
-//        table.row();
-//        table.add();
-//
-//        table.add();
-//        stage.addActor(table);
-//
-//        table = new Table();
-//        table.setFillParent(true);
-//
-//        Button button = new Button(skin, "flare");
-//        table.add(button);
-//
-//        Label label = new Label("You bum", skin);
-//        label.setWrap(true);
-//        label.setColor(skin.getColor("BLACK"));
-//        table.add(label).growX();
-//
-//        table.row();
-//        table.add();
-//
-//        table.add();
-//        stage.addActor(table);
-
-
+        physicWorld.dispose();
+        stage.dispose();
+        recipeQueueUI.dispose();
     }
 }

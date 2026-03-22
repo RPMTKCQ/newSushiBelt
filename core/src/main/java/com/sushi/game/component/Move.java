@@ -32,4 +32,8 @@ public class Move implements Component {
     public void setRooted(boolean rooted) {
         isRooted = rooted;
     }
+
+    public void setMaxSpeed(float maxSpeed) {
+        this.maxSpeed = maxSpeed;
+    }
 }

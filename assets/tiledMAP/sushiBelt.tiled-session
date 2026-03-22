@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "restaurant-1.tmx",
+    "activeFile": "Player.tsx",
     "expandedProjectPaths": [
         "."
     ],
@@ -84,11 +84,11 @@
             "expandedObjectLayers": [
                 2
             ],
-            "scale": 4,
+            "scale": 2,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 290.625,
-                "y": 240.875
+                "x": 239.25,
+                "y": 248.75
             }
         },
         "restaurant.tmx": {
@@ -118,10 +118,10 @@
     "project": "sushiBelt.tiled-project",
     "property.type": "int",
     "recentFiles": [
-        "Player.tsx",
         "Chef.tsx",
         "Interior.tsx",
         "restaurant-1.tmx",
+        "Player.tsx",
         "Main_Spritesheet.tsx",
         "C:/Users/Wyshcen/Documents/Java/SushiBeltBackup/assets/tiledMAP/mao.tmx",
         "C:/Users/Wyshcen/Documents/Java/SushiBeltBackup/assets/tiledMAP/New Object.tsx",

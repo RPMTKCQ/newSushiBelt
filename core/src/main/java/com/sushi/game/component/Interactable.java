@@ -5,4 +5,5 @@ import com.badlogic.ashley.core.ComponentMapper;
 
 public class Interactable implements Component {
     public static final ComponentMapper<Interactable> MAPPER = ComponentMapper.getFor(Interactable.class);
+
 }
