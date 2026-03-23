@@ -20,6 +20,7 @@ import com.sushi.game.asset.AtlasAsset;
 import com.sushi.game.asset.MapAsset;
 import com.sushi.game.asset.SkinAsset;
 import com.sushi.game.audio.AudioService;
+import com.sushi.game.factory.ChefFactory;
 import com.sushi.game.factory.CustomerFactory;
 import com.sushi.game.factory.TableManager;
 import com.sushi.game.input.GameControllerState;
@@ -28,77 +29,92 @@ import com.sushi.game.system.*;
 import com.sushi.game.tiled.TiledAshleyConfigurator;
 import com.sushi.game.tiled.TiledService;
 import com.sushi.game.ui.GameScreenUI;
-import com.sushi.game.ui.RecipeQueueUI;
-import com.sushi.game.ui.model.RecipeQueue;
 
 import java.util.function.Consumer;
 
 public class GameScreen extends ScreenAdapter {
 
-    // ── core ─────────────────────────────────────────────────────────────────
+    //  core
     private final SushiGame game;
     private final Engine engine;
     private final World physicWorld;
     private final AudioService audioService;
 
-    // ── tiled ────────────────────────────────────────────────────────────────
+    //  tiled
     private final TiledService tiledService;
     private final TiledAshleyConfigurator tiledAshleyConfigurator;
 
-    // ── input ────────────────────────────────────────────────────────────────
+    //  input
     private final KeyboardController keyboardController;
 
-    // ── factory / spawning ───────────────────────────────────────────────────
+    //  factory / spawning
     private final TableManager tableManager;
     private final CustomerFactory customerFactory;
     private final CustomerSpawner customerSpawner;
 
-    // ── ui ───────────────────────────────────────────────────────────────────
+    //  ui
     private final Skin skin;
     private final Viewport uiViewport;
     private final Stage stage;
-    private final RecipeQueue recipeQueue;
-    private final RecipeQueueUI recipeQueueUI;
     private final GameScreenUI gameScreenUI;
 
-    // ── systems (kept as references for cross-system calls) ──────────────────
+    //  systems
     private final PowerUpSystem powerUpSystem;
+    private final LevelSystem levelSystem;
+    private final StrikeSystem strikeSystem;
+    private final ChefSystem chefSystem;
+    private final ConveyorSystem conveyorSystem;
+    private final ChefFactory chefFactory;
+    private final ChefSpawner chefSpawner;
 
     public GameScreen(SushiGame game) {
         this.game = game;
 
-        // ── core ─────────────────────────────────────────────────────────────
+        //  core
         this.physicWorld = new World(Vector2.Zero, true);
         this.physicWorld.setAutoClearForces(false);
         this.audioService = game.getAudioService();
         this.engine = new Engine();
 
-        // ── tiled ─────────────────────────────────────────────────────────────
+        //  tiled
         this.tiledService = new TiledService(game.getAssetService(), this.physicWorld);
         this.tiledAshleyConfigurator = new TiledAshleyConfigurator(this.engine, game.getAssetService(), physicWorld);
 
-        // ── input ─────────────────────────────────────────────────────────────
+        //  input
         this.keyboardController = new KeyboardController(GameControllerState.class, engine);
 
-        // ── factory / spawning ────────────────────────────────────────────────
+        //  factory / spawning
         this.tableManager = new TableManager();
         this.customerFactory = new CustomerFactory(engine, physicWorld, game.getAssetService());
         this.customerSpawner = new CustomerSpawner(customerFactory, tableManager, engine);
+        this.chefFactory = new ChefFactory(engine, game.getAssetService());
+        this.chefSpawner = new ChefSpawner(chefFactory);
 
-        // ── ui ────────────────────────────────────────────────────────────────
+        //  ui
         this.skin = game.getAssetService().get(SkinAsset.DEFAULT);
         this.uiViewport = new FitViewport(1920f, 1080f);
         this.stage = new Stage(uiViewport, game.getBatch());
-        this.recipeQueue = new RecipeQueue();
-        this.recipeQueueUI = new RecipeQueueUI(uiViewport, recipeQueue, skin);
-        this.gameScreenUI = new GameScreenUI(stage, skin);
+        this.gameScreenUI = new GameScreenUI(stage,
+            game.getAssetService().get(SkinAsset.GAME),
+            game.getAssetService());
 
-        // ── systems ───────────────────────────────────────────────────────────
+        //  systems
         this.powerUpSystem = new PowerUpSystem(engine);
+        this.levelSystem = new LevelSystem(gameScreenUI, powerUpSystem);
+        this.strikeSystem = new StrikeSystem(gameScreenUI, () ->
+            game.setScreen(new GameOverScreen(game, levelSystem.getScore())));
+        this.chefSystem = new ChefSystem(gameScreenUI, engine);
+        this.conveyorSystem = new ConveyorSystem();
 
-        engine.addSystem(new CustomerSystem(physicWorld, tableManager, engine, recipeQueueUI));
+        engine.addSystem(new CustomerSystem(physicWorld, tableManager, engine,
+            gameScreenUI, levelSystem, strikeSystem));
         engine.addSystem(powerUpSystem);
-        engine.addSystem(new ControllerSystem(game.getAudioService(), this.physicWorld));
+        engine.addSystem(levelSystem);
+        engine.addSystem(strikeSystem);
+        engine.addSystem(chefSystem);
+        engine.addSystem(conveyorSystem);
+        engine.addSystem(new CustomerRenderSystem(game.getCamera()));
+        engine.addSystem(new ControllerSystem(game.getAudioService(), this.physicWorld, gameScreenUI));
         engine.addSystem(new FsmSystem());
         engine.addSystem(new FacingSystem());
         engine.addSystem(new PhysicMoveSystem());
@@ -118,7 +134,7 @@ public class GameScreen extends ScreenAdapter {
 
         Consumer<TiledMap> renderConsumer = engine.getSystem(RenderSystem.class)::setMap;
         Consumer<TiledMap> cameraConsumer = engine.getSystem(CameraSystem.class)::setMap;
-        Consumer<TiledMap> audioConsumer  = audioService::setMap;
+        Consumer<TiledMap> audioConsumer = audioService::setMap;
 
         tiledService.setMapChangeConsumer(renderConsumer.andThen(cameraConsumer).andThen(audioConsumer));
         tiledService.setLoadObjectConsumer(tiledAshleyConfigurator::onLoadObject);
@@ -131,9 +147,10 @@ public class GameScreen extends ScreenAdapter {
         if (objectLayer != null) {
             tableManager.loadTables(objectLayer.getObjects());
             customerSpawner.loadSpawnPoints(objectLayer.getObjects());
+            chefSpawner.loadSpawnPoints(objectLayer.getObjects());
         }
+        chefSpawner.spawnAll();
 
-        // temp atlas log
         for (TextureAtlas.AtlasRegion r : game.getAssetService().get(AtlasAsset.OBJECTS).getRegions()) {
             Gdx.app.log("ATLAS", r.name);
         }
@@ -144,21 +161,18 @@ public class GameScreen extends ScreenAdapter {
     public void render(float delta) {
         delta = Math.min(delta, 1 / 30f);
 
-        // ── game logic ────────────────────────────────────────────────────────
+        //  game logic
         customerSpawner.update(delta);
         engine.update(delta);
 
-        // ── ui ────────────────────────────────────────────────────────────────
+        //  ui
         uiViewport.apply();
         stage.getBatch().setColor(Color.WHITE);
         stage.act(delta);
         stage.draw();
 
-        // recipe queue draws outside stage (uses its own ShapeRenderer + batch)
-        recipeQueueUI.update(delta);
-        game.getBatch().begin();
-        recipeQueueUI.draw(game.getBatch());
-        game.getBatch().end();
+        // tick receipt patience bars
+        gameScreenUI.updateReceipts(delta);
     }
 
     @Override
@@ -181,6 +195,5 @@ public class GameScreen extends ScreenAdapter {
         }
         physicWorld.dispose();
         stage.dispose();
-        recipeQueueUI.dispose();
     }
 }

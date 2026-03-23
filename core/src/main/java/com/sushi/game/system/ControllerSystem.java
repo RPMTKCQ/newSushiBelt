@@ -13,50 +13,60 @@ import com.sushi.game.input.Command;
 import com.sushi.game.component.Physic;
 import com.sushi.game.component.Customer;
 import com.sushi.game.component.Interactable;
+import com.sushi.game.ui.GameScreenUI;
 
 public class ControllerSystem extends IteratingSystem {
 
     private final AudioService audioService;
     private final World world;
+    private final GameScreenUI gameScreenUI;
 
-    public ControllerSystem(AudioService audioService, World world) {
+    public ControllerSystem(AudioService audioService, World world, GameScreenUI gameScreenUI) {
         super(Family.all(Controller.class).get());
         this.audioService = audioService;
         this.world = world;
+        this.gameScreenUI = gameScreenUI;
     }
 
     private void startGiveFood(Entity playerEntity) {
-        Gdx.app.log("INTERACT", "startGiveFood called");
         Physic physic = Physic.MAPPER.get(playerEntity);
         if (physic == null) return;
 
-        // get player position in world units
-        Vector2 playerPos = physic.getBody().getPosition();
-        float range = 1.2f; // interaction range in world units
+        Inventory inventory = Inventory.MAPPER.get(playerEntity);
+        if (inventory == null) return;
 
-        // query a box around the player for any nearby interactable
+        Vector2 playerPos = physic.getBody().getPosition();
+        float range = 1.2f;
+
         world.QueryAABB(fixture -> {
-                Gdx.app.log("QUERY", "hit fixture: " + fixture.getBody().getUserData()); // temp log
                 Object userData = fixture.getBody().getUserData();
-                if (!(userData instanceof Entity)) return true; // keep searching
+                if (!(userData instanceof Entity)) return true;
 
                 Entity nearby = (Entity) userData;
-                Interactable interactable = Interactable.MAPPER.get(nearby);
-                Gdx.app.log("QUERY", "interactable: " + (interactable != null));
-                if (interactable == null) return true; // not interactable, keep searching
 
-                Customer customer = Customer.MAPPER.get(nearby);
-                if (customer == null) return true; // has no customer component, keep searching
-
-                // act based on customer state
-                switch (customer.state) {
-                    case WAITING -> seatCustomer(nearby, customer);
-                    case ORDERING -> deliverFood(nearby, customer, playerEntity);
-                    default -> {
-                    } // nothing to do in other states
+                // ── try pick up dish from belt ────────────────────────────────────
+                DishOnBelt dish = DishOnBelt.MAPPER.get(nearby);
+                if (dish != null && !dish.pickedUp && !inventory.isFull()) {
+                    inventory.addDish(dish.dishId);
+                    dish.pickedUp = true;
+                    gameScreenUI.updateInventory(inventory.dishes);
+                    Gdx.app.log("PICKUP", "picked up: " + dish.dishId);
+                    return false;
                 }
 
-                return false; // found
+                // ── try deliver to customer ───────────────────────────────────────
+                Customer customer = Customer.MAPPER.get(nearby);
+                Interactable interactable = Interactable.MAPPER.get(nearby);
+                if (customer == null || interactable == null) return true;
+
+                switch (customer.state) {
+                    case WAITING -> seatCustomer(nearby, customer);
+                    case ORDERING -> deliverFood(nearby, customer, playerEntity, inventory);
+                    default -> {
+                    }
+                }
+
+                return false;
             },
             playerPos.x - range, playerPos.y - range,
             playerPos.x + range, playerPos.y + range);
@@ -69,10 +79,24 @@ public class ControllerSystem extends IteratingSystem {
         customer.clickable = false;
     }
 
-    private void deliverFood(Entity customerEntity, Customer customer, Entity playerEntity) {
-        // check player is actually carrying food first
+    private void deliverFood(Entity customerEntity, Customer customer,
+                             Entity playerEntity, Inventory inventory) {
+        if (inventory.isEmpty()) {
+            Gdx.app.log("DELIVER", "player has no food!");
+            return;
+        }
+
+        // check player carries the dish the customer actually ordered
+        if (!inventory.hasDish(customer.orderItemId)) {
+            Gdx.app.log("DELIVER", "wrong dish! customer wants: " + customer.orderItemId);
+            return;
+        }
+
+        inventory.removeDish(customer.orderItemId);
+        gameScreenUI.updateInventory(inventory.dishes);
         customer.state = Customer.CustomerState.EATING;
         customer.stateTimer = 0f;
+        Gdx.app.log("DELIVER", "delivered: " + customer.orderItemId);
     }
 
     @Override

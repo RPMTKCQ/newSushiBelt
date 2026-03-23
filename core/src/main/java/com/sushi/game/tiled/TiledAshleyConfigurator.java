@@ -90,6 +90,10 @@ public class TiledAshleyConfigurator {
         addEntityAnimation(tile, entity);
         addEntityMove(tile, entity);
         addEntityController(tileMapObject, entity);
+
+        boolean isPlayer = tileMapObject.getProperties().get("controller", false, Boolean.class);
+        if (isPlayer) entity.add(new Inventory());
+
         entity.add(new Facing(Facing.FacingDirection.RIGHT));
         entity.add(new Fsm(entity));
         entity.add(new Graphic(Color.WHITE.cpy(), textureRegion));

@@ -22,28 +22,28 @@ public class Animation2D implements Component {
     private Animation<TextureRegion> animation;
     private boolean dirty;
     private float FRAME_DURATION = 1 / 5f;
+    public boolean paused = false;  // ADD
 
     public Animation2D(AtlasAsset atlasAsset,
                        String atlasKey,
                        AnimationType type,
                        PlayMode playmode,
-                       float speed
-    ) {
+                       float speed) {
         this.atlasAsset = atlasAsset;
-        this.atlasKey = atlasKey;
-        this.type = type;
-        this.direction = null;
-        this.playmode = playmode;
-        this.speed = speed;
-        this.stateTime = 0f;
-        this.animation = null;
+        this.atlasKey   = atlasKey;
+        this.type       = type;
+        this.direction  = null;
+        this.playmode   = playmode;
+        this.speed      = speed;
+        this.stateTime  = 0f;
+        this.animation  = null;
     }
 
     public float getFRAME_DURATION() {
-        return switch(this.type) {
+        return switch (this.type) {
             case WALK -> 0.1f;
             case IDLE -> 0.2f;
-            default -> 0.15f;
+            default   -> 0.15f;
         };
     }
 
@@ -52,58 +52,31 @@ public class Animation2D implements Component {
     }
 
     public void setAnimation(Animation<TextureRegion> animation, FacingDirection direction) {
-        this.animation = animation;
-        this.direction = direction;
-        this.stateTime = 0f;
-        this.dirty = false;
+        this.animation  = animation;
+        this.direction  = direction;
+        this.stateTime  = 0f;
+        this.dirty      = false;
     }
 
-    public FacingDirection getDirection() {
-        return direction;
-    }
-
-    public Animation<TextureRegion> getAnimation() {
-        return animation;
-    }
-
-    public AtlasAsset getAtlasAsset() {
-        return atlasAsset;
-    }
-
-    public String getAtlasKey() {
-        return atlasKey;
-    }
+    public FacingDirection getDirection()          { return direction; }
+    public Animation<TextureRegion> getAnimation() { return animation; }
+    public AtlasAsset getAtlasAsset()              { return atlasAsset; }
+    public String getAtlasKey()                    { return atlasKey; }
+    public AnimationType getType()                 { return type; }
+    public PlayMode getPlaymode()                  { return playmode; }
+    public boolean isDirty()                       { return dirty; }
+    public boolean isFinished()                    { return animation.isAnimationFinished(stateTime); }
 
     public void setType(AnimationType type) {
-        this.type = type;
+        this.type  = type;
         this.dirty = true;
     }
 
-    public AnimationType getType() {
-        return type;
-    }
-
-    public PlayMode getPlaymode() {
-        return playmode;
-    }
-
-    public void setSpeed(float speed) {
-        this.speed = speed;
-    }
-
-    public void setPlaymode(PlayMode playmode) {
-        this.playmode = playmode;
-    }
-
-    public boolean isDirty() {
-        return dirty;
-    }
-
-    public boolean isFinished() {
-        return animation.isAnimationFinished(stateTime);
-    }
+    public void setSpeed(float speed)         { this.speed = speed; }
+    public void setPlaymode(PlayMode playmode) { this.playmode = playmode; }
 
     public float incAndGetStateTime(float deltaTime) {
+        if (paused) return this.stateTime;  // don't advance if paused
         this.stateTime += deltaTime * speed;
         return this.stateTime;
     }
@@ -117,9 +90,6 @@ public class Animation2D implements Component {
             this.atlasKey = name().toLowerCase();
         }
 
-        public String getAtlasKey() {
-            return atlasKey;
-        }
+        public String getAtlasKey() { return atlasKey; }
     }
-
 }

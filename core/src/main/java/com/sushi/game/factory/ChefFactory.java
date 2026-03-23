@@ -2,24 +2,33 @@ package com.sushi.game.factory;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.sushi.game.asset.AssetService;
-import com.sushi.game.component.Chef;
+import com.sushi.game.asset.AtlasAsset;
+import com.sushi.game.component.*;
 
 public class ChefFactory extends EntityFactory {
-    private static final String CHEF_SPRITE = "chef_idle"; // replace with real atlas name
 
     public ChefFactory(Engine engine, AssetService assetService) {
-        super(engine, assetService); // no World needed — chef has no physics body
+        super(engine, assetService);
     }
 
     public Entity createChef(float x, float y, int stationId) {
-        // base handles Transform + Graphic
-        Entity entity = createBase(x, y, 1, CHEF_SPRITE);
+        Entity entity = createBase(x, y, 1, "Chef/idle_right");
 
-        // chef-specific: station assignment + recipe logic
         Chef chef = new Chef();
         chef.stationId = stationId;
         entity.add(chef);
+
+        entity.add(new Animation2D(
+            AtlasAsset.OBJECTS,
+            "Chef",
+            Animation2D.AnimationType.IDLE,
+            Animation.PlayMode.LOOP,
+            1f
+        ));
+
+        entity.add(new Facing(Facing.FacingDirection.RIGHT));
 
         engine.addEntity(entity);
         return entity;

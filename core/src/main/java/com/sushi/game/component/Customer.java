@@ -18,6 +18,8 @@ public class Customer implements Component {
     public float stateTimer = 0f;
     public boolean clickable = true;
     public SeatData claimedSeat = null;
+    public float maxPatience = 30f;   // set on spawn
+    public boolean leftAngry = false;
 
     public void reset() {
         state = CustomerState.WAITING;

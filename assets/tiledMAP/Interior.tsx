@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tileset version="1.10" tiledversion="1.11.2" name="Interior" tilewidth="32" tileheight="32" tilecount="256" columns="16">
  <image source="Main_Spritesheet.png" width="512" height="512"/>
+ <tile id="5">
+  <properties>
+   <property name="z" type="int" value="4"/>
+  </properties>
+ </tile>
  <tile id="24">
   <objectgroup draworder="index" id="3">
    <object id="2" x="0" y="16" width="32" height="16"/>
@@ -12,8 +17,8 @@
    <property name="sensor" type="bool" value="true"/>
   </properties>
   <objectgroup draworder="index" id="2">
-   <object id="1" x="8.81861" y="31.7326">
-    <polygon points="0,0 0.144567,-11.5654 5.20443,-19.2998 12.1437,-22.6971 23.0585,-22.7694 23.1814,0.26745"/>
+   <object id="2" x="32" y="32">
+    <polygon points="0,0 -22.9375,-0.09375 -22.0625,-10.25 -9.75,-16.25 0,-16"/>
    </object>
   </objectgroup>
  </tile>
@@ -22,6 +27,9 @@
    <property name="restitution" type="float" value="1"/>
    <property name="sensor" type="bool" value="true"/>
   </properties>
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="16" width="32" height="16"/>
+  </objectgroup>
  </tile>
  <tile id="31" type="Prop">
   <properties>
@@ -147,6 +155,7 @@
    <property name="atlasAsset" value="OBJECTS"/>
    <property name="restitution" type="float" value="1"/>
    <property name="sensor" type="bool" value="true"/>
+   <property name="z" type="int" value="3"/>
   </properties>
   <objectgroup draworder="index" id="2">
    <object id="1" x="10.5" y="25.875" width="11" height="6.125"/>

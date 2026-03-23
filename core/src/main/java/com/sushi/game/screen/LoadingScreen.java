@@ -27,6 +27,7 @@ public class LoadingScreen extends ScreenAdapter {
             assetService.queue(sound);
         }
         assetService.queue(SkinAsset.DEFAULT);
+        assetService.queue(SkinAsset.GAME);
     }
 
     @Override

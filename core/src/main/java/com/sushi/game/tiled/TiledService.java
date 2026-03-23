@@ -71,14 +71,13 @@ public class TiledService {
 
     private void loadMapObjects(TiledMap tiledMap) {
         for (MapLayer layer : tiledMap.getLayers()) {
-            if ("objects".equals(layer.getName())) {
+            String name = layer.getName();
+            if ("objects".equals(name) || "small-objects".equals(name) || "wall-object".equals(name)) {
                 loadingObjectLayer(layer);
             } else if (layer instanceof TiledMapTileLayer tileLayer) {
                 loadTileLayer(tileLayer);
             }
-
         }
-
         spawnMapBoundary(tiledMap);
     }
 

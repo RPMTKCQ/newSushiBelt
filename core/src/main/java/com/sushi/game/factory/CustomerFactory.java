@@ -6,19 +6,22 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.sushi.game.SushiGame;
 import com.sushi.game.asset.AssetService;
 import com.sushi.game.asset.AtlasAsset;
 import com.sushi.game.component.*;
-import com.sushi.game.component.Transform;
 
 public class CustomerFactory extends EntityFactory {
+
     private static final String[] SPRITE_NAMES = {
         "NPC1/idle_right",
         "NPC2/idle_right",
         "NPC3/idle_right"
     };
+
+    private static final String[] ATLAS_KEYS = {"NPC1", "NPC2", "NPC3"};
 
     private final World world;
 
@@ -30,49 +33,62 @@ public class CustomerFactory extends EntityFactory {
     public Entity createCustomer(float x, float y) {
         int spriteIdx = MathUtils.random(0, 2);
 
-        String[] ATLAS_KEYS = {"NPC1", "NPC2", "NPC3"};
-        String atlasKey = ATLAS_KEYS[spriteIdx];
 
-        Entity entity = createBase(x, y, 1, SPRITE_NAMES[spriteIdx]);
+        Entity entity = createBase(x, y, 5, SPRITE_NAMES[spriteIdx]);
 
+        // customer component
         Customer customer = new Customer();
         customer.spriteIndex = spriteIdx;
         entity.add(customer);
-        entity.add(new Interactable()); // might change
+        entity.add(new Interactable());
 
-        // adds idle animation
+        // animation
         entity.add(new Animation2D(
-            AtlasAsset.OBJECTS,  // same atlas as everything else
-            atlasKey,            // "NPC1", "NPC2", or "NPC3"
+            AtlasAsset.OBJECTS,
+            ATLAS_KEYS[spriteIdx],
             Animation2D.AnimationType.IDLE,
             Animation.PlayMode.LOOP,
-            1f                   // speed multiplier
+            1f
         ));
 
-        //facing directoin
         entity.add(new Facing(Facing.FacingDirection.RIGHT));
 
-        //temp logs
+        // temp log
         TextureAtlas atlas = assetService.get(AtlasAsset.OBJECTS);
         TextureAtlas.AtlasRegion testRegion = atlas.findRegion(SPRITE_NAMES[0]);
-        Gdx.app.log("CUSTOMER", "region found: " + (testRegion != null ? SPRITE_NAMES[0] : "NULL - wrong name!"));
-        // click detection
-        Transform transform = Transform.MAPPER.get(entity);
+        Gdx.app.log("CUSTOMER", "region found: " + (testRegion != null ? SPRITE_NAMES[0] : "NULL"));
+
+        // physics body at spawn position
+        Vector2 spawnPos = new Vector2(x, y).scl(SushiGame.UNIT_SCALE);
+
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.StaticBody;
-        bodyDef.position.set(transform.getPosition());
+        bodyDef.position.set(spawnPos);
+        bodyDef.fixedRotation = true;
+
         Body body = world.createBody(bodyDef);
         body.setUserData(entity);
 
-        CircleShape shape = new CircleShape();
-        shape.setRadius(0.4f);
-        FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.shape = shape;
-        fixtureDef.isSensor = true;
-        body.createFixture(fixtureDef);
-        shape.dispose();
+        // sensor for interaction detection
+        CircleShape sensorShape = new CircleShape();
+        sensorShape.setRadius(0.4f);
+        FixtureDef sensorFixture = new FixtureDef();
+        sensorFixture.shape = sensorShape;
+        sensorFixture.isSensor = true;
+        body.createFixture(sensorFixture);
+        sensorShape.dispose();
 
-        entity.add(new Physic(body, transform.getPosition().cpy()));
+        // solid fixture for collision with chairs and walls
+        CircleShape solidShape = new CircleShape();
+        solidShape.setRadius(0.25f);
+        FixtureDef solidFixture = new FixtureDef();
+        solidFixture.shape = solidShape;
+        solidFixture.isSensor = false;
+        solidFixture.density = 1f;
+        body.createFixture(solidFixture);
+        solidShape.dispose();
+
+        entity.add(new Physic(body, spawnPos.cpy()));
 
         engine.addEntity(entity);
         return entity;
