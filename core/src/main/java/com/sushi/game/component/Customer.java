@@ -8,17 +8,17 @@ import com.sushi.game.model.SeatData;
 public class Customer implements Component {
     public static final ComponentMapper<Customer> MAPPER = ComponentMapper.getFor(Customer.class);
 
-    public enum CustomerState { WAITING, SEATING, ORDERING, EATING, LEAVING }
+    public enum CustomerState { WAITING, SEATING, ORDERING, WAITING_FOR_FOOD, EATING, LEAVING }
 
     public CustomerState state = CustomerState.WAITING;
-    public int spriteIndex = 0; // picking a random sprite
-    public int tableId= -1; // tiled object id
+    public int spriteIndex = 0;
+    public int tableId = -1;
     public Vector2 tablePosition = new Vector2();
-    public String orderItemId;        // e.g. "tuna_roll"
+    public String orderItemId;
     public float stateTimer = 0f;
     public boolean clickable = true;
     public SeatData claimedSeat = null;
-    public float maxPatience = 30f;   // set on spawn
+    public float maxPatience = 60f;
     public boolean leftAngry = false;
 
     public void reset() {

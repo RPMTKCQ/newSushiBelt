@@ -13,7 +13,7 @@ import com.sushi.game.model.TableData;
 import com.sushi.game.ui.GameScreenUI;
 
 public class CustomerSystem extends IteratingSystem {
-    private static final float ORDER_DELAY  = 5f;
+    private static final float ORDER_DELAY = 3f;
     private static final float EAT_DURATION = 8f;
     private static final float SEAT_Y_OFFSET = 0.5f; // adjust this to move customer up/down on seat
 
@@ -32,11 +32,11 @@ public class CustomerSystem extends IteratingSystem {
                           GameScreenUI gameScreenUI, LevelSystem levelSystem,
                           StrikeSystem strikeSystem) {
         super(Family.all(Customer.class, Transform.class).get());
-        this.world        = world;
+        this.world = world;
         this.tableManager = tableManager;
-        this.engine       = engine;
+        this.engine = engine;
         this.gameScreenUI = gameScreenUI;
-        this.levelSystem  = levelSystem;
+        this.levelSystem = levelSystem;
         this.strikeSystem = strikeSystem;
     }
 
@@ -56,13 +56,25 @@ public class CustomerSystem extends IteratingSystem {
                 break;
 
             case ORDERING:
+                // show bubble, wait for player to take order via SELECT
                 if (customer.stateTimer >= customer.maxPatience) {
-                    customer.leftAngry  = true;
-                    customer.state      = Customer.CustomerState.LEAVING;
+                    customer.leftAngry = true;
+                    customer.state = Customer.CustomerState.LEAVING;
+                    customer.stateTimer = 0f;
+                    strikeSystem.onCustomerLeft();
+                    Gdx.app.log("CUSTOMER", "left angry, strikes++");
+                }
+                break;
+
+            case WAITING_FOR_FOOD:
+                // order taken, waiting for delivery — patience still ticks
+                if (customer.stateTimer >= customer.maxPatience) {
+                    customer.leftAngry = true;
+                    customer.state = Customer.CustomerState.LEAVING;
                     customer.stateTimer = 0f;
                     gameScreenUI.removeOrder(String.valueOf(customer.tableId));
                     strikeSystem.onCustomerLeft();
-                    Gdx.app.log("CUSTOMER", "left angry, strikes++");
+                    Gdx.app.log("CUSTOMER", "left angry waiting for food, strikes++");
                 }
                 break;
 
@@ -70,7 +82,7 @@ public class CustomerSystem extends IteratingSystem {
                 if (customer.stateTimer >= EAT_DURATION) {
                     levelSystem.onServeCompleted();
                     strikeSystem.onServeCompleted();
-                    customer.state      = Customer.CustomerState.LEAVING;
+                    customer.state = Customer.CustomerState.LEAVING;
                     customer.stateTimer = 0f;
                 }
                 break;
@@ -85,8 +97,8 @@ public class CustomerSystem extends IteratingSystem {
         if (customer.tablePosition.isZero()) {
             TableData table = tableManager.claimFreeTable();
             if (table == null) {
-                customer.state      = Customer.CustomerState.WAITING;
-                customer.clickable  = true;
+                customer.state = Customer.CustomerState.WAITING;
+                customer.clickable = true;
                 customer.stateTimer = 0f;
                 Gdx.app.log("SEATING", "no free table!");
                 return;
@@ -99,9 +111,9 @@ public class CustomerSystem extends IteratingSystem {
             for (SeatData seat : table.seats) {
                 Gdx.app.log("SEATING", "seat isOccupied: " + seat.isOccupied);
                 if (!seat.isOccupied) {
-                    seat.isOccupied      = true;
+                    seat.isOccupied = true;
                     customer.claimedSeat = seat;
-                    customer.tableId     = table.tableId;
+                    customer.tableId = table.tableId;
 
                     // offset seat position so customer sits visually on the chair
                     Vector2 seatPos = new Vector2(seat.position).add(0f, SEAT_Y_OFFSET);
@@ -124,18 +136,13 @@ public class CustomerSystem extends IteratingSystem {
             }
 
             customer.orderItemId = POSSIBLE_ORDERS[MathUtils.random(0, POSSIBLE_ORDERS.length - 1)];
-            customer.maxPatience = MathUtils.random(15f, 30f);
+            customer.maxPatience = MathUtils.random(45f, 90f);
         }
 
         if (customer.stateTimer >= ORDER_DELAY) {
-            customer.state      = Customer.CustomerState.ORDERING;
+            customer.state = Customer.CustomerState.ORDERING;
             customer.stateTimer = 0f;
-            gameScreenUI.addOrder(
-                customer.orderItemId,
-                String.valueOf(customer.tableId),
-                customer.maxPatience
-            );
-            Gdx.app.log("CUSTOMER", "ordering: " + customer.orderItemId);
+            Gdx.app.log("CUSTOMER", "ready to order: " + customer.orderItemId);
         }
     }
 

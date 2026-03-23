@@ -116,7 +116,7 @@
         "Chef.tsx"
     ],
     "project": "sushiBelt.tiled-project",
-    "property.type": "int",
+    "property.type": "bool",
     "recentFiles": [
         "Player.tsx",
         "Chef.tsx",

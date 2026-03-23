@@ -14,7 +14,7 @@ public class ChefSystem extends IteratingSystem {
     public ChefSystem(GameScreenUI gameScreenUI, Engine engine) {
         super(Family.all(Chef.class, Transform.class).get());
         this.gameScreenUI = gameScreenUI;
-        this.engine       = engine;
+        this.engine = engine;
     }
 
     @Override
@@ -27,6 +27,9 @@ public class ChefSystem extends IteratingSystem {
                 break;
             case COOKING:
                 chef.cookTimer += deltaTime;
+                if (chef.cookDuration > 0f) {
+                    gameScreenUI.updateCookingProgress(chef.cookTimer / chef.cookDuration);
+                }
                 if (chef.cookTimer >= chef.cookDuration) {
                     finishCooking(entity, chef);
                 }
@@ -37,25 +40,28 @@ public class ChefSystem extends IteratingSystem {
     }
 
     private void tryStartCooking(Chef chef) {
+        if (!gameScreenUI.isChefReady()) return;
+
         String nextDish = gameScreenUI.getFirstDishName();
         if (nextDish == null) return;
 
         chef.currentRecipeId = nextDish;
-        chef.cookDuration    = getCookDuration(nextDish);
-        chef.cookTimer       = 0f;
-        chef.state           = Chef.ChefState.COOKING;
+        chef.cookDuration = getCookDuration(nextDish);
+        chef.cookTimer = 0f;
+        chef.state = Chef.ChefState.COOKING;
+        gameScreenUI.setChefReady(false);
+        gameScreenUI.setChefCooking(true);
         Gdx.app.log("CHEF", "started cooking: " + nextDish);
     }
 
     private void finishCooking(Entity chefEntity, Chef chef) {
         chef.cookTimer = 0f;
-
         Transform chefTransform = Transform.MAPPER.get(chefEntity);
         spawnDishOnBelt(chef.currentRecipeId, chefTransform);
-
         gameScreenUI.removeFirstOrder();
-
-        chef.state           = Chef.ChefState.IDLE;
+        gameScreenUI.setChefCooking(false);
+        gameScreenUI.resetCookingBar();   // ADD
+        chef.state = Chef.ChefState.IDLE;
         chef.currentRecipeId = null;
         Gdx.app.log("CHEF", "finished cooking, dish on belt");
     }
@@ -81,10 +87,14 @@ public class ChefSystem extends IteratingSystem {
 
     private float getCookDuration(String dishId) {
         switch (dishId) {
-            case "tuna_roll":    return 5f;
-            case "salmon_roll":  return 6f;
-            case "maguro_nigiri":return 7f;
-            default:             return 5f;
+            case "tuna_roll":
+                return 5f;
+            case "salmon_nigiri":
+                return 6f;
+            case "maguro_nigiri":
+                return 7f;
+            default:
+                return 5f;
         }
     }
 }

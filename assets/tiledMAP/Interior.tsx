@@ -198,6 +198,33 @@
    <object id="1" x="8" y="21.75" width="16" height="10.25"/>
   </objectgroup>
  </tile>
+ <tile id="74" type="Prop">
+  <properties>
+   <property name="restitution" type="float" value="1"/>
+   <property name="sensor" type="bool" value="true"/>
+  </properties>
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="16" width="32" height="16"/>
+  </objectgroup>
+ </tile>
+ <tile id="75" type="Prop">
+  <properties>
+   <property name="restitution" type="float" value="1"/>
+   <property name="sensor" type="bool" value="true"/>
+  </properties>
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="16" width="32" height="16"/>
+  </objectgroup>
+ </tile>
+ <tile id="76" type="Prop">
+  <properties>
+   <property name="restitution" type="float" value="1"/>
+   <property name="sensor" type="bool" value="true"/>
+  </properties>
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="16" width="32" height="16"/>
+  </objectgroup>
+ </tile>
  <tile id="77" type="Prop">
   <properties>
    <property name="atlasAsset" value="OBJECTS"/>
@@ -218,6 +245,38 @@
    <object id="1" x="0" y="16" width="32" height="16"/>
   </objectgroup>
  </tile>
+ <tile id="85">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="8" y="16" width="17" height="16"/>
+  </objectgroup>
+ </tile>
+ <tile id="90" type="Prop">
+  <properties>
+   <property name="restitution" type="float" value="1"/>
+   <property name="sensor" type="bool" value="true"/>
+  </properties>
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="0" width="17" height="32"/>
+  </objectgroup>
+ </tile>
+ <tile id="91" type="Prop">
+  <properties>
+   <property name="restitution" type="float" value="1"/>
+   <property name="sensor" type="bool" value="true"/>
+  </properties>
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="16" width="32" height="16"/>
+  </objectgroup>
+ </tile>
+ <tile id="92" type="Prop">
+  <properties>
+   <property name="restitution" type="float" value="1"/>
+   <property name="sensor" type="bool" value="true"/>
+  </properties>
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="16" width="32" height="16"/>
+  </objectgroup>
+ </tile>
  <tile id="93" type="Prop">
   <properties>
    <property name="atlasAsset" value="OBJECTS"/>
@@ -228,11 +287,33 @@
    <object id="1" x="0" y="8" width="16" height="24"/>
   </objectgroup>
  </tile>
- <tile id="106">
+ <tile id="106" type="Prop">
   <properties>
    <property name="restitution" type="float" value="1"/>
    <property name="sensor" type="bool" value="true"/>
   </properties>
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="16" width="32" height="16"/>
+   <object id="2" x="0" y="0" width="16" height="16"/>
+  </objectgroup>
+ </tile>
+ <tile id="107" type="Prop">
+  <properties>
+   <property name="restitution" type="float" value="1"/>
+   <property name="sensor" type="bool" value="true"/>
+  </properties>
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="16" width="32" height="16"/>
+  </objectgroup>
+ </tile>
+ <tile id="108" type="Prop">
+  <properties>
+   <property name="restitution" type="float" value="1"/>
+   <property name="sensor" type="bool" value="true"/>
+  </properties>
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="16" width="32" height="16"/>
+  </objectgroup>
  </tile>
  <tile id="109" type="Prop">
   <properties>

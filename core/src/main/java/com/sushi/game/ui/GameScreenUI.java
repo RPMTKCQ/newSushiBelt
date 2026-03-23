@@ -4,6 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -14,7 +15,6 @@ import com.sushi.game.asset.AssetService;
 import com.sushi.game.asset.AtlasAsset;
 import com.sushi.game.system.PowerUpSystem;
 import com.sushi.game.ui.model.PowerUpType;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,58 +25,85 @@ public class GameScreenUI {
     private final Skin skin;
     private final AssetService assetService;
 
-    // ── labels updated at runtime ─────────────────────────────────────────────
     private Label moneyLabel;
     private Label scoreLabel;
     private Label levelLabel;
     private Label strikesLabel;
     private ProgressBar xpBar;
 
-    // ── power-up overlay ──────────────────────────────────────────────────────
     private Table powerUpOverlay;
-
-    // ── inventory slots ───────────────────────────────────────────────────────
     private final Table[] inventorySlots = new Table[3];
-
-    // ── receipt cards ─────────────────────────────────────────────────────────
     private Table receiptRow;
     private final List<ReceiptCardData> receiptCards = new ArrayList<>();
+
+    private boolean chefReady   = false;
+    private boolean chefCooking = false;
 
     private static class ReceiptCardData {
         Table card;
         Image dishImage;
         Label dishLabel;
         ProgressBar timerBar;
+        ProgressBar cookingBar;
         Label secondsLabel;
         String customerId;
         float timer;
         float maxTime;
 
         ReceiptCardData(Table card, Image img, Label label,
-                        ProgressBar bar, Label secondsLabel, String customerId, float maxTime) {
-            this.card = card;
-            this.dishImage = img;
-            this.dishLabel = label;
-            this.timerBar = bar;
+                        ProgressBar bar, ProgressBar cookingBar,
+                        Label secondsLabel, String customerId, float maxTime) {
+            this.card         = card;
+            this.dishImage    = img;
+            this.dishLabel    = label;
+            this.timerBar     = bar;
+            this.cookingBar   = cookingBar;
             this.secondsLabel = secondsLabel;
-            this.customerId = customerId;
-            this.maxTime = maxTime;
+            this.customerId   = customerId;
+            this.maxTime      = maxTime;
         }
     }
 
     public GameScreenUI(Stage stage, Skin skin, AssetService assetService) {
-        this.stage = stage;
-        this.skin = skin;
+        this.stage        = stage;
+        this.skin         = skin;
         this.assetService = assetService;
         build();
     }
 
-    // ── receipt API ───────────────────────────────────────────────────────────
+    public boolean isQueueSortedByUrgency() {
+        for (int i = 0; i < receiptCards.size() - 1; i++) {
+            float timeRemainingA = receiptCards.get(i).maxTime - receiptCards.get(i).timer;
+            float timeRemainingB = receiptCards.get(i + 1).maxTime - receiptCards.get(i + 1).timer;
+            if (timeRemainingA > timeRemainingB) return false;
+        }
+        return true;
+    }
 
+    // chef API
+    public void setChefReady(boolean ready)     { this.chefReady   = ready; }
+    public boolean isChefReady()                { return chefReady; }
+    public void setChefCooking(boolean cooking) { this.chefCooking = cooking; }
+    public boolean isChefCooking()              { return chefCooking; }
+
+    public void updateCookingProgress(float ratio) {
+        if (receiptCards.isEmpty()) return;
+        receiptCards.get(0).cookingBar.setValue(ratio * 100f);
+        receiptCards.get(0).cookingBar.setVisible(true);
+    }
+
+    public void resetCookingBar() {
+        if (receiptCards.isEmpty()) return;
+        receiptCards.get(0).cookingBar.setValue(0f);
+        receiptCards.get(0).cookingBar.setVisible(false);
+    }
+
+    // receipt API
     public void addOrder(String dishId, String customerId, float maxTime) {
         Table card = new Table();
         card.setBackground(skin.getDrawable("rct-border"));
         card.align(Align.top);
+        card.setTouchable(Touchable.enabled);
 
         Image img = new Image(assetService.get(AtlasAsset.OBJECTS)
             .findRegion("Food/" + dishId.replace("_", "-")));
@@ -93,12 +120,20 @@ public class GameScreenUI {
         bar.setValue(100f);
         card.add(bar).padLeft(-50f).padRight(-50f).spaceTop(10f).maxWidth(100f);
         card.row();
+
+        ProgressBar cookingBar = new ProgressBar(0f, 100f, 1f, false, skin);
+        cookingBar.setValue(0f);
+        cookingBar.setVisible(false);
+        card.add(cookingBar).padLeft(-50f).padRight(-50f).spaceTop(4f).maxWidth(100f);
+        card.row();
+
         Label secondsLabel = new Label("30s", skin, "receipt");
         secondsLabel.setColor(skin.getColor("black"));
         secondsLabel.setAlignment(Align.center);
         card.add(secondsLabel).spaceTop(4f);
 
-        ReceiptCardData data = new ReceiptCardData(card, img, label, bar, secondsLabel, customerId, maxTime);
+        ReceiptCardData data = new ReceiptCardData(card, img, label, bar,
+            cookingBar, secondsLabel, customerId, maxTime);
         receiptCards.add(data);
         attachDragListener(card, data);
         relayoutReceiptRow();
@@ -107,10 +142,7 @@ public class GameScreenUI {
     public void removeOrder(String customerId) {
         ReceiptCardData toRemove = null;
         for (ReceiptCardData d : receiptCards) {
-            if (d.customerId.equals(customerId)) {
-                toRemove = d;
-                break;
-            }
+            if (d.customerId.equals(customerId)) { toRemove = d; break; }
         }
         if (toRemove == null) return;
         receiptCards.remove(toRemove);
@@ -137,22 +169,17 @@ public class GameScreenUI {
             float ratio = 1f - (d.timer / d.maxTime);
             d.timerBar.setValue(Math.max(ratio * 100f, 0f));
 
-            // update seconds label
             int secondsLeft = Math.max(0, (int)(d.maxTime - d.timer));
             d.secondsLabel.setText(secondsLeft + "s");
 
-            // color urgency — white → yellow → red
-            if (ratio > 0.5f) {
+            if (ratio > 0.5f)
                 d.secondsLabel.setColor(skin.getColor("black"));
-            } else if (ratio > 0.25f) {
+            else if (ratio > 0.25f)
                 d.secondsLabel.setColor(com.badlogic.gdx.graphics.Color.ORANGE);
-            } else {
+            else
                 d.secondsLabel.setColor(com.badlogic.gdx.graphics.Color.RED);
-            }
         }
     }
-
-    // ── inventory API ─────────────────────────────────────────────────────────
 
     public void updateInventory(List<String> dishes) {
         for (int i = 0; i < 3; i++) {
@@ -168,30 +195,18 @@ public class GameScreenUI {
         }
     }
 
-    // ── score / level API ─────────────────────────────────────────────────────
-
-    public void setMoney(int money) {
-        moneyLabel.setText("Money: " + money + "$");
-    }
-
-    public void setScore(int score) {
-        scoreLabel.setText("Score: " + score);
-    }
-
-    public void setStrikes(int s, int max) {
-        strikesLabel.setText("Strikes: " + s + "/" + max);
-    }
+    public void setMoney(int money)        { moneyLabel.setText("Money: " + money + "$"); }
+    public void setScore(int score)        { scoreLabel.setText("Score: " + score); }
+    public void setStrikes(int s, int max) { strikesLabel.setText("Strikes: " + s + "/" + max); }
 
     public void setXp(int xp, int xpToNext, int level) {
         levelLabel.setText("Level: " + level + "/10");
         xpBar.setValue((float) xp / xpToNext * 100f);
     }
 
-    // ── power-up overlay API ──────────────────────────────────────────────────
-
     public void showPowerUpOverlay(PowerUpSystem powerUpSystem) {
         powerUpOverlay.setVisible(true);
-        powerUpOverlay.setTouchable(com.badlogic.gdx.scenes.scene2d.Touchable.enabled);
+        powerUpOverlay.setTouchable(Touchable.enabled);
         powerUpOverlay.toFront();
 
         for (Actor actor : powerUpOverlay.getChildren()) {
@@ -206,30 +221,28 @@ public class GameScreenUI {
 
     private void hideOverlay() {
         powerUpOverlay.setVisible(false);
-        powerUpOverlay.setTouchable(com.badlogic.gdx.scenes.scene2d.Touchable.disabled);
+        powerUpOverlay.setTouchable(Touchable.disabled);
     }
-
-    // ── build ─────────────────────────────────────────────────────────────────
 
     private void build() {
         Table root = new Table();
         root.setName("GameScreen");
         root.setFillParent(true);
+        root.setTouchable(Touchable.childrenOnly);
 
-        // row 1 — receipts + score panel
         Table topBar = new Table();
         topBar.setName("TopBar");
         topBar.setColor(skin.getColor("sand"));
+        topBar.setTouchable(Touchable.childrenOnly);
         topBar.padLeft(50f).padRight(50f).align(Align.left);
         topBar.add(buildReceiptRow()).growX().align(Align.left);
         topBar.add(buildScorePanel()).grow().align(Align.topRight);
         root.add(topBar).growX().align(Align.left).minHeight(280f);
         root.row();
 
-        // row 2 — power-up overlay (hidden by default)
         powerUpOverlay = buildPowerUpOverlay();
         powerUpOverlay.setVisible(false);
-        powerUpOverlay.setTouchable(com.badlogic.gdx.scenes.scene2d.Touchable.disabled);
+        powerUpOverlay.setTouchable(Touchable.disabled);
         Table midRow = new Table();
         midRow.add().grow();
         midRow.add(powerUpOverlay).growX();
@@ -237,31 +250,35 @@ public class GameScreenUI {
         root.add(midRow).growX();
         root.row();
 
-        // row 3 — inventory
         root.add(buildInventoryRow()).padBottom(40f).growX()
             .align(Align.bottom).minHeight(350f);
 
         stage.addActor(root);
     }
 
-    // ── receipt row ───────────────────────────────────────────────────────────
-
     private Table buildReceiptRow() {
         receiptRow = new Table();
         receiptRow.align(Align.left);
+        receiptRow.setTouchable(Touchable.childrenOnly);
         return receiptRow;
     }
 
     private void relayoutReceiptRow() {
         receiptRow.clearChildren();
         for (ReceiptCardData d : receiptCards) {
+            d.card.setTouchable(Touchable.enabled);
             receiptRow.add(d.card).padRight(10f).growY().align(Align.top)
-                .minSize(160f, 200f).maxSize(160f, 200f);
+                .minSize(160f, 220f).maxSize(160f, 220f);
         }
     }
 
+    // insertion sort drag — lift, scan, insert
     private void attachDragListener(Table card, ReceiptCardData data) {
         card.addListener(new DragListener() {
+            {
+                setTapSquareSize(4f);
+            }
+
             @Override
             public void dragStart(InputEvent e, float x, float y, int ptr) {
                 card.toFront();
@@ -272,8 +289,9 @@ public class GameScreenUI {
             public void drag(InputEvent e, float x, float y, int ptr) {
                 card.moveBy(x - card.getWidth() / 2f, 0);
 
+                // scan left-to-right to find insertion point (insertion sort scan)
                 int from = receiptCards.indexOf(data);
-                int to = from;
+                int to   = from;
                 float cardCenterX = card.getX() + card.getWidth() / 2f;
 
                 for (int i = 0; i < receiptCards.size(); i++) {
@@ -284,6 +302,7 @@ public class GameScreenUI {
                     else if (cardCenterX > otherCX && i > to) to = i;
                 }
 
+                // shift elements and insert (insertion sort insert)
                 if (to != from) {
                     receiptCards.remove(from);
                     receiptCards.add(to, data);
@@ -299,16 +318,14 @@ public class GameScreenUI {
         });
     }
 
-    // ── score panel ───────────────────────────────────────────────────────────
-
     private Table buildScorePanel() {
         Table panel = new Table();
         panel.align(Align.topRight);
 
         Table topRow = new Table();
         strikesLabel = new Label("Strikes: 0/20", skin, "powerup");
-        moneyLabel = new Label("Money: 100$", skin, "powerup");
-        scoreLabel = new Label("Score: 0", skin, "powerup");
+        moneyLabel   = new Label("Money: 100$",   skin, "powerup");
+        scoreLabel   = new Label("Score: 0",       skin, "powerup");
         topRow.add(strikesLabel).padRight(30f);
         topRow.add(moneyLabel).padRight(30f).spaceRight(20f);
         topRow.add(scoreLabel).padRight(30f);
@@ -325,13 +342,11 @@ public class GameScreenUI {
         return panel;
     }
 
-    // ── power-up overlay ──────────────────────────────────────────────────────
-
     private Table buildPowerUpOverlay() {
         Table overlay = new Table();
         overlay.add(buildPowerUpCard(PowerUpType.MOVEMENT_SPEED)).spaceRight(100f).fill().align(Align.top).minSize(200f, 400f).maxSize(200f, 400f);
-        overlay.add(buildPowerUpCard(PowerUpType.COOKING_SPEED)).spaceRight(100f).fill().align(Align.top).minSize(200f, 400f).maxSize(200f, 400f);
-        overlay.add(buildPowerUpCard(PowerUpType.RUSH_HOUR)).spaceRight(100f).fill().align(Align.top).minSize(200f, 400f).maxSize(200f, 400f);
+        overlay.add(buildPowerUpCard(PowerUpType.COOKING_SPEED)) .spaceRight(100f).fill().align(Align.top).minSize(200f, 400f).maxSize(200f, 400f);
+        overlay.add(buildPowerUpCard(PowerUpType.RUSH_HOUR))     .spaceRight(100f).fill().align(Align.top).minSize(200f, 400f).maxSize(200f, 400f);
         return overlay;
     }
 
@@ -369,7 +384,6 @@ public class GameScreenUI {
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
                 card.addAction(Actions.color(skin.getColor("sand"), 0.1f));
             }
-
             @Override
             public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
                 card.addAction(Actions.color(skin.getColor("white"), 0.1f));
@@ -383,8 +397,6 @@ public class GameScreenUI {
             }
         });
     }
-
-    // ── inventory row ─────────────────────────────────────────────────────────
 
     private Table buildInventoryRow() {
         Table row = new Table();
@@ -407,8 +419,6 @@ public class GameScreenUI {
         slot.pad(5f);
         return slot;
     }
-
-    // ── helpers ───────────────────────────────────────────────────────────────
 
     private String formatDishName(String dishId) {
         String[] parts = dishId.split("_");

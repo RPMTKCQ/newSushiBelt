@@ -34,77 +34,82 @@ import java.util.function.Consumer;
 
 public class GameScreen extends ScreenAdapter {
 
-    //  core
+    // core
     private final SushiGame game;
     private final Engine engine;
     private final World physicWorld;
     private final AudioService audioService;
 
-    //  tiled
+    // tiled
     private final TiledService tiledService;
     private final TiledAshleyConfigurator tiledAshleyConfigurator;
 
-    //  input
+    // input
     private final KeyboardController keyboardController;
 
-    //  factory / spawning
+    // factory / spawning
     private final TableManager tableManager;
     private final CustomerFactory customerFactory;
     private final CustomerSpawner customerSpawner;
+    private final ChefFactory chefFactory;
+    private final ChefSpawner chefSpawner;
 
-    //  ui
+    // ui
     private final Skin skin;
     private final Viewport uiViewport;
     private final Stage stage;
     private final GameScreenUI gameScreenUI;
 
-    //  systems
+    // systems
     private final PowerUpSystem powerUpSystem;
     private final LevelSystem levelSystem;
     private final StrikeSystem strikeSystem;
     private final ChefSystem chefSystem;
     private final ConveyorSystem conveyorSystem;
-    private final ChefFactory chefFactory;
-    private final ChefSpawner chefSpawner;
+    private final CustomerRenderSystem customerRenderSystem;
 
     public GameScreen(SushiGame game) {
         this.game = game;
 
-        //  core
+        // core
         this.physicWorld = new World(Vector2.Zero, true);
         this.physicWorld.setAutoClearForces(false);
         this.audioService = game.getAudioService();
         this.engine = new Engine();
 
-        //  tiled
+        // tiled
         this.tiledService = new TiledService(game.getAssetService(), this.physicWorld);
         this.tiledAshleyConfigurator = new TiledAshleyConfigurator(this.engine, game.getAssetService(), physicWorld);
 
-        //  input
+        // input
         this.keyboardController = new KeyboardController(GameControllerState.class, engine);
 
-        //  factory / spawning
-        this.tableManager = new TableManager();
+        // factory / spawning
+        this.tableManager    = new TableManager();
         this.customerFactory = new CustomerFactory(engine, physicWorld, game.getAssetService());
         this.customerSpawner = new CustomerSpawner(customerFactory, tableManager, engine);
-        this.chefFactory = new ChefFactory(engine, game.getAssetService());
-        this.chefSpawner = new ChefSpawner(chefFactory);
+        this.chefFactory     = new ChefFactory(engine, game.getAssetService());
+        this.chefSpawner     = new ChefSpawner(chefFactory);
 
-        //  ui
-        this.skin = game.getAssetService().get(SkinAsset.DEFAULT);
-        this.uiViewport = new FitViewport(1920f, 1080f);
-        this.stage = new Stage(uiViewport, game.getBatch());
+        // ui
+        this.skin        = game.getAssetService().get(SkinAsset.DEFAULT);
+        this.uiViewport  = new FitViewport(1920f, 1080f);
+        this.stage       = new Stage(uiViewport, game.getBatch());
         this.gameScreenUI = new GameScreenUI(stage,
             game.getAssetService().get(SkinAsset.GAME),
             game.getAssetService());
 
-        //  systems
-        this.powerUpSystem = new PowerUpSystem(engine);
-        this.levelSystem = new LevelSystem(gameScreenUI, powerUpSystem);
-        this.strikeSystem = new StrikeSystem(gameScreenUI, () ->
+        // systems
+        this.powerUpSystem  = new PowerUpSystem(engine);
+        this.levelSystem    = new LevelSystem(gameScreenUI, powerUpSystem);
+        this.strikeSystem   = new StrikeSystem(gameScreenUI, () ->
             game.setScreen(new GameOverScreen(game, levelSystem.getScore())));
-        this.chefSystem = new ChefSystem(gameScreenUI, engine);
+        this.chefSystem     = new ChefSystem(gameScreenUI, engine);
         this.conveyorSystem = new ConveyorSystem();
+
+        // CustomerRenderSystem managed manually — NOT added to engine
+        this.customerRenderSystem = new CustomerRenderSystem(
+            game.getCamera(), game.getAssetService(), game.getBatch(), engine);
 
         engine.addSystem(new CustomerSystem(physicWorld, tableManager, engine,
             gameScreenUI, levelSystem, strikeSystem));
@@ -113,7 +118,6 @@ public class GameScreen extends ScreenAdapter {
         engine.addSystem(strikeSystem);
         engine.addSystem(chefSystem);
         engine.addSystem(conveyorSystem);
-        engine.addSystem(new CustomerRenderSystem(game.getCamera()));
         engine.addSystem(new ControllerSystem(game.getAudioService(), this.physicWorld, gameScreenUI));
         engine.addSystem(new FsmSystem());
         engine.addSystem(new FacingSystem());
@@ -134,7 +138,7 @@ public class GameScreen extends ScreenAdapter {
 
         Consumer<TiledMap> renderConsumer = engine.getSystem(RenderSystem.class)::setMap;
         Consumer<TiledMap> cameraConsumer = engine.getSystem(CameraSystem.class)::setMap;
-        Consumer<TiledMap> audioConsumer = audioService::setMap;
+        Consumer<TiledMap> audioConsumer  = audioService::setMap;
 
         tiledService.setMapChangeConsumer(renderConsumer.andThen(cameraConsumer).andThen(audioConsumer));
         tiledService.setLoadObjectConsumer(tiledAshleyConfigurator::onLoadObject);
@@ -161,11 +165,14 @@ public class GameScreen extends ScreenAdapter {
     public void render(float delta) {
         delta = Math.min(delta, 1 / 30f);
 
-        //  game logic
+        // game logic
         customerSpawner.update(delta);
         engine.update(delta);
 
-        //  ui
+        // customer bubbles + anger bars — drawn after engine, batch is free
+        customerRenderSystem.update(delta);
+
+        // ui
         uiViewport.apply();
         stage.getBatch().setColor(Color.WHITE);
         stage.act(delta);
@@ -193,6 +200,7 @@ public class GameScreen extends ScreenAdapter {
                 disposable.dispose();
             }
         }
+        customerRenderSystem.dispose();
         physicWorld.dispose();
         stage.dispose();
     }

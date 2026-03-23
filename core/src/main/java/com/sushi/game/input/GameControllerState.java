@@ -8,7 +8,6 @@ import com.sushi.game.component.Controller;
 
 import java.util.List;
 
-
 public class GameControllerState implements ControllerState {
 
     private final ImmutableArray<Entity> controllerEntities;
@@ -21,7 +20,7 @@ public class GameControllerState implements ControllerState {
     public void keyDown(Command command) {
         for (Entity entity : controllerEntities) {
             List<Command> pressed = Controller.MAPPER.get(entity).getPressedCommands();
-            if (!pressed.contains(command)) { // only add if not already there
+            if (!pressed.contains(command)) {
                 pressed.add(command);
             }
         }
@@ -29,8 +28,11 @@ public class GameControllerState implements ControllerState {
 
     @Override
     public void keyUp(Command command) {
-        for (Entity entity : controllerEntities){
-            Controller.MAPPER.get(entity).getReleasedCommands().add(command);
+        for (Entity entity : controllerEntities) {
+            Controller controller = Controller.MAPPER.get(entity);
+            // remove from pressed on key up — prevents held key from re-firing
+            controller.getPressedCommands().remove(command);
+            controller.getReleasedCommands().add(command);
         }
     }
 }
