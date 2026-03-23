@@ -13,8 +13,10 @@
  </tile>
  <tile id="29" type="Prop">
   <properties>
+   <property name="direction" value="DOWN"/>
    <property name="restitution" type="float" value="1"/>
    <property name="sensor" type="bool" value="true"/>
+   <property name="speed" type="float" value="2"/>
   </properties>
   <objectgroup draworder="index" id="2">
    <object id="2" x="32" y="32">
@@ -24,8 +26,10 @@
  </tile>
  <tile id="30" type="Prop">
   <properties>
+   <property name="direction" value="LEFT"/>
    <property name="restitution" type="float" value="1"/>
    <property name="sensor" type="bool" value="true"/>
+   <property name="speed" type="float" value="2"/>
   </properties>
   <objectgroup draworder="index" id="2">
    <object id="1" x="0" y="16" width="32" height="16"/>
@@ -33,8 +37,10 @@
  </tile>
  <tile id="31" type="Prop">
   <properties>
+   <property name="direction" value="LEFT"/>
    <property name="restitution" type="float" value="1"/>
    <property name="sensor" type="bool" value="true"/>
+   <property name="speed" type="float" value="2"/>
   </properties>
  </tile>
  <tile id="35">
@@ -64,8 +70,10 @@
  </tile>
  <tile id="45" type="Prop">
   <properties>
+   <property name="direction" value="DOWN"/>
    <property name="restitution" type="float" value="1"/>
    <property name="sensor" type="bool" value="true"/>
+   <property name="speed" type="float" value="2"/>
   </properties>
   <objectgroup draworder="index" id="2">
    <object id="1" x="9" y="0" width="16" height="32"/>
@@ -73,8 +81,10 @@
  </tile>
  <tile id="47" type="Prop">
   <properties>
+   <property name="direction" value="UP"/>
    <property name="restitution" type="float" value="1"/>
    <property name="sensor" type="bool" value="true"/>
+   <property name="speed" type="float" value="2"/>
   </properties>
  </tile>
  <tile id="48" type="Prop">
@@ -102,8 +112,10 @@
  </tile>
  <tile id="61" type="Prop">
   <properties>
+   <property name="direction" value="RIGHT"/>
    <property name="restitution" type="float" value="1"/>
    <property name="sensor" type="bool" value="true"/>
+   <property name="speed" type="float" value="2"/>
   </properties>
   <objectgroup draworder="index" id="5">
    <object id="5" x="8.8909" y="0.0722837">
@@ -113,8 +125,10 @@
  </tile>
  <tile id="62" type="Prop">
   <properties>
+   <property name="direction" value="RIGHT"/>
    <property name="restitution" type="float" value="1"/>
    <property name="sensor" type="bool" value="true"/>
+   <property name="speed" type="float" value="2"/>
   </properties>
   <objectgroup draworder="index" id="2">
    <object id="1" x="0" y="9" width="32" height="23"/>
@@ -122,8 +136,10 @@
  </tile>
  <tile id="63" type="Prop">
   <properties>
+   <property name="direction" value="UP"/>
    <property name="restitution" type="float" value="1"/>
    <property name="sensor" type="bool" value="true"/>
+   <property name="speed" type="float" value="2"/>
   </properties>
  </tile>
  <tile id="64" type="Prop">
@@ -245,7 +261,11 @@
    <object id="1" x="0" y="16" width="32" height="16"/>
   </objectgroup>
  </tile>
- <tile id="85">
+ <tile id="85" type="Prop">
+  <properties>
+   <property name="restitution" type="float" value="1"/>
+   <property name="sensor" type="bool" value="true"/>
+  </properties>
   <objectgroup draworder="index" id="2">
    <object id="1" x="8" y="16" width="17" height="16"/>
   </objectgroup>

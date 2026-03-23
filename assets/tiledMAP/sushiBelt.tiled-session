@@ -68,7 +68,7 @@
             "scaleInEditor": 1
         },
         "Interior.tsx": {
-            "scaleInDock": 1,
+            "scaleInDock": 2,
             "scaleInEditor": 1
         },
         "Main_Spritesheet.tsx": {
@@ -84,11 +84,11 @@
             "expandedObjectLayers": [
                 2
             ],
-            "scale": 2,
-            "selectedLayer": 2,
+            "scale": 3,
+            "selectedLayer": 3,
             "viewCenter": {
-                "x": 239.25,
-                "y": 248.75
+                "x": 279.5,
+                "y": 303.8333333333333
             }
         },
         "restaurant.tmx": {
@@ -116,7 +116,7 @@
         "Chef.tsx"
     ],
     "project": "sushiBelt.tiled-project",
-    "property.type": "bool",
+    "property.type": "int",
     "recentFiles": [
         "Player.tsx",
         "Chef.tsx",

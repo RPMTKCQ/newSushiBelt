@@ -28,7 +28,7 @@ public class GameScreenUI {
     private Label moneyLabel;
     private Label scoreLabel;
     private Label levelLabel;
-    private Label strikesLabel;
+    private Label satisfactionLabel;
     private ProgressBar xpBar;
 
     private Table powerUpOverlay;
@@ -36,8 +36,12 @@ public class GameScreenUI {
     private Table receiptRow;
     private final List<ReceiptCardData> receiptCards = new ArrayList<>();
 
-    private boolean chefReady   = false;
-    private boolean chefCooking = false;
+    private boolean chefReady        = false;
+    private boolean chefCooking      = false;
+    // true if the queue was sorted by urgency when the player last hit SUBMIT
+    private boolean lastSubmitSorted  = false;
+    // customerId of the card currently being cooked — pins the cooking bar regardless of drag order
+    private String cookingCustomerId  = null;
 
     private static class ReceiptCardData {
         Table card;
@@ -71,34 +75,84 @@ public class GameScreenUI {
         build();
     }
 
+    // ── sort check ───────────────────────────────────────────────────────────
+
+    // returns true if every card has less time remaining than the one after it
+    // (most urgent first = ascending time-remaining order)
     public boolean isQueueSortedByUrgency() {
         for (int i = 0; i < receiptCards.size() - 1; i++) {
-            float timeRemainingA = receiptCards.get(i).maxTime - receiptCards.get(i).timer;
+            float timeRemainingA = receiptCards.get(i).maxTime   - receiptCards.get(i).timer;
             float timeRemainingB = receiptCards.get(i + 1).maxTime - receiptCards.get(i + 1).timer;
             if (timeRemainingA > timeRemainingB) return false;
         }
         return true;
     }
 
-    // chef API
-    public void setChefReady(boolean ready)     { this.chefReady   = ready; }
+    // ── lastSubmitSorted flag ────────────────────────────────────────────────
+
+    // called by ControllerSystem right before setChefReady(true)
+    public void setLastSubmitSorted(boolean sorted) { this.lastSubmitSorted = sorted; }
+
+    // called by CustomerSystem in the EATING → LEAVING transition
+    public boolean wasLastSubmitSorted()            { return lastSubmitSorted; }
+
+    // ── chef API ─────────────────────────────────────────────────────────────
     public boolean isChefReady()                { return chefReady; }
     public void setChefCooking(boolean cooking) { this.chefCooking = cooking; }
     public boolean isChefCooking()              { return chefCooking; }
 
+    // Call this instead of plain setChefReady(true) — captures which card is being cooked
+    // so the cooking bar stays pinned to that card even if the player drags others around.
+    public void setChefReady(boolean ready) {
+        this.chefReady = ready;
+        if (!ready) cookingCustomerId = null;   // reset when chef goes back to idle
+    }
+
+    public void startCookingFor(String customerId) {
+        this.cookingCustomerId = customerId;
+        // tint the card so the player can see which one is being cooked
+        ReceiptCardData d = getCookingCard();
+        if (d != null) d.card.addAction(Actions.color(
+            new com.badlogic.gdx.graphics.Color(1f, 0.65f, 0.1f, 1f), 0.2f));
+    }
+
+    // Find the card pinned to cookingCustomerId, not index 0
+    private ReceiptCardData getCookingCard() {
+        if (cookingCustomerId == null) return null;
+        for (ReceiptCardData d : receiptCards) {
+            if (d.customerId.equals(cookingCustomerId)) return d;
+        }
+        return null;
+    }
+
     public void updateCookingProgress(float ratio) {
-        if (receiptCards.isEmpty()) return;
-        receiptCards.get(0).cookingBar.setValue(ratio * 100f);
-        receiptCards.get(0).cookingBar.setVisible(true);
+        ReceiptCardData d = getCookingCard();
+        if (d == null) return;
+        d.cookingBar.setValue(ratio * 100f);
+        d.cookingBar.setVisible(true);
     }
 
     public void resetCookingBar() {
-        if (receiptCards.isEmpty()) return;
-        receiptCards.get(0).cookingBar.setValue(0f);
-        receiptCards.get(0).cookingBar.setVisible(false);
+        ReceiptCardData d = getCookingCard();
+        if (d == null) return;
+        d.cookingBar.setValue(0f);
+        d.cookingBar.setVisible(false);
+        // turn card yellow — dish is ready on belt, waiting for pickup + delivery
+        d.card.addAction(Actions.color(new com.badlogic.gdx.graphics.Color(1f, 0.95f, 0.2f, 1f), 0.2f));
+        cookingCustomerId = null;
     }
 
-    // receipt API
+    // call this when the order is successfully delivered to reset card color
+    public void onOrderDelivered(String customerId) {
+        for (ReceiptCardData d : receiptCards) {
+            if (d.customerId.equals(customerId)) {
+                d.card.addAction(Actions.color(skin.getColor("white"), 0.15f));
+                return;
+            }
+        }
+    }
+
+    // ── receipt API ──────────────────────────────────────────────────────────
     public void addOrder(String dishId, String customerId, float maxTime) {
         Table card = new Table();
         card.setBackground(skin.getDrawable("rct-border"));
@@ -163,6 +217,11 @@ public class GameScreenUI {
             .toLowerCase().replace(" ", "_");
     }
 
+    public String getFirstCustomerId() {
+        if (receiptCards.isEmpty()) return null;
+        return receiptCards.get(0).customerId;
+    }
+
     public void updateReceipts(float delta) {
         for (ReceiptCardData d : receiptCards) {
             d.timer += delta;
@@ -195,9 +254,9 @@ public class GameScreenUI {
         }
     }
 
-    public void setMoney(int money)        { moneyLabel.setText("Money: " + money + "$"); }
-    public void setScore(int score)        { scoreLabel.setText("Score: " + score); }
-    public void setStrikes(int s, int max) { strikesLabel.setText("Strikes: " + s + "/" + max); }
+    public void setMoney(int money)              { moneyLabel.setText("Money: " + money + "$"); }
+    public void setScore(int score)              { scoreLabel.setText("Score: " + score); }
+    public void setSatisfaction(float pct)       { satisfactionLabel.setText(String.format("Satisfaction: %.0f%%", pct)); }
 
     public void setXp(int xp, int xpToNext, int level) {
         levelLabel.setText("Level: " + level + "/10");
@@ -272,7 +331,10 @@ public class GameScreenUI {
         }
     }
 
-    // insertion sort drag — lift, scan, insert
+    // insertion sort drag:
+    //   dragStart  → pick up element (bring card to front)
+    //   drag       → scan list, find where it fits, shift others
+    //   dragStop   → element is inserted at its final position
     private void attachDragListener(Table card, ReceiptCardData data) {
         card.addListener(new DragListener() {
             {
@@ -281,28 +343,34 @@ public class GameScreenUI {
 
             @Override
             public void dragStart(InputEvent e, float x, float y, int ptr) {
+                // block dragging the card that's currently being cooked
+                if (data.customerId.equals(cookingCustomerId)) {
+                    cancel();
+                    return;
+                }
                 card.toFront();
                 card.addAction(Actions.color(skin.getColor("sand"), 0.08f));
             }
 
             @Override
             public void drag(InputEvent e, float x, float y, int ptr) {
+                if (data.customerId.equals(cookingCustomerId)) return;
                 card.moveBy(x - card.getWidth() / 2f, 0);
 
-                // scan left-to-right to find insertion point (insertion sort scan)
-                int from = receiptCards.indexOf(data);
-                int to   = from;
-                float cardCenterX = card.getX() + card.getWidth() / 2f;
+                // scan left-to-right: find the slot where this card now belongs
+                int from      = receiptCards.indexOf(data);
+                int to        = from;
+                float cardCX  = card.getX() + card.getWidth() / 2f;
 
                 for (int i = 0; i < receiptCards.size(); i++) {
                     if (i == from) continue;
                     float otherCX = receiptCards.get(i).card.getX()
                         + receiptCards.get(i).card.getWidth() / 2f;
-                    if (cardCenterX < otherCX && i < to) to = i;
-                    else if (cardCenterX > otherCX && i > to) to = i;
+                    if (cardCX < otherCX && i < to) to = i;
+                    else if (cardCX > otherCX && i > to) to = i;
                 }
 
-                // shift elements and insert (insertion sort insert)
+                // shift surrounding elements and insert at new position
                 if (to != from) {
                     receiptCards.remove(from);
                     receiptCards.add(to, data);
@@ -312,6 +380,8 @@ public class GameScreenUI {
 
             @Override
             public void dragStop(InputEvent e, float x, float y, int ptr) {
+                if (data.customerId.equals(cookingCustomerId)) return;
+                // drop: snap card into its final slot
                 card.addAction(Actions.color(skin.getColor("white"), 0.08f));
                 relayoutReceiptRow();
             }
@@ -323,10 +393,10 @@ public class GameScreenUI {
         panel.align(Align.topRight);
 
         Table topRow = new Table();
-        strikesLabel = new Label("Strikes: 0/20", skin, "powerup");
+        satisfactionLabel = new Label("Satisfaction: 100%", skin, "powerup");
         moneyLabel   = new Label("Money: 100$",   skin, "powerup");
         scoreLabel   = new Label("Score: 0",       skin, "powerup");
-        topRow.add(strikesLabel).padRight(30f);
+        topRow.add(satisfactionLabel).padRight(30f);
         topRow.add(moneyLabel).padRight(30f).spaceRight(20f);
         topRow.add(scoreLabel).padRight(30f);
         panel.add(topRow).padBottom(20f).align(Align.right);

@@ -13,9 +13,8 @@ import com.sushi.game.model.TableData;
 import com.sushi.game.ui.GameScreenUI;
 
 public class CustomerSystem extends IteratingSystem {
-    private static final float ORDER_DELAY = 3f;
-    private static final float EAT_DURATION = 8f;
-    private static final float SEAT_Y_OFFSET = 0.5f; // adjust this to move customer up/down on seat
+    private static final float ORDER_DELAY   = 3f;
+    private static final float SEAT_Y_OFFSET = 0.5f;
 
     private static final String[] POSSIBLE_ORDERS = {
         "tuna_roll", "salmon_nigiri", "maguro_nigiri"
@@ -32,11 +31,11 @@ public class CustomerSystem extends IteratingSystem {
                           GameScreenUI gameScreenUI, LevelSystem levelSystem,
                           StrikeSystem strikeSystem) {
         super(Family.all(Customer.class, Transform.class).get());
-        this.world = world;
+        this.world        = world;
         this.tableManager = tableManager;
-        this.engine = engine;
+        this.engine       = engine;
         this.gameScreenUI = gameScreenUI;
-        this.levelSystem = levelSystem;
+        this.levelSystem  = levelSystem;
         this.strikeSystem = strikeSystem;
     }
 
@@ -56,33 +55,33 @@ public class CustomerSystem extends IteratingSystem {
                 break;
 
             case ORDERING:
-                // show bubble, wait for player to take order via SELECT
+                // customer never got their order taken — satisfaction hit, leave
                 if (customer.stateTimer >= customer.maxPatience) {
-                    customer.leftAngry = true;
-                    customer.state = Customer.CustomerState.LEAVING;
+                    customer.leftAngry  = true;
+                    customer.state      = Customer.CustomerState.LEAVING;
                     customer.stateTimer = 0f;
                     strikeSystem.onCustomerLeft();
-                    Gdx.app.log("CUSTOMER", "left angry, strikes++");
+                    Gdx.app.log("CUSTOMER", "left angry during ordering");
                 }
                 break;
 
             case WAITING_FOR_FOOD:
-                // order taken, waiting for delivery — patience still ticks
-                if (customer.stateTimer >= customer.maxPatience) {
-                    customer.leftAngry = true;
-                    customer.state = Customer.CustomerState.LEAVING;
-                    customer.stateTimer = 0f;
-                    gameScreenUI.removeOrder(String.valueOf(customer.tableId));
+                // timer ran out — satisfaction hit, mark late, but customer STAYS
+                // they will leave when the player eventually delivers (or indefinitely wait)
+                if (!customer.leftAngry && customer.stateTimer >= customer.maxPatience) {
+                    customer.leftAngry = true;   // reuse leftAngry as "delivered late" flag
                     strikeSystem.onCustomerLeft();
-                    Gdx.app.log("CUSTOMER", "left angry waiting for food, strikes++");
+                    Gdx.app.log("CUSTOMER", "patience ran out — satisfaction hit, but still waiting");
                 }
                 break;
 
             case EATING:
-                if (customer.stateTimer >= EAT_DURATION) {
-                    levelSystem.onServeCompleted();
+                // stateTimer is set to 999f by ControllerSystem on delivery — fires next frame
+                if (customer.stateTimer >= 8f) {
+                    // leftAngry = true means timer already expired before delivery (late)
+                    levelSystem.onServeCompleted(gameScreenUI.wasLastSubmitSorted(), customer.leftAngry);
                     strikeSystem.onServeCompleted();
-                    customer.state = Customer.CustomerState.LEAVING;
+                    customer.state      = Customer.CustomerState.LEAVING;
                     customer.stateTimer = 0f;
                 }
                 break;
@@ -97,8 +96,8 @@ public class CustomerSystem extends IteratingSystem {
         if (customer.tablePosition.isZero()) {
             TableData table = tableManager.claimFreeTable();
             if (table == null) {
-                customer.state = Customer.CustomerState.WAITING;
-                customer.clickable = true;
+                customer.state      = Customer.CustomerState.WAITING;
+                customer.clickable  = true;
                 customer.stateTimer = 0f;
                 Gdx.app.log("SEATING", "no free table!");
                 return;
@@ -111,11 +110,10 @@ public class CustomerSystem extends IteratingSystem {
             for (SeatData seat : table.seats) {
                 Gdx.app.log("SEATING", "seat isOccupied: " + seat.isOccupied);
                 if (!seat.isOccupied) {
-                    seat.isOccupied = true;
+                    seat.isOccupied      = true;
                     customer.claimedSeat = seat;
-                    customer.tableId = table.tableId;
+                    customer.tableId     = table.tableId;
 
-                    // offset seat position so customer sits visually on the chair
                     Vector2 seatPos = new Vector2(seat.position).add(0f, SEAT_Y_OFFSET);
                     customer.tablePosition.set(seatPos);
 
@@ -127,7 +125,6 @@ public class CustomerSystem extends IteratingSystem {
                         physic.getBody().setTransform(seatPos, 0f);
                     }
 
-                    // stop animation when seated
                     Animation2D anim = Animation2D.MAPPER.get(entity);
                     if (anim != null) anim.paused = true;
 
@@ -136,28 +133,22 @@ public class CustomerSystem extends IteratingSystem {
             }
 
             customer.orderItemId = POSSIBLE_ORDERS[MathUtils.random(0, POSSIBLE_ORDERS.length - 1)];
-            customer.maxPatience = MathUtils.random(45f, 90f);
+            customer.maxPatience = MathUtils.random(120f, 180f);
         }
 
         if (customer.stateTimer >= ORDER_DELAY) {
-            customer.state = Customer.CustomerState.ORDERING;
+            customer.state      = Customer.CustomerState.ORDERING;
             customer.stateTimer = 0f;
             Gdx.app.log("CUSTOMER", "ready to order: " + customer.orderItemId);
         }
     }
 
     private void removeCustomer(Entity entity, Customer customer) {
-        if (customer.tableId != -1) {
-            tableManager.vacateTable(customer.tableId);
-        }
-        if (customer.claimedSeat != null) {
-            customer.claimedSeat.isOccupied = false;
-        }
+        if (customer.tableId != -1) tableManager.vacateTable(customer.tableId);
+        if (customer.claimedSeat != null) customer.claimedSeat.isOccupied = false;
 
         Physic physic = Physic.MAPPER.get(entity);
-        if (physic != null && physic.getBody() != null) {
-            world.destroyBody(physic.getBody());
-        }
+        if (physic != null && physic.getBody() != null) world.destroyBody(physic.getBody());
 
         engine.removeEntity(entity);
     }

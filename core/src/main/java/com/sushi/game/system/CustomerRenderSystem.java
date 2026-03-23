@@ -14,17 +14,21 @@ import com.sushi.game.component.*;
 
 public class CustomerRenderSystem {
 
-    private static final float SHOW_ANGER_THRESHOLD = 0.30f;
+    private static final float SHOW_ANGER_THRESHOLD = 0.6f;   // show bar when 60% patience gone
     private static final float BAR_WIDTH    = 0.8f;
     private static final float BAR_HEIGHT   = 0.1f;
     private static final float BAR_OFFSET   = 1.2f;
     private static final float BUBBLE_SIZE  = 0.5f;
     private static final float BUBBLE_OFFSET = 0.5f;
 
-    // chef bar
     private static final float CHEF_BAR_WIDTH  = 0.8f;
     private static final float CHEF_BAR_HEIGHT = 0.1f;
     private static final float CHEF_BAR_OFFSET = 1.2f;
+
+    // tint colors for bubble
+    private static final Color COLOR_WAITING   = new Color(1f, 1f, 1f, 1f);       // normal — white
+    private static final Color COLOR_READY     = new Color(0.3f, 1f, 0.3f, 1f);   // player has the dish — green
+    private static final Color COLOR_URGENT    = new Color(1f, 0.4f, 0.4f, 1f);   // almost out of patience — red
 
     private final ShapeRenderer shapeRenderer;
     private final Batch batch;
@@ -33,6 +37,7 @@ public class CustomerRenderSystem {
     private final Engine engine;
     private final Family customerFamily;
     private final Family chefFamily;
+    private final Family playerFamily;   // to find player inventory
 
     public CustomerRenderSystem(OrthographicCamera camera, AssetService assetService,
                                 Batch batch, Engine engine) {
@@ -42,12 +47,16 @@ public class CustomerRenderSystem {
         this.engine         = engine;
         this.customerFamily = Family.all(Customer.class, Transform.class).get();
         this.chefFamily     = Family.all(Chef.class, Transform.class).get();
+        this.playerFamily   = Family.all(Inventory.class, Controller.class).get();
         this.shapeRenderer  = new ShapeRenderer();
     }
 
     public void update(float deltaTime) {
         ImmutableArray<Entity> customers = engine.getEntitiesFor(customerFamily);
         ImmutableArray<Entity> chefs     = engine.getEntitiesFor(chefFamily);
+
+        // get player inventory once per frame
+        Inventory playerInventory = getPlayerInventory();
 
         // pass 1 — shape renderer: anger bars + chef cooking bar
         shapeRenderer.setProjectionMatrix(camera.combined);
@@ -59,28 +68,35 @@ public class CustomerRenderSystem {
         // pass 2 — batch: dish bubbles
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
-        for (Entity entity : customers) drawBubble(entity);
+        for (Entity entity : customers) drawBubble(entity, playerInventory);
         batch.end();
+    }
+
+    private Inventory getPlayerInventory() {
+        ImmutableArray<Entity> players = engine.getEntitiesFor(playerFamily);
+        if (players.size() == 0) return null;
+        return Inventory.MAPPER.get(players.first());
     }
 
     private void drawAngerBar(Entity entity) {
         Customer  customer  = Customer.MAPPER.get(entity);
         Transform transform = Transform.MAPPER.get(entity);
 
-        if (customer.state != Customer.CustomerState.ORDERING) return;
+        // only show bar once order is taken — not while customer is still ordering
+        if (customer.state != Customer.CustomerState.WAITING_FOR_FOOD) return;
 
         float ratio = 1f - (customer.stateTimer / customer.maxPatience);
-        if (ratio > SHOW_ANGER_THRESHOLD) return;
 
         float x = transform.getPosition().x - BAR_WIDTH / 2f;
         float y = transform.getPosition().y + BAR_OFFSET;
 
         // background
-        shapeRenderer.setColor(0.3f, 0f, 0f, 1f);
+        shapeRenderer.setColor(0.2f, 0.2f, 0.2f, 1f);
         shapeRenderer.rect(x, y, BAR_WIDTH, BAR_HEIGHT);
 
-        // foreground
-        shapeRenderer.setColor(Color.RED);
+        // green if > 50% patience remaining, red if <= 50%
+        if (ratio > 0.5f) shapeRenderer.setColor(Color.GREEN);
+        else              shapeRenderer.setColor(Color.RED);
         shapeRenderer.rect(x, y, BAR_WIDTH * ratio, BAR_HEIGHT);
     }
 
@@ -95,20 +111,21 @@ public class CustomerRenderSystem {
         float x     = transform.getPosition().x - CHEF_BAR_WIDTH / 2f;
         float y     = transform.getPosition().y + CHEF_BAR_OFFSET;
 
-        // background (dark yellow)
         shapeRenderer.setColor(0.4f, 0.3f, 0f, 1f);
         shapeRenderer.rect(x, y, CHEF_BAR_WIDTH, CHEF_BAR_HEIGHT);
 
-        // foreground (yellow filling up)
         shapeRenderer.setColor(Color.YELLOW);
         shapeRenderer.rect(x, y, CHEF_BAR_WIDTH * ratio, CHEF_BAR_HEIGHT);
     }
 
-    private void drawBubble(Entity entity) {
+    private void drawBubble(Entity entity, Inventory playerInventory) {
         Customer  customer  = Customer.MAPPER.get(entity);
         Transform transform = Transform.MAPPER.get(entity);
 
-        if (customer.state != Customer.CustomerState.ORDERING) return;
+        // show bubble during ORDERING and WAITING_FOR_FOOD
+        boolean isOrdering        = customer.state == Customer.CustomerState.ORDERING;
+        boolean isWaitingForFood  = customer.state == Customer.CustomerState.WAITING_FOR_FOOD;
+        if (!isOrdering && !isWaitingForFood) return;
         if (customer.orderItemId == null) return;
 
         TextureAtlas atlas   = assetService.get(AtlasAsset.OBJECTS);
@@ -123,8 +140,14 @@ public class CustomerRenderSystem {
         float drawWidth   = BUBBLE_SIZE * aspectRatio;
         float drawHeight  = BUBBLE_SIZE;
 
-        batch.setColor(1f, 1f, 1f, 1f);
+        // green tint if player is carrying the right dish, white otherwise
+        boolean playerHasDish = isWaitingForFood
+            && playerInventory != null
+            && playerInventory.hasDish(customer.orderItemId);
+
+        batch.setColor(playerHasDish ? COLOR_READY : COLOR_WAITING);
         batch.draw(region, x - (drawWidth - BUBBLE_SIZE) / 2f, y, drawWidth, drawHeight);
+        batch.setColor(Color.WHITE);
     }
 
     public void dispose() {

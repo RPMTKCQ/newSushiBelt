@@ -5,44 +5,36 @@ import com.sushi.game.ui.GameScreenUI;
 
 public class StrikeSystem extends EntitySystem {
 
-    private static final int MAX_STRIKES        = 20;
-    private static final int SERVES_TO_REDEEM   = 2;   // serves needed to remove 1 strike
+    private static final float MAX_SATISFACTION    = 100f;
+    private static final float GAME_OVER_THRESHOLD = 50f;   // below 50% = game over
+    private static final float MISS_PENALTY        = 4f;    // missed order costs 4%
+    private static final float SUCCESS_REWARD      = 2f;    // successful delivery gains 2%
 
-    private final GameScreenUI  gameScreenUI;
-    private final Runnable       onGameOver;
+    private final GameScreenUI gameScreenUI;
+    private final Runnable     onGameOver;
 
-    private int strikes          = 0;
-    private int servesSinceStrike = 0;
+    private float satisfaction = 100f;
 
     public StrikeSystem(GameScreenUI gameScreenUI, Runnable onGameOver) {
         this.gameScreenUI = gameScreenUI;
         this.onGameOver   = onGameOver;
+        gameScreenUI.setSatisfaction(satisfaction);
     }
 
-    // ── called by CustomerSystem when customer leaves angry ───────────────────
+    // called when a customer leaves without being served (timer ran out)
     public void onCustomerLeft() {
-        strikes++;
-        servesSinceStrike = 0;
-        gameScreenUI.setStrikes(strikes, MAX_STRIKES);
-
-        if (strikes >= MAX_STRIKES) {
-            onGameOver.run();
-        }
+        satisfaction = Math.max(0f, satisfaction - MISS_PENALTY);
+        gameScreenUI.setSatisfaction(satisfaction);
+        if (satisfaction <= GAME_OVER_THRESHOLD) onGameOver.run();
     }
 
-    // ── called by LevelSystem after each successful serve ─────────────────────
+    // called when a successful delivery is made
     public void onServeCompleted() {
-        if (strikes <= 0) return;
-
-        servesSinceStrike++;
-        if (servesSinceStrike >= SERVES_TO_REDEEM) {
-            strikes--;
-            servesSinceStrike = 0;
-            gameScreenUI.setStrikes(strikes, MAX_STRIKES);
-        }
+        satisfaction = Math.min(MAX_SATISFACTION, satisfaction + SUCCESS_REWARD);
+        gameScreenUI.setSatisfaction(satisfaction);
     }
 
-    public int getStrikes() { return strikes; }
+    public float getSatisfaction() { return satisfaction; }
 
     @Override public void update(float delta) { }
 }

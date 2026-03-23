@@ -65,7 +65,9 @@ public class ControllerSystem extends IteratingSystem {
         Vector2 playerPos = physic.getBody().getPosition();
         float range = 1.2f;
 
+        final boolean[] interacted = {false};
         world.QueryAABB(fixture -> {
+                if (interacted[0]) return false;
                 Object userData = fixture.getBody().getUserData();
                 if (!(userData instanceof Entity)) return true;
 
@@ -78,6 +80,7 @@ public class ControllerSystem extends IteratingSystem {
                     dish.pickedUp = true;
                     gameScreenUI.updateInventory(inventory.dishes);
                     Gdx.app.log("PICKUP", "picked up: " + dish.dishId);
+                    interacted[0] = true;
                     return false;
                 }
 
@@ -98,8 +101,9 @@ public class ControllerSystem extends IteratingSystem {
                         customer.stateTimer = 0f;
                     }
                     case WAITING_FOR_FOOD -> deliverFood(nearby, customer, playerEntity, inventory);
-                    default -> { }
+                    default -> { return true; }
                 }
+                interacted[0] = true;
                 return false;
             },
             playerPos.x - range, playerPos.y - range,
@@ -136,8 +140,14 @@ public class ControllerSystem extends IteratingSystem {
                     return false;
                 }
 
+                // snapshot whether the queue was sorted before handing off to chef
+                boolean sorted = gameScreenUI.isQueueSortedByUrgency();
+                gameScreenUI.setLastSubmitSorted(sorted);
+                // pin the cooking bar to this specific card before chef takes over
+                gameScreenUI.startCookingFor(gameScreenUI.getFirstCustomerId());
                 gameScreenUI.setChefReady(true);
-                Gdx.app.log("BUZZER", "submitted: " + firstDish + " to chef");
+
+                Gdx.app.log("BUZZER", "submitted: " + firstDish + " | sorted=" + sorted);
                 found[0] = true;
                 return false;
             },
@@ -163,8 +173,11 @@ public class ControllerSystem extends IteratingSystem {
         }
         inventory.removeDish(customer.orderItemId);
         gameScreenUI.updateInventory(inventory.dishes);
+        gameScreenUI.onOrderDelivered(String.valueOf(customer.tableId));
+        // set to EATING with timer already at max so CustomerSystem triggers
+        // score/level/strike on the very next frame then immediately goes to LEAVING
         customer.state      = Customer.CustomerState.EATING;
-        customer.stateTimer = 0f;
+        customer.stateTimer = 999f;
         Gdx.app.log("DELIVER", "delivered: " + customer.orderItemId);
     }
 

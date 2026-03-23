@@ -84,28 +84,31 @@ public class GameScreen extends ScreenAdapter {
         // input
         this.keyboardController = new KeyboardController(GameControllerState.class, engine);
 
-        // factory / spawning
+        // factories
         this.tableManager    = new TableManager();
         this.customerFactory = new CustomerFactory(engine, physicWorld, game.getAssetService());
-        this.customerSpawner = new CustomerSpawner(customerFactory, tableManager, engine);
         this.chefFactory     = new ChefFactory(engine, game.getAssetService());
         this.chefSpawner     = new ChefSpawner(chefFactory);
 
         // ui
-        this.skin        = game.getAssetService().get(SkinAsset.DEFAULT);
-        this.uiViewport  = new FitViewport(1920f, 1080f);
-        this.stage       = new Stage(uiViewport, game.getBatch());
+        this.skin         = game.getAssetService().get(SkinAsset.DEFAULT);
+        this.uiViewport   = new FitViewport(1920f, 1080f);
+        this.stage        = new Stage(uiViewport, game.getBatch());
         this.gameScreenUI = new GameScreenUI(stage,
             game.getAssetService().get(SkinAsset.GAME),
             game.getAssetService());
 
-        // systems
-        this.powerUpSystem  = new PowerUpSystem(engine);
-        this.levelSystem    = new LevelSystem(gameScreenUI, powerUpSystem);
+        // systems — levelSystem must be created before customerSpawner
+        // so the spawner can read score for dynamic max-customer scaling
+        this.powerUpSystem = new PowerUpSystem(engine);
+        this.levelSystem   = new LevelSystem(gameScreenUI, powerUpSystem);
+
+        this.customerSpawner = new CustomerSpawner(customerFactory, tableManager, engine, levelSystem);
+
         this.strikeSystem   = new StrikeSystem(gameScreenUI, () ->
             game.setScreen(new GameOverScreen(game, levelSystem.getScore())));
-        this.chefSystem     = new ChefSystem(gameScreenUI, engine);
         this.conveyorSystem = new ConveyorSystem();
+        this.chefSystem     = new ChefSystem(gameScreenUI, engine, physicWorld, game.getAssetService(), conveyorSystem);
 
         // CustomerRenderSystem managed manually — NOT added to engine
         this.customerRenderSystem = new CustomerRenderSystem(
@@ -147,12 +150,17 @@ public class GameScreen extends ScreenAdapter {
         TiledMap tiledMap = tiledService.loadMap(MapAsset.MAIN);
         tiledService.setMap(tiledMap);
 
-        MapLayer objectLayer = tiledMap.getLayers().get("objects");
+        MapLayer objectLayer      = tiledMap.getLayers().get("objects");
+        MapLayer smallObjectLayer = tiledMap.getLayers().get("small-objects");
+
         if (objectLayer != null) {
             tableManager.loadTables(objectLayer.getObjects());
             customerSpawner.loadSpawnPoints(objectLayer.getObjects());
             chefSpawner.loadSpawnPoints(objectLayer.getObjects());
         }
+        // belt_spawn and belt_waypoint points can be in any layer — check both
+        if (objectLayer != null)      conveyorSystem.loadBelt(objectLayer.getObjects());
+        if (smallObjectLayer != null) conveyorSystem.loadBelt(smallObjectLayer.getObjects());
         chefSpawner.spawnAll();
 
         for (TextureAtlas.AtlasRegion r : game.getAssetService().get(AtlasAsset.OBJECTS).getRegions()) {

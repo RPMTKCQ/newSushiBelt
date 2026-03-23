@@ -1,5 +1,6 @@
 package com.sushi.game.tiled;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -145,13 +146,13 @@ public class TiledService {
             if (mapObject instanceof TiledMapTileMapObject tileMapObject) {
                 loadObjectConsumer.accept(tileMapObject);
             } else if (mapObject instanceof PointMapObject) {
-                //skip
+                // skip — used for spawn points, handled separately
             } else {
-                throw new GdxRuntimeException("unsupported Object: " + mapObject.getClass().getSimpleName());
+                // skip non-tile objects (rectangles, polygons etc used for conveyor_belt bounds etc)
+                Gdx.app.log("TILED", "skipping non-tile object: "
+                    + mapObject.getName() + " (" + mapObject.getClass().getSimpleName() + ")");
             }
-
         }
-
     }
 
     public void setMapChangeConsumer(Consumer<TiledMap> mapChangeConsumer) {
