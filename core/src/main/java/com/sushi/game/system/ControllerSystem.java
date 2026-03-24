@@ -95,8 +95,8 @@ public class ControllerSystem extends IteratingSystem {
                 switch (customer.state) {
                     case WAITING -> seatCustomer(nearby, customer);
                     case ORDERING -> {
-                        // FIX: Explicitly lock in the fast-paced timer for the "Waiting for Food" phase!
-                        customer.maxPatience = MathUtils.random(40f, 50f);
+                        // waiting for food i think
+                        customer.maxPatience = MathUtils.random(20f, 60f);
                         customer.stateTimer = 0f;
 
                         gameScreenUI.addOrder(

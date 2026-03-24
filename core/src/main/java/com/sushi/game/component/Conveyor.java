@@ -9,5 +9,5 @@ public class Conveyor implements Component {
     public enum Direction { LEFT, RIGHT, UP, DOWN }
 
     public Direction direction = Direction.RIGHT;
-    public float speed = 2f;  // world units per second
+    public float speed = 1f;  // world units per second
 }

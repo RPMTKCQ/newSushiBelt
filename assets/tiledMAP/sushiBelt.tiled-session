@@ -69,7 +69,7 @@
         },
         "Interior.tsx": {
             "scaleInDock": 2,
-            "scaleInEditor": 1
+            "scaleInEditor": 1.5
         },
         "Main_Spritesheet.tsx": {
             "scaleInDock": 1,
@@ -84,11 +84,11 @@
             "expandedObjectLayers": [
                 2
             ],
-            "scale": 3,
-            "selectedLayer": 3,
+            "scale": 2,
+            "selectedLayer": 4,
             "viewCenter": {
-                "x": 279.5,
-                "y": 303.8333333333333
+                "x": 256.75,
+                "y": 184.25
             }
         },
         "restaurant.tmx": {

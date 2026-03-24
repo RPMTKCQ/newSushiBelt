@@ -231,7 +231,7 @@
    </properties>
   </object>
   <object id="391" name="buzzer_table" gid="109" x="352" y="160" width="32" height="32"/>
-  <object id="394" name="belt_spawn" x="400" y="192">
+  <object id="394" name="belt_spawn" x="392" y="192">
    <point/>
   </object>
   <object id="395" name="belt_waypoint" x="304" y="192">
@@ -246,13 +246,13 @@
    </properties>
    <point/>
   </object>
-  <object id="397" name="belt_waypoint" x="400" y="224">
+  <object id="397" name="belt_waypoint" x="392" y="224">
    <properties>
     <property name="sequence" type="int" value="2"/>
    </properties>
    <point/>
   </object>
-  <object id="404" name="belt_waypoint" x="400" y="192">
+  <object id="404" name="belt_waypoint" x="392" y="192">
    <properties>
     <property name="sequence" type="int" value="3"/>
    </properties>

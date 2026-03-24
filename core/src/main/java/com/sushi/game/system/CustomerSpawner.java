@@ -51,8 +51,8 @@ public class CustomerSpawner {
     public void update(float delta) {
         if (!tableManager.hasFreeTables()) return;
 
-        // Base capacity of 2. Adds +1 capacity for every 100 points you score!
-        int dynamicMax = Math.min(tableManager.getTotalCapacity(), 2 + (levelSystem.getScore() / SCORE_PER_REDUCTION));
+        // Base capacity of 3. Adds +1 capacity for every 100 points you scored
+        int dynamicMax = Math.min(tableManager.getTotalCapacity(), 3 + (levelSystem.getScore() / SCORE_PER_REDUCTION));
 
         // Always reads the exact number of active customers in the room
         if (customers.size() >= dynamicMax) return;

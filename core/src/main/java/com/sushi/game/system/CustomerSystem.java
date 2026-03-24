@@ -13,7 +13,7 @@ import com.sushi.game.model.TableData;
 import com.sushi.game.ui.GameScreenUI;
 
 public class CustomerSystem extends IteratingSystem {
-    private static final float ORDER_DELAY   = 3f;
+    private static final float ORDER_DELAY   = MathUtils.random(3f, 5f);
     private static final float SEAT_Y_OFFSET = 0.5f;
 
     private static final String[] POSSIBLE_ORDERS = {
@@ -55,6 +55,7 @@ public class CustomerSystem extends IteratingSystem {
                 break;
 
             case ORDERING:
+                // Timer fills — when it expires, customer leaves and satisfaction is penalised
                 if (customer.stateTimer >= customer.maxPatience) {
                     customer.leftAngry  = true;
                     customer.state      = Customer.CustomerState.LEAVING;
@@ -65,15 +66,15 @@ public class CustomerSystem extends IteratingSystem {
                 break;
 
             case WAITING_FOR_FOOD:
+                // Bar drains to 0 — satisfaction is hit once, but customer stays seated indefinitely
                 if (!customer.leftAngry && customer.stateTimer >= customer.maxPatience) {
                     customer.leftAngry = true;
                     strikeSystem.onCustomerLeft();
-                    Gdx.app.log("CUSTOMER", "patience ran out — satisfaction hit, but still waiting");
+                    Gdx.app.log("CUSTOMER", "patience ran out — satisfaction hit, still waiting");
                 }
                 break;
 
             case EATING:
-                // Eats for exactly 5 seconds
                 if (customer.stateTimer >= 5f) {
                     customer.state      = Customer.CustomerState.PAYING;
                     customer.stateTimer = 0f;
@@ -81,7 +82,6 @@ public class CustomerSystem extends IteratingSystem {
                 break;
 
             case PAYING:
-                // Sits indefinitely waiting for player to collect money
                 break;
 
             case LEAVING:
@@ -100,13 +100,11 @@ public class CustomerSystem extends IteratingSystem {
                 Gdx.app.log("SEATING", "no free table!");
                 return;
             }
-            Gdx.app.log("SEATING", "table found, seats: " + table.seats.size());
 
             customer.tableId = table.tableId;
             customer.tablePosition.set(table.position);
 
             for (SeatData seat : table.seats) {
-                Gdx.app.log("SEATING", "seat isOccupied: " + seat.isOccupied);
                 if (!seat.isOccupied) {
                     seat.isOccupied      = true;
                     customer.claimedSeat = seat;
@@ -130,9 +128,9 @@ public class CustomerSystem extends IteratingSystem {
                     break;
                 }
             }
-
+            //YELLOW BAR PATIENCE TIMER
             customer.orderItemId = POSSIBLE_ORDERS[MathUtils.random(0, POSSIBLE_ORDERS.length - 1)];
-            customer.maxPatience = MathUtils.random(120f, 180f);
+            customer.maxPatience = MathUtils.random(20f, 40f);
         }
 
         if (customer.stateTimer >= ORDER_DELAY) {

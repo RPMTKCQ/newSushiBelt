@@ -36,8 +36,7 @@ public class CustomerFactory extends EntityFactory {
         Customer customer = new Customer();
         customer.spriteIndex = spriteIdx;
 
-        // NEW BALANCE: Overcooked-style tight patience timer (Randomly between 40-50 seconds)
-        // This is perfectly tuned for ~20s perfect-serve sequences.
+        // patience timer random between 40 to 50 secs
         customer.maxPatience = MathUtils.random(40f, 50f);
 
         entity.add(customer);
