@@ -125,7 +125,7 @@ public class GameScreen extends ScreenAdapter {
         engine.addSystem(new AnimationSystem(game.getAssetService()));
         engine.addSystem(new CameraSystem(game.getCamera()));
         engine.addSystem(new RenderSystem(game.getBatch(), game.getViewport(), game.getCamera()));
-        engine.addSystem(new PhysicDebugRenderSystem(physicWorld, game.getCamera()));
+//        engine.addSystem(new PhysicDebugRenderSystem(physicWorld, game.getCamera()));
 
         game.getCamera().zoom = 1f;
     }

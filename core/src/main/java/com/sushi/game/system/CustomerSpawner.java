@@ -17,10 +17,10 @@ import com.badlogic.gdx.utils.Array;
 
 public class CustomerSpawner {
 
-    private static final float BASE_SPAWN_INTERVAL  = 10f;
-    private static final float INTERVAL_REDUCTION   = 0.5f;
-    private static final int   SCORE_PER_REDUCTION  = 2000;
-    private static final float MIN_SPAWN_INTERVAL   = 3f;
+    private static final float BASE_SPAWN_INTERVAL  = 12f;
+    private static final float INTERVAL_REDUCTION   = 1f;
+    private static final int   SCORE_PER_REDUCTION  = 100; // Every 100 points = harder game!
+    private static final float MIN_SPAWN_INTERVAL   = 4f;
 
     private final CustomerFactory factory;
     private final TableManager tableManager;
@@ -28,8 +28,7 @@ public class CustomerSpawner {
     private final Array<Vector2> spawnPoints = new Array<>();
     private final ImmutableArray<Entity> customers;
 
-    private float timer          = 0f;
-    private int currentCustomers = 0;
+    private float timer = 0f;
 
     public CustomerSpawner(CustomerFactory factory, TableManager tableManager,
                            Engine engine, LevelSystem levelSystem) {
@@ -52,19 +51,21 @@ public class CustomerSpawner {
     public void update(float delta) {
         if (!tableManager.hasFreeTables()) return;
 
-        // FIX: Max customers is now tied to Level (Level 1 = 3 max, Level 2 = 4 max, etc.)
-        // It automatically caps out at the physical number of chairs in the room.
-        int dynamicMax = Math.min(tableManager.getTotalCapacity(), 2 + levelSystem.getLevel());
+        // Base capacity of 2. Adds +1 capacity for every 100 points you score!
+        int dynamicMax = Math.min(tableManager.getTotalCapacity(), 2 + (levelSystem.getScore() / SCORE_PER_REDUCTION));
 
-        if (currentCustomers >= dynamicMax) return;
+        // Always reads the exact number of active customers in the room
+        if (customers.size() >= dynamicMax) return;
+
         if (spawnPoints.isEmpty()) return;
-        if (getFreeSpawnPoint() == null) return;
+        Vector2 point = getFreeSpawnPoint();
+        if (point == null) return;
 
         timer += delta;
         float interval = getSpawnInterval();
         if (timer >= interval) {
             timer = 0f;
-            spawnCustomer();
+            factory.createCustomer(point.x, point.y);
         }
     }
 
@@ -81,13 +82,6 @@ public class CustomerSpawner {
         return null;
     }
 
-    private void spawnCustomer() {
-        Vector2 point = getFreeSpawnPoint();
-        if (point == null) return;
-        factory.createCustomer(point.x, point.y);
-        currentCustomers++;
-    }
-
     private boolean isPointOccupied(Vector2 point) {
         for (Entity entity : customers) {
             Transform t = Transform.MAPPER.get(entity);
@@ -97,7 +91,5 @@ public class CustomerSpawner {
         return false;
     }
 
-    public void onCustomerLeft() {
-        currentCustomers = Math.max(0, currentCustomers - 1);
-    }
+    public void onCustomerLeft() {}
 }

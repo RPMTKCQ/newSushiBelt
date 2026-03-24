@@ -6,11 +6,10 @@ import com.sushi.game.ui.GameScreenUI;
 
 public class LevelSystem extends EntitySystem {
 
-    // --- XP & BALANCING ADJUSTMENTS HERE ---
     private static final int MAX_LEVEL        = 10;
-    private static final int BASE_XP_TO_NEXT  = 100;  // XP needed for Level 2
-    private static final int XP_INCREMENT     = 50;   // How much harder each level gets (Lvl 3 = 150xp, Lvl 4 = 200xp)
-    private static final int XP_PER_SERVE     = 10;   // XP given per delivery
+    private static final int BASE_XP_TO_NEXT  = 30;
+    private static final int XP_INCREMENT     = 20;
+    private static final int XP_PER_SERVE     = 10;
 
     private static final int SCORE_ON_TIME    = 10;
     private static final int SCORE_LATE       = 0;
@@ -28,6 +27,9 @@ public class LevelSystem extends EntitySystem {
     private int score         = 0;
     private int money         = 100;
 
+    // Tracks when you hit the 100-point difficulty spikes
+    private int lastScoreBracket = 0;
+
     public LevelSystem(GameScreenUI gameScreenUI, PowerUpSystem powerUpSystem) {
         this.gameScreenUI  = gameScreenUI;
         this.powerUpSystem = powerUpSystem;
@@ -37,35 +39,55 @@ public class LevelSystem extends EntitySystem {
     }
 
     public int getScore() { return score; }
-    public int getLevel() { return level; } // ADDED for the Spawner
+    public int getLevel() { return level; }
 
     public void onServeCompleted(boolean sortedCorrectly, boolean lateDelivery) {
-        float multiplier = powerUpSystem.getRushHourMultiplier();
-        powerUpSystem.consumeRushHourServeIfActive();
-        if (powerUpSystem.getRushHourMultiplier() == 1f) gameScreenUI.hideRushHourIfDepleted();
+        float scoreMultiplier = powerUpSystem.getRushHourMultiplier();
+        float moneyMultiplier = powerUpSystem.getDoubleTipsMultiplier();
+
+        powerUpSystem.consumeServePowerUps();
+
+        if (powerUpSystem.getRushHourMultiplier() == 1f) {
+            gameScreenUI.hideRushHourIfDepleted();
+        }
 
         int baseScore = lateDelivery ? SCORE_LATE : SCORE_ON_TIME + (sortedCorrectly ? SORT_SCORE_BONUS : 0);
-        int gained = (int) (baseScore * multiplier);
-        score += gained;
+        int gainedScore = (int) (baseScore * scoreMultiplier);
+        score += gainedScore;
 
-        money += lateDelivery ? MONEY_LATE : MONEY_ON_TIME + (sortedCorrectly ? SORT_MONEY_BONUS : 0);
+        int baseMoney = lateDelivery ? MONEY_LATE : MONEY_ON_TIME + (sortedCorrectly ? SORT_MONEY_BONUS : 0);
+        int gainedMoney = (int) (baseMoney * moneyMultiplier);
+        money += gainedMoney;
+
+        // Check for Milestone difficulty spikes!
+        int newBracket = score / 100;
+        if (newBracket > lastScoreBracket) {
+            lastScoreBracket = newBracket;
+            gameScreenUI.addLogEvent("Reputation increased! More customers arriving...", com.badlogic.gdx.graphics.Color.GOLD);
+        }
+
+        if (lateDelivery) {
+            gameScreenUI.addLogEvent("A customer was served late!", com.badlogic.gdx.graphics.Color.RED);
+        }
 
         xp += XP_PER_SERVE;
-        if (xp >= xpToNextLevel && level < MAX_LEVEL) levelUp();
+
+        if (xp >= xpToNextLevel && level < MAX_LEVEL) {
+            levelUp();
+        }
 
         gameScreenUI.setScore(score);
         gameScreenUI.setMoney(money);
         gameScreenUI.setXp(xp, xpToNextLevel, level);
-
-        Gdx.app.log("LEVEL", "serve done | late=" + lateDelivery + " sorted=" + sortedCorrectly + " score+=" + gained + " xp=" + xp + "/" + xpToNextLevel);
     }
 
     private void levelUp() {
         level++;
-        xp = 0;
-        xpToNextLevel = BASE_XP_TO_NEXT + (level - 1) * XP_INCREMENT;
-        gameScreenUI.setXp(0, xpToNextLevel, level);
+        xp -= xpToNextLevel;
+        xpToNextLevel = BASE_XP_TO_NEXT + ((level - 1) * XP_INCREMENT);
+        gameScreenUI.setXp(xp, xpToNextLevel, level);
+
+        gameScreenUI.addLogEvent("Level Up! Choose a perk.", com.badlogic.gdx.graphics.Color.CYAN);
         gameScreenUI.showPowerUpOverlay(powerUpSystem);
-        Gdx.app.log("LEVEL", "Leveled up to " + level + "!");
     }
 }

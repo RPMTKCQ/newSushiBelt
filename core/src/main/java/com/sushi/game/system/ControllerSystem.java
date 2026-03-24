@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.sushi.game.asset.SoundAsset;
@@ -94,13 +95,17 @@ public class ControllerSystem extends IteratingSystem {
                 switch (customer.state) {
                     case WAITING -> seatCustomer(nearby, customer);
                     case ORDERING -> {
+                        // FIX: Explicitly lock in the fast-paced timer for the "Waiting for Food" phase!
+                        customer.maxPatience = MathUtils.random(40f, 50f);
+                        customer.stateTimer = 0f;
+
                         gameScreenUI.addOrder(
                             customer.orderItemId,
                             String.valueOf(customer.id),
-                            customer.maxPatience - customer.stateTimer
+                            customer.maxPatience
                         );
-                        customer.state      = Customer.CustomerState.WAITING_FOR_FOOD;
-                        customer.stateTimer = 0f;
+
+                        customer.state = Customer.CustomerState.WAITING_FOR_FOOD;
                     }
                     case WAITING_FOR_FOOD -> deliverFood(nearby, customer, playerEntity, inventory);
                     case PAYING -> collectPayment(nearby, customer);
@@ -144,8 +149,6 @@ public class ControllerSystem extends IteratingSystem {
 
                 boolean sorted = gameScreenUI.isQueueSortedByUrgency();
                 gameScreenUI.setLastSubmitSorted(sorted);
-
-                // FIX: Only sets the flag! ChefSystem is now responsible for starting the UI color swap.
                 gameScreenUI.setChefReady(true);
 
                 Gdx.app.log("BUZZER", "submitted: " + firstDish + " | sorted=" + sorted);

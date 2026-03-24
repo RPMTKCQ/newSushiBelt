@@ -12,6 +12,10 @@ public class PowerUpSystem extends IteratingSystem {
 
     private int rushHourServesLeft = 0;
     private float rushHourScoreMultiplier = 1f;
+
+    private int doubleTipsServesLeft = 0;
+    private float doubleTipsMultiplier = 1f;
+
     private final Engine engine;
 
     public PowerUpSystem(Engine engine) {
@@ -20,7 +24,6 @@ public class PowerUpSystem extends IteratingSystem {
     }
 
     public void applyPowerUp(PowerUpType type) {
-        // Prevent stacking the same type — remove old one first
         for (Entity existing : getEntities()) {
             PowerUp old = PowerUp.MAPPER.get(existing);
             if (old.type == type) {
@@ -48,6 +51,10 @@ public class PowerUpSystem extends IteratingSystem {
                 rushHourServesLeft = 3;
                 rushHourScoreMultiplier = type.multiplier();
             }
+            case DOUBLE_TIPS -> {
+                doubleTipsServesLeft = 3;
+                doubleTipsMultiplier = type.multiplier();
+            }
         }
 
         entity.add(powerUp);
@@ -65,7 +72,7 @@ public class PowerUpSystem extends IteratingSystem {
     private void applyCookingSpeed(float multiplier) {
         for (Entity e : engine.getEntitiesFor(Family.all(Chef.class).get())) {
             Chef chef = Chef.MAPPER.get(e);
-            chef.cookDuration /= multiplier; // divide to make cooking faster
+            chef.cookDuration /= multiplier;
         }
     }
 
@@ -87,27 +94,33 @@ public class PowerUpSystem extends IteratingSystem {
                 rushHourServesLeft = 0;
                 rushHourScoreMultiplier = 1f;
             }
+            case DOUBLE_TIPS -> {
+                doubleTipsServesLeft = 0;
+                doubleTipsMultiplier = 1f;
+            }
         }
     }
 
-    public float getRushHourMultiplier() {
-        return rushHourScoreMultiplier;
-    }
+    public float getRushHourMultiplier() { return rushHourScoreMultiplier; }
+    public float getDoubleTipsMultiplier() { return doubleTipsMultiplier; }
 
-    // Called by LevelSystem every time a serve is completed
-    public void consumeRushHourServeIfActive() {
+    public void consumeServePowerUps() {
         if (rushHourServesLeft > 0) {
             rushHourServesLeft--;
-            Gdx.app.log("POWERUP", "Rush Hour consumed! Remaining: " + rushHourServesLeft);
             if (rushHourServesLeft == 0) {
                 rushHourScoreMultiplier = 1f;
                 Gdx.app.log("POWERUP", "Rush Hour ended.");
             }
         }
+        if (doubleTipsServesLeft > 0) {
+            doubleTipsServesLeft--;
+            if (doubleTipsServesLeft == 0) {
+                doubleTipsMultiplier = 1f;
+                Gdx.app.log("POWERUP", "Double Tips ended.");
+            }
+        }
     }
 
     @Override
-    protected void processEntity(Entity entity, float deltaTime) {
-        // You can add duration ticking logic here if you want Movement/Cooking speed to expire
-    }
+    protected void processEntity(Entity entity, float deltaTime) {}
 }

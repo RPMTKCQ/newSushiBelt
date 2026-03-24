@@ -42,6 +42,11 @@
    <property name="sensor" type="bool" value="true"/>
    <property name="speed" type="float" value="2"/>
   </properties>
+  <objectgroup draworder="index" id="2">
+   <object id="2" x="0" y="32">
+    <polygon points="0,0 0,-16.0976 16.9867,-16.0253 22.408,-9.3752 22.5525,-0.195166"/>
+   </object>
+  </objectgroup>
  </tile>
  <tile id="35">
   <properties>
@@ -141,6 +146,11 @@
    <property name="sensor" type="bool" value="true"/>
    <property name="speed" type="float" value="2"/>
   </properties>
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="32">
+    <polygon points="0,0 13.0111,0.0216851 20.9623,-8.21866 21.902,-31.9277 7.0838,-31.9277 7.95121,-18.6998 3.9756,-15.5193 0,-15.6639"/>
+   </object>
+  </objectgroup>
  </tile>
  <tile id="64" type="Prop">
   <properties>

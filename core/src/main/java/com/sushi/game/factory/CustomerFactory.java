@@ -2,9 +2,7 @@ package com.sushi.game.factory;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
@@ -35,13 +33,16 @@ public class CustomerFactory extends EntityFactory {
 
         Entity entity = createBase(x, y, 5, SPRITE_NAMES[spriteIdx]);
 
-        // customer component
         Customer customer = new Customer();
         customer.spriteIndex = spriteIdx;
+
+        // NEW BALANCE: Overcooked-style tight patience timer (Randomly between 40-50 seconds)
+        // This is perfectly tuned for ~20s perfect-serve sequences.
+        customer.maxPatience = MathUtils.random(40f, 50f);
+
         entity.add(customer);
         entity.add(new Interactable());
 
-        // animation
         entity.add(new Animation2D(
             AtlasAsset.OBJECTS,
             ATLAS_KEYS[spriteIdx],
@@ -52,16 +53,9 @@ public class CustomerFactory extends EntityFactory {
 
         entity.add(new Facing(Facing.FacingDirection.RIGHT));
 
-        // temp log
-        TextureAtlas atlas = assetService.get(AtlasAsset.OBJECTS);
-        TextureAtlas.AtlasRegion testRegion = atlas.findRegion(SPRITE_NAMES[0]);
-        Gdx.app.log("CUSTOMER", "region found: " + (testRegion != null ? SPRITE_NAMES[0] : "NULL"));
-
-        // physics body at spawn position
         Vector2 spawnPos = new Vector2(x, y).scl(SushiGame.UNIT_SCALE);
 
         BodyDef bodyDef = new BodyDef();
-        // CHANGED: KinematicBody prevents physics engine conflicts when moving/teleporting
         bodyDef.type = BodyDef.BodyType.KinematicBody;
         bodyDef.position.set(spawnPos);
         bodyDef.fixedRotation = true;
@@ -69,18 +63,20 @@ public class CustomerFactory extends EntityFactory {
         Body body = world.createBody(bodyDef);
         body.setUserData(entity);
 
-        // sensor for interaction detection
         CircleShape sensorShape = new CircleShape();
-        sensorShape.setRadius(0.4f);
+        sensorShape.setRadius(0.8f);
+        sensorShape.setPosition(new Vector2(0.5f, 0.5f));
+
         FixtureDef sensorFixture = new FixtureDef();
         sensorFixture.shape = sensorShape;
         sensorFixture.isSensor = true;
         body.createFixture(sensorFixture);
         sensorShape.dispose();
 
-        // solid fixture for collision with chairs and walls
         CircleShape solidShape = new CircleShape();
-        solidShape.setRadius(0.25f);
+        solidShape.setRadius(0.3f);
+        solidShape.setPosition(new Vector2(0.5f, 0.3f));
+
         FixtureDef solidFixture = new FixtureDef();
         solidFixture.shape = solidShape;
         solidFixture.isSensor = false;

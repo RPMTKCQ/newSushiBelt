@@ -28,7 +28,6 @@ public class ConveyorSystem extends IteratingSystem {
 
     public void loadBelt(MapObjects objects) {
         if (beltLoaded) return;
-
         List<WaypointEntry> raw = new ArrayList<>();
 
         for (MapObject obj : objects) {
@@ -42,30 +41,19 @@ public class ConveyorSystem extends IteratingSystem {
             if ("belt_spawn".equals(name)) {
                 spawnPoint   = worldPos;
                 defaultSpeed = obj.getProperties().get("belt_speed", 2f, Float.class);
-                Gdx.app.log("CONVEYOR", "spawn point: " + spawnPoint);
             } else if ("belt_waypoint".equals(name)) {
                 int seq = obj.getProperties().get("sequence", 0, Integer.class);
                 raw.add(new WaypointEntry(seq, worldPos));
-                Gdx.app.log("CONVEYOR", "waypoint seq=" + seq + " pos=" + worldPos);
             }
         }
 
-        if (spawnPoint == null) {
-            Gdx.app.log("CONVEYOR", "WARNING: no 'belt_spawn' point found!");
-            return;
-        }
-        if (raw.isEmpty()) {
-            Gdx.app.log("CONVEYOR", "WARNING: no 'belt_waypoint' points found!");
-            return;
-        }
+        if (spawnPoint == null || raw.isEmpty()) return;
 
         raw.sort(Comparator.comparingInt(e -> e.sequence));
         waypoints.clear();
         for (WaypointEntry e : raw) waypoints.add(e.pos);
 
         beltLoaded = true;
-        Gdx.app.log("CONVEYOR", "belt loaded: " + waypoints.size()
-            + " waypoints, speed=" + defaultSpeed);
     }
 
     public Vector2 getSpawnPoint()  { return spawnPoint; }
@@ -89,10 +77,10 @@ public class ConveyorSystem extends IteratingSystem {
         Transform transform = Transform.MAPPER.get(entity);
         Vector2 pos = transform.getPosition();
 
-        int targetIdx = dish.waypointIndex;
-        if (targetIdx >= waypoints.size()) return;
+        // FIX: Modulo creates an infinite loop around your map waypoints
+        int targetIdx = dish.waypointIndex % waypoints.size();
 
-        if (isDishAhead(entity, pos, dish.waypointIndex)) return;
+        if (isDishAhead(entity, pos, targetIdx)) return;
 
         Vector2 target = waypoints.get(targetIdx);
         Vector2 dir    = new Vector2(target).sub(pos);
@@ -101,7 +89,7 @@ public class ConveyorSystem extends IteratingSystem {
 
         if (dist <= step) {
             pos.set(target);
-            dish.waypointIndex++;
+            dish.waypointIndex++; // Grows infinitely to track laps
         } else {
             pos.add(dir.nor().scl(step));
         }
@@ -111,33 +99,33 @@ public class ConveyorSystem extends IteratingSystem {
         }
     }
 
-    private boolean isDishAhead(Entity self, Vector2 myPos, int myWaypointIdx) {
+    // FIX: Using Vector Dot Product for robust collision that works across loops
+    private boolean isDishAhead(Entity self, Vector2 myPos, int targetIdx) {
         for (Entity other : getEntities()) {
             if (other == self) continue;
             DishOnBelt otherDish = DishOnBelt.MAPPER.get(other);
-
-            // FIX: Removed the logic that ignored stopped dishes, restoring collision!
             if (otherDish == null || otherDish.pickedUp) continue;
 
             Transform otherTransform = Transform.MAPPER.get(other);
             if (otherTransform == null) continue;
 
-            if (otherDish.waypointIndex < myWaypointIdx) continue;
+            float distToOther = myPos.dst(otherTransform.getPosition());
 
-            // If dishes are on the exact same belt segment, check who is closer to the end
-            if (otherDish.waypointIndex == myWaypointIdx) {
-                if (myWaypointIdx >= waypoints.size()) continue; // both are stacked at the very end
+            // If another dish is physically too close
+            if (distToOther < MIN_DISH_SPACING) {
+                Vector2 target = waypoints.get(targetIdx);
 
-                Vector2 target = waypoints.get(myWaypointIdx);
-                float myDistToTarget = myPos.dst(target);
-                float otherDistToTarget = otherTransform.getPosition().dst(target);
+                Vector2 dirToTarget = new Vector2(target).sub(myPos);
+                if (dirToTarget.isZero()) continue;
+                Vector2 myDir = dirToTarget.nor();
 
-                if (otherDistToTarget > myDistToTarget) {
-                    continue; // The other dish is further away, so it's behind us
-                }
+                Vector2 dirToOther = new Vector2(otherTransform.getPosition()).sub(myPos);
+                if (dirToOther.isZero()) return true; // Overlapping perfectly
+                Vector2 toOther = dirToOther.nor();
+
+                // Dot product checks the angle. > 0.3 means the other dish is directly in front of me!
+                if (myDir.dot(toOther) > 0.3f) return true;
             }
-
-            if (myPos.dst(otherTransform.getPosition()) < (MIN_DISH_SPACING * 0.9f)) return true;
         }
         return false;
     }

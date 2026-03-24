@@ -18,6 +18,12 @@ public enum PowerUpType {
         @Override public String description()  { return "Next 3 serves give 30% bonus points"; }
         @Override public String iconName()     { return "icon-rush"; }
         @Override public float  multiplier()   { return 1.30f; }
+    },
+    DOUBLE_TIPS {
+        @Override public String displayName()  { return "Double Tips"; }
+        @Override public String description()  { return "Next 3 serves grant 2x Money"; }
+        @Override public String iconName()     { return "icon-money"; }
+        @Override public float  multiplier()   { return 2.00f; }
     };
 
     public abstract String displayName();

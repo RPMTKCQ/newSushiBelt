@@ -1,5 +1,6 @@
 package com.sushi.game.ui;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -17,6 +18,8 @@ import com.sushi.game.system.PowerUpSystem;
 import com.sushi.game.ui.model.PowerUpType;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class GameScreenUI {
@@ -32,6 +35,7 @@ public class GameScreenUI {
     private ProgressBar xpBar;
 
     private Table powerUpOverlay;
+    private Table eventLogTable; // NEW: The RimWorld style event log
     private final Table[] inventorySlots = new Table[3];
     private Table receiptRow;
     private final List<ReceiptCardData> receiptCards = new ArrayList<>();
@@ -40,6 +44,8 @@ public class GameScreenUI {
     private boolean chefCooking      = false;
     private boolean lastSubmitSorted = false;
     private String cookingCustomerId = null;
+
+    private ReceiptCardData currentlyDraggingCard = null;
 
     private static class ReceiptCardData {
         Table card;
@@ -74,10 +80,25 @@ public class GameScreenUI {
         build();
     }
 
+    // NEW METHOD: Adds a fading text log to the bottom right of the screen
+    public void addLogEvent(String message, com.badlogic.gdx.graphics.Color color) {
+        Label logLabel = new Label(message, skin, "receipt");
+        logLabel.setColor(color);
+        eventLogTable.add(logLabel).align(Align.right).padBottom(5f).row();
+
+        logLabel.addAction(Actions.sequence(
+            Actions.alpha(0f),
+            Actions.fadeIn(0.2f),
+            Actions.delay(4f),
+            Actions.fadeOut(1f),
+            Actions.removeActor()
+        ));
+    }
+
     public boolean isQueueSortedByUrgency() {
         List<ReceiptCardData> active = new ArrayList<>();
         for (ReceiptCardData d : receiptCards) {
-            if (!d.cooked && (cookingCustomerId == null || !d.customerId.equals(cookingCustomerId))) active.add(d);
+            if (!d.cooked && !d.customerId.equals(cookingCustomerId)) active.add(d);
         }
         for (int i = 0; i < active.size() - 1; i++) {
             float timeRemainingA = active.get(i).maxTime   - active.get(i).timer;
@@ -138,16 +159,6 @@ public class GameScreenUI {
         cookingCustomerId = null;
     }
 
-    public void onOrderDelivered(String customerId) {
-        for (ReceiptCardData d : receiptCards) {
-            if (d.customerId.equals(customerId)) {
-                d.card.clearActions();
-                d.card.addAction(Actions.color(skin.getColor("white"), 0.15f));
-                return;
-            }
-        }
-    }
-
     public void addOrder(String dishId, String customerId, float maxTime) {
         Table card = new Table();
         card.setBackground(skin.getDrawable("rct-border"));
@@ -194,14 +205,32 @@ public class GameScreenUI {
             if (d.customerId.equals(customerId)) { toRemove = d; break; }
         }
         if (toRemove == null) return;
+
+        if (!toRemove.cooked) {
+            for (ReceiptCardData d : receiptCards) {
+                if (d != toRemove && d.cooked && d.dishLabel.getText().toString().equals(toRemove.dishLabel.getText().toString())) {
+                    d.cooked = false;
+                    d.card.setTouchable(Touchable.enabled);
+                    d.card.clearActions();
+                    d.card.addAction(Actions.color(skin.getColor("white"), 0.2f));
+                    break;
+                }
+            }
+        }
+
         receiptCards.remove(toRemove);
         toRemove.card.remove();
+
+        if (currentlyDraggingCard == toRemove) {
+            currentlyDraggingCard = null;
+        }
+
         relayoutReceiptRow();
     }
 
     public String getFirstDishName() {
         for (ReceiptCardData d : receiptCards) {
-            if (!d.cooked && (cookingCustomerId == null || !d.customerId.equals(cookingCustomerId))) {
+            if (!d.cooked && !d.customerId.equals(cookingCustomerId)) {
                 return d.dishLabel.getText().toString().toLowerCase().replace(" ", "_");
             }
         }
@@ -210,7 +239,7 @@ public class GameScreenUI {
 
     public String getFirstCustomerId() {
         for (ReceiptCardData d : receiptCards) {
-            if (!d.cooked && (cookingCustomerId == null || !d.customerId.equals(cookingCustomerId))) {
+            if (!d.cooked && !d.customerId.equals(cookingCustomerId)) {
                 return d.customerId;
             }
         }
@@ -259,9 +288,14 @@ public class GameScreenUI {
     }
 
     public void showPowerUpOverlay(PowerUpSystem powerUpSystem) {
-        powerUpOverlay.setVisible(true);
-        powerUpOverlay.setTouchable(Touchable.enabled);
-        powerUpOverlay.toFront();
+        powerUpOverlay.clearChildren();
+
+        List<PowerUpType> allTypes = new ArrayList<>(Arrays.asList(PowerUpType.values()));
+        Collections.shuffle(allTypes);
+
+        powerUpOverlay.add(buildPowerUpCard(allTypes.get(0))).spaceRight(100f).fill().align(Align.top).minSize(200f, 400f).maxSize(200f, 400f);
+        powerUpOverlay.add(buildPowerUpCard(allTypes.get(1))).spaceRight(100f).fill().align(Align.top).minSize(200f, 400f).maxSize(200f, 400f);
+        powerUpOverlay.add(buildPowerUpCard(allTypes.get(2))).spaceRight(100f).fill().align(Align.top).minSize(200f, 400f).maxSize(200f, 400f);
 
         for (Actor actor : powerUpOverlay.getChildren()) {
             if (actor instanceof Table card) {
@@ -271,6 +305,14 @@ public class GameScreenUI {
                 addCardListeners(card, type, powerUpSystem);
             }
         }
+
+        powerUpOverlay.setVisible(true);
+        powerUpOverlay.setTouchable(Touchable.enabled);
+        powerUpOverlay.toFront();
+    }
+
+    public void hideRushHourIfDepleted() {
+        Gdx.app.log("UI", "Rush Hour ended.");
     }
 
     private void hideOverlay() {
@@ -291,23 +333,34 @@ public class GameScreenUI {
         topBar.padLeft(50f).padRight(50f).align(Align.left);
         topBar.add(buildReceiptRow()).growX().align(Align.left);
         topBar.add(buildScorePanel()).grow().align(Align.topRight);
-        root.add(topBar).growX().align(Align.left).minHeight(280f);
+        root.add(topBar).growX().align(Align.top).minHeight(280f);
         root.row();
 
-        powerUpOverlay = buildPowerUpOverlay();
+        powerUpOverlay = new Table();
         powerUpOverlay.setVisible(false);
         powerUpOverlay.setTouchable(Touchable.disabled);
         Table midRow = new Table();
         midRow.add().grow();
         midRow.add(powerUpOverlay).growX();
         midRow.add().grow();
-        root.add(midRow).growX();
+        root.add(midRow).grow(); // Ensures the spacer acts as a pillar
         root.row();
 
         root.add(buildInventoryRow()).padBottom(40f).growX()
             .align(Align.bottom).minHeight(350f);
 
         stage.addActor(root);
+
+        // NEW: Build the invisible overlay specifically for the Event Logs
+        Table logRoot = new Table();
+        logRoot.setFillParent(true);
+        logRoot.setTouchable(Touchable.disabled);
+
+        eventLogTable = new Table();
+        eventLogTable.align(Align.bottomRight);
+        logRoot.add(eventLogTable).expand().align(Align.bottomRight).padBottom(150f).padRight(50f);
+
+        stage.addActor(logRoot);
     }
 
     private Table buildReceiptRow() {
@@ -323,6 +376,10 @@ public class GameScreenUI {
             receiptRow.add(d.card).padRight(10f).growY().align(Align.top)
                 .minSize(160f, 220f).maxSize(160f, 220f);
         }
+
+        if (currentlyDraggingCard != null && receiptCards.contains(currentlyDraggingCard)) {
+            currentlyDraggingCard.card.toFront();
+        }
     }
 
     private void attachDragListener(Table card, ReceiptCardData data) {
@@ -337,6 +394,7 @@ public class GameScreenUI {
                     cancel();
                     return;
                 }
+                currentlyDraggingCard = data;
                 card.toFront();
                 card.clearActions();
                 card.addAction(Actions.color(skin.getColor("sand"), 0.08f));
@@ -367,7 +425,6 @@ public class GameScreenUI {
                     else if (cardCX > otherCX && i > to) to = i;
                 }
 
-                // Prevent dragging into the locked wall territory entirely
                 to = Math.max(lockedCount, Math.min(to, receiptCards.size() - 1));
 
                 if (to != from) {
@@ -380,6 +437,8 @@ public class GameScreenUI {
             @Override
             public void dragStop(InputEvent e, float x, float y, int ptr) {
                 if ((cookingCustomerId != null && data.customerId.equals(cookingCustomerId)) || data.cooked) return;
+
+                currentlyDraggingCard = null;
                 card.clearActions();
                 card.addAction(Actions.color(skin.getColor("white"), 0.08f));
                 relayoutReceiptRow();
@@ -409,14 +468,6 @@ public class GameScreenUI {
         panel.add(levelRow).expandX().align(Align.right);
 
         return panel;
-    }
-
-    private Table buildPowerUpOverlay() {
-        Table overlay = new Table();
-        overlay.add(buildPowerUpCard(PowerUpType.MOVEMENT_SPEED)).spaceRight(100f).fill().align(Align.top).minSize(200f, 400f).maxSize(200f, 400f);
-        overlay.add(buildPowerUpCard(PowerUpType.COOKING_SPEED)) .spaceRight(100f).fill().align(Align.top).minSize(200f, 400f).maxSize(200f, 400f);
-        overlay.add(buildPowerUpCard(PowerUpType.RUSH_HOUR))     .spaceRight(100f).fill().align(Align.top).minSize(200f, 400f).maxSize(200f, 400f);
-        return overlay;
     }
 
     private Table buildPowerUpCard(PowerUpType type) {
@@ -462,6 +513,10 @@ public class GameScreenUI {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 powerUpSystem.applyPowerUp(type);
+
+                // Add the log event when a power up is successfully picked!
+                addLogEvent("Power-Up Activated: " + type.displayName(), com.badlogic.gdx.graphics.Color.CYAN);
+
                 hideOverlay();
             }
         });
