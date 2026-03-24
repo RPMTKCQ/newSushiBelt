@@ -5,6 +5,8 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.sushi.game.SushiGame;
 import com.sushi.game.asset.AssetService;
 import com.sushi.game.asset.AtlasAsset;
+import com.sushi.game.asset.SkinAsset;
+import com.sushi.game.asset.SoundAsset;
 
 public class LoadingScreen extends ScreenAdapter {
 
@@ -21,6 +23,11 @@ public class LoadingScreen extends ScreenAdapter {
         for (AtlasAsset atlas : AtlasAsset.values()) {
             assetService.queue(atlas);
         }
+        for (SoundAsset sound : SoundAsset.values()) {
+            assetService.queue(sound);
+        }
+        assetService.queue(SkinAsset.DEFAULT);
+        assetService.queue(SkinAsset.GAME);
     }
 
     @Override
@@ -30,11 +37,12 @@ public class LoadingScreen extends ScreenAdapter {
             createScreens();
             this.game.removeScreen(this);
             this.dispose();
-            this.game.setScreen(GameScreen.class);
+            this.game.setScreen(MenuScreen.class);
         }
     }
 
     private void createScreens() {
+        this.game.addScreen(new MenuScreen(this.game));
         this.game.addScreen(new GameScreen(this.game));
 
     }

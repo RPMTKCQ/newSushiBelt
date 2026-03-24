@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.profiling.GLProfiler;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.viewport.*;
 import com.sushi.game.asset.AssetService;
+import com.sushi.game.audio.AudioService;
 import com.sushi.game.screen.GameScreen;
 import com.sushi.game.screen.LoadingScreen;
 
@@ -31,11 +32,12 @@ public class SushiGame extends Game {
     private GLProfiler glProfiler;
     private FPSLogger fpsLogger;
     private InputMultiplexer inputMultiplexer;
+    private AudioService audioService;
 
     private final Map<Class<? extends Screen>, Screen> screenCache = new HashMap<>();
 
     @Override
-    public void create() {
+    public void create() { // runs once, initializes everything
         Gdx.app.setLogLevel(Application.LOG_DEBUG);
         this.inputMultiplexer = new InputMultiplexer();
         Gdx.input.setInputProcessor(inputMultiplexer);
@@ -47,6 +49,7 @@ public class SushiGame extends Game {
         this.glProfiler = new GLProfiler(Gdx.graphics);
         this.glProfiler.enable();
         this.fpsLogger = new FPSLogger();
+        this.audioService = new AudioService(assetService);
 
 
         addScreen(new LoadingScreen(this, assetService));
@@ -54,9 +57,9 @@ public class SushiGame extends Game {
     }
 
     @Override
-    public void resize(int width,int height) {
+    public void resize(int width,int height) { // runs when window changes
         viewport.update(width,height, true);
-        super.resize(width, height);
+        super.resize(width, height); // updates the current screen layout too
     }
 
     public void addScreen(Screen screen) {
@@ -76,7 +79,7 @@ public class SushiGame extends Game {
     }
 
     @Override
-    public void render() {
+    public void render() { // runs every frame / draws everything / checks for updates
         glProfiler.reset();
 
         Gdx.gl.glClearColor(0f,0f,0f, 1f);
@@ -99,7 +102,7 @@ public class SushiGame extends Game {
         this.assetService.dispose();
     }
 
-    public  Batch getBatch() {
+    public Batch getBatch() {
         return batch;
     }
 
@@ -124,6 +127,8 @@ public class SushiGame extends Game {
         }
     }
 
-
+    public AudioService getAudioService() {
+        return audioService;
+    }
 
 }

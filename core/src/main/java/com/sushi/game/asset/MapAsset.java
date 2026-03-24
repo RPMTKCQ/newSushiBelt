@@ -6,14 +6,14 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 
 public enum MapAsset implements Asset<TiledMap> {
-    MAIN("mao.tmx");
+    MAIN("restaurant-1.tmx");
 
     private final AssetDescriptor<TiledMap> descriptor;
 
-      MapAsset(String mapName) {
-          TmxMapLoader.Parameters parameters = new TmxMapLoader.Parameters();
-          parameters.projectFilePath = "tiledMAP/samplesushi.tiled-project";
-          this.descriptor = new AssetDescriptor<>("tiledMAP/"+mapName, TiledMap.class);
+    MapAsset(String mapName) {
+        TmxMapLoader.Parameters parameters = new TmxMapLoader.Parameters();
+        parameters.projectFilePath = "tiledMAP/sushiBelt.tiled-project";
+        this.descriptor = new AssetDescriptor<>("tiledMAP/" + mapName, TiledMap.class);
     }
 
     @Override

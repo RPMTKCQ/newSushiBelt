@@ -1,10 +1,85 @@
 
 objects.png
+size: 256, 64
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+Chef/idle_left
+  rotate: false
+  xy: 2, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 1
+Chef/idle_left
+  rotate: false
+  xy: 36, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 2
+Chef/idle_left
+  rotate: false
+  xy: 70, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 3
+Chef/idle_right
+  rotate: false
+  xy: 104, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 1
+Chef/idle_right
+  rotate: false
+  xy: 138, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 2
+Chef/idle_right
+  rotate: false
+  xy: 172, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 3
+
+objects2.png
+size: 64, 32
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+Food/maguro-nigiri
+  rotate: false
+  xy: 2, 2
+  size: 14, 11
+  orig: 14, 11
+  offset: 0, 0
+  index: -1
+Food/salmon-nigiri
+  rotate: false
+  xy: 18, 17
+  size: 14, 11
+  orig: 14, 11
+  offset: 0, 0
+  index: -1
+Food/tuna-roll
+  rotate: false
+  xy: 2, 15
+  size: 14, 13
+  orig: 14, 13
+  offset: 0, 0
+  index: -1
+
+objects3.png
 size: 1024, 1024
 format: RGBA8888
 filter: Nearest, Nearest
 repeat: none
-newMAIN/Main_Spritesheet
+interior/interior
   rotate: false
   xy: 2, 2
   size: 512, 512
@@ -12,22 +87,278 @@ newMAIN/Main_Spritesheet
   offset: 0, 0
   index: -1
 
-objects2.png
-size: 1024, 1024
+objects4.png
+size: 256, 64
 format: RGBA8888
 filter: Nearest, Nearest
 repeat: none
-oldMAIN/Main_Spritesheet32x32
+NPC1/idle_left
   rotate: false
   xy: 2, 2
-  size: 512, 512
-  orig: 512, 512
+  size: 32, 32
+  orig: 32, 32
   offset: 0, 0
-  index: -1
-oldMAIN/Main_SpritesheetTRY
+  index: 1
+NPC1/idle_left
+  rotate: false
+  xy: 36, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 2
+NPC1/idle_left
+  rotate: false
+  xy: 70, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 3
+NPC1/idle_right
+  rotate: false
+  xy: 104, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 1
+NPC1/idle_right
+  rotate: false
+  xy: 138, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 2
+NPC1/idle_right
+  rotate: false
+  xy: 172, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 3
+
+objects5.png
+size: 256, 64
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+NPC2/idle_left
   rotate: false
   xy: 2, 2
-  size: 512, 512
-  orig: 512, 512
+  size: 32, 32
+  orig: 32, 32
   offset: 0, 0
-  index: -1
+  index: 1
+NPC2/idle_left
+  rotate: false
+  xy: 36, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 2
+NPC2/idle_left
+  rotate: false
+  xy: 70, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 3
+NPC2/idle_right
+  rotate: false
+  xy: 104, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 1
+NPC2/idle_right
+  rotate: false
+  xy: 138, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 2
+NPC2/idle_right
+  rotate: false
+  xy: 172, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 3
+
+objects6.png
+size: 256, 64
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+NPC3/idle_left
+  rotate: false
+  xy: 2, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 1
+NPC3/idle_left
+  rotate: false
+  xy: 36, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 2
+NPC3/idle_left
+  rotate: false
+  xy: 70, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 3
+NPC3/idle_right
+  rotate: false
+  xy: 104, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 1
+NPC3/idle_right
+  rotate: false
+  xy: 138, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 2
+NPC3/idle_right
+  rotate: false
+  xy: 172, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 3
+
+objects7.png
+size: 256, 128
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+Player/idle_left
+  rotate: false
+  xy: 2, 70
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 0
+Player/idle_left
+  rotate: false
+  xy: 2, 36
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 1
+Player/idle_left
+  rotate: false
+  xy: 36, 70
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 2
+Player/idle_right
+  rotate: false
+  xy: 2, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 0
+Player/idle_right
+  rotate: false
+  xy: 36, 36
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 1
+Player/idle_right
+  rotate: false
+  xy: 70, 70
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 2
+Player/walk_left
+  rotate: false
+  xy: 36, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 0
+Player/walk_left
+  rotate: false
+  xy: 70, 36
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 1
+Player/walk_left
+  rotate: false
+  xy: 104, 70
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 2
+Player/walk_left
+  rotate: false
+  xy: 70, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 3
+Player/walk_left
+  rotate: false
+  xy: 104, 36
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 4
+Player/walk_left
+  rotate: false
+  xy: 138, 70
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 5
+Player/walk_right
+  rotate: false
+  xy: 104, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 0
+Player/walk_right
+  rotate: false
+  xy: 138, 36
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 1
+Player/walk_right
+  rotate: false
+  xy: 172, 70
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 2
+Player/walk_right
+  rotate: false
+  xy: 138, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 3
+Player/walk_right
+  rotate: false
+  xy: 172, 36
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 4
+Player/walk_right
+  rotate: false
+  xy: 206, 70
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 5

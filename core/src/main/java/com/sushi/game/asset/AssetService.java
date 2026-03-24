@@ -5,7 +5,9 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Disposable;
+import com.ray3k.stripe.FreeTypeSkinLoader;
 
 public class AssetService implements Disposable {
     private final AssetManager assetManager;
@@ -13,6 +15,7 @@ public class AssetService implements Disposable {
     public AssetService(FileHandleResolver fileHandleResolver) {
         this.assetManager = new AssetManager(fileHandleResolver);
         this.assetManager.setLoader(TiledMap.class, new TmxMapLoader());
+        this.assetManager.setLoader(Skin.class, new FreeTypeSkinLoader(fileHandleResolver));
     }
 
     public <T> T load(Asset<T> asset) {
@@ -29,7 +32,7 @@ public class AssetService implements Disposable {
         return this.assetManager.get(asset.getDescriptor());
     }
 
-    public <T> void unload( Asset<T> asset) {
+    public <T> void unload(Asset<T> asset) {
         this.assetManager.unload(asset.getDescriptor().fileName);
 
     }
@@ -39,7 +42,7 @@ public class AssetService implements Disposable {
     }
 
     public void debugDiagnostics() {
-        Gdx.app.debug("AssetService",this.assetManager.getDiagnostics());
+        Gdx.app.debug("AssetService", this.assetManager.getDiagnostics());
     }
 
     @Override
