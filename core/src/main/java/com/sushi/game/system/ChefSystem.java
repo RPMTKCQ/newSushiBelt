@@ -40,18 +40,24 @@ public class ChefSystem extends IteratingSystem {
 
         switch (chef.state) {
             case IDLE:
-                // Check if the player has submitted an order via the buzzer
                 if (gameScreenUI.isChefReady()) {
+                    String customerId = gameScreenUI.getFirstCustomerId();
                     String dishToCook = gameScreenUI.getFirstDishName();
-                    if (dishToCook != null) {
+
+                    // FIX: Chef pulls the ID and guarantees the UI syncs exactly with what is being cooked
+                    if (dishToCook != null && customerId != null) {
                         chef.currentRecipeId = dishToCook;
                         chef.cookTimer       = 0f;
-                        chef.cookDuration    = 3f; // Base cooking time
+                        chef.cookDuration    = 3f;
                         chef.state           = Chef.ChefState.COOKING;
 
                         gameScreenUI.setChefReady(false);
                         gameScreenUI.setChefCooking(true);
+                        gameScreenUI.startCookingFor(customerId);
+
                         Gdx.app.log("CHEF", "started cooking: " + dishToCook);
+                    } else {
+                        gameScreenUI.setChefReady(false); // Failsafe
                     }
                 }
                 break;
@@ -117,9 +123,7 @@ public class ChefSystem extends IteratingSystem {
         body.createFixture(fixtureDef);
         shape.dispose();
 
-        // Store body in DishOnBelt to avoid PhysicSystem interpolation issues
         dishOnBelt.body = body;
-
         engine.addEntity(dish);
         Gdx.app.log("CHEF", "spawned " + dishId + " at " + position);
     }

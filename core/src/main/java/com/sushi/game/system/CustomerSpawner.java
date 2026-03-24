@@ -42,21 +42,21 @@ public class CustomerSpawner {
     public void loadSpawnPoints(MapObjects objects) {
         spawnPoints.clear();
         for (MapObject obj : objects) {
-            Gdx.app.log("SPAWNER", "object: '" + obj.getName() + "'");
             if (!"customer_spawn".equals(obj.getName())) continue;
             float x = obj.getProperties().get("x", 0f, Float.class);
             float y = obj.getProperties().get("y", 0f, Float.class);
             spawnPoints.add(new Vector2(x, y));
-            Gdx.app.log("SPAWNER", "loaded x=" + x + " y=" + y);
         }
-        Gdx.app.log("SPAWNER", "total: " + spawnPoints.size);
     }
 
     public void update(float delta) {
         if (!tableManager.hasFreeTables()) return;
 
-        // CHANGED: Use dynamic table capacity instead of hardcoded max
-        if (currentCustomers >= tableManager.getTotalCapacity()) return;
+        // FIX: Max customers is now tied to Level (Level 1 = 3 max, Level 2 = 4 max, etc.)
+        // It automatically caps out at the physical number of chairs in the room.
+        int dynamicMax = Math.min(tableManager.getTotalCapacity(), 2 + levelSystem.getLevel());
+
+        if (currentCustomers >= dynamicMax) return;
         if (spawnPoints.isEmpty()) return;
         if (getFreeSpawnPoint() == null) return;
 
@@ -86,8 +86,6 @@ public class CustomerSpawner {
         if (point == null) return;
         factory.createCustomer(point.x, point.y);
         currentCustomers++;
-        Gdx.app.log("SPAWNER", "spawned customer " + currentCustomers + "/" + tableManager.getTotalCapacity()
-            + " interval=" + getSpawnInterval() + "s score=" + levelSystem.getScore());
     }
 
     private boolean isPointOccupied(Vector2 point) {
@@ -101,10 +99,5 @@ public class CustomerSpawner {
 
     public void onCustomerLeft() {
         currentCustomers = Math.max(0, currentCustomers - 1);
-    }
-
-    public void addSpawnPoint(float x, float y) {
-        spawnPoints.add(new Vector2(x, y));
-        Gdx.app.log("SPAWNER", "manually added spawn point x=" + x + " y=" + y);
     }
 }

@@ -111,34 +111,32 @@ public class ConveyorSystem extends IteratingSystem {
         }
     }
 
-    // FIX: Completely resolved the gridlock collision bug.
     private boolean isDishAhead(Entity self, Vector2 myPos, int myWaypointIdx) {
         for (Entity other : getEntities()) {
             if (other == self) continue;
             DishOnBelt otherDish = DishOnBelt.MAPPER.get(other);
 
-            if (otherDish == null || otherDish.pickedUp || otherDish.waypointIndex >= waypoints.size()) continue;
+            // FIX: Removed the logic that ignored stopped dishes, restoring collision!
+            if (otherDish == null || otherDish.pickedUp) continue;
 
             Transform otherTransform = Transform.MAPPER.get(other);
             if (otherTransform == null) continue;
 
-            // If the other dish is aiming for an earlier waypoint, it is behind us.
             if (otherDish.waypointIndex < myWaypointIdx) continue;
 
-            // If both dishes are aiming for the EXACT same waypoint, determine who is closer to it.
+            // If dishes are on the exact same belt segment, check who is closer to the end
             if (otherDish.waypointIndex == myWaypointIdx) {
+                if (myWaypointIdx >= waypoints.size()) continue; // both are stacked at the very end
+
                 Vector2 target = waypoints.get(myWaypointIdx);
                 float myDistToTarget = myPos.dst(target);
                 float otherDistToTarget = otherTransform.getPosition().dst(target);
 
-                // If the other dish is further away from the goal, it is behind us. Ignore it.
                 if (otherDistToTarget > myDistToTarget) {
-                    continue;
+                    continue; // The other dish is further away, so it's behind us
                 }
             }
 
-            // If we get here, the other dish is definitely ahead of us.
-            // Check if we are too close.
             if (myPos.dst(otherTransform.getPosition()) < (MIN_DISH_SPACING * 0.9f)) return true;
         }
         return false;

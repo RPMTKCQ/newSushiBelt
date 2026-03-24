@@ -77,7 +77,7 @@ public class GameScreenUI {
     public boolean isQueueSortedByUrgency() {
         List<ReceiptCardData> active = new ArrayList<>();
         for (ReceiptCardData d : receiptCards) {
-            if (!d.cooked && !d.customerId.equals(cookingCustomerId)) active.add(d);
+            if (!d.cooked && (cookingCustomerId == null || !d.customerId.equals(cookingCustomerId))) active.add(d);
         }
         for (int i = 0; i < active.size() - 1; i++) {
             float timeRemainingA = active.get(i).maxTime   - active.get(i).timer;
@@ -201,7 +201,7 @@ public class GameScreenUI {
 
     public String getFirstDishName() {
         for (ReceiptCardData d : receiptCards) {
-            if (!d.cooked && !d.customerId.equals(cookingCustomerId)) {
+            if (!d.cooked && (cookingCustomerId == null || !d.customerId.equals(cookingCustomerId))) {
                 return d.dishLabel.getText().toString().toLowerCase().replace(" ", "_");
             }
         }
@@ -210,7 +210,7 @@ public class GameScreenUI {
 
     public String getFirstCustomerId() {
         for (ReceiptCardData d : receiptCards) {
-            if (!d.cooked && !d.customerId.equals(cookingCustomerId)) {
+            if (!d.cooked && (cookingCustomerId == null || !d.customerId.equals(cookingCustomerId))) {
                 return d.customerId;
             }
         }
@@ -333,7 +333,7 @@ public class GameScreenUI {
 
             @Override
             public void dragStart(InputEvent e, float x, float y, int ptr) {
-                if (data.customerId.equals(cookingCustomerId) || data.cooked) {
+                if ((cookingCustomerId != null && data.customerId.equals(cookingCustomerId)) || data.cooked) {
                     cancel();
                     return;
                 }
@@ -344,7 +344,7 @@ public class GameScreenUI {
 
             @Override
             public void drag(InputEvent e, float x, float y, int ptr) {
-                if (data.customerId.equals(cookingCustomerId) || data.cooked) return;
+                if ((cookingCustomerId != null && data.customerId.equals(cookingCustomerId)) || data.cooked) return;
 
                 card.moveBy(x - card.getWidth() / 2f, 0);
 
@@ -352,15 +352,13 @@ public class GameScreenUI {
                 int to = from;
                 float cardCX = card.getX() + card.getWidth() / 2f;
 
-                // FIX: Calculate the boundary of the "locked wall"
                 int lockedCount = 0;
                 for (ReceiptCardData d : receiptCards) {
-                    if (d.cooked || d.customerId.equals(cookingCustomerId)) {
+                    if (d.cooked || (cookingCustomerId != null && d.customerId.equals(cookingCustomerId))) {
                         lockedCount++;
                     }
                 }
 
-                // Check collisions only with OTHER movable cards
                 for (int i = lockedCount; i < receiptCards.size(); i++) {
                     if (i == from) continue;
 
@@ -369,7 +367,7 @@ public class GameScreenUI {
                     else if (cardCX > otherCX && i > to) to = i;
                 }
 
-                // FIX: Clamp 'to' so the dragged card can NEVER penetrate the locked wall indices on the left
+                // Prevent dragging into the locked wall territory entirely
                 to = Math.max(lockedCount, Math.min(to, receiptCards.size() - 1));
 
                 if (to != from) {
@@ -381,7 +379,7 @@ public class GameScreenUI {
 
             @Override
             public void dragStop(InputEvent e, float x, float y, int ptr) {
-                if (data.customerId.equals(cookingCustomerId) || data.cooked) return;
+                if ((cookingCustomerId != null && data.customerId.equals(cookingCustomerId)) || data.cooked) return;
                 card.clearActions();
                 card.addAction(Actions.color(skin.getColor("white"), 0.08f));
                 relayoutReceiptRow();

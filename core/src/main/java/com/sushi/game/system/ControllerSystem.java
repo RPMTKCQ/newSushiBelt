@@ -96,7 +96,7 @@ public class ControllerSystem extends IteratingSystem {
                     case ORDERING -> {
                         gameScreenUI.addOrder(
                             customer.orderItemId,
-                            String.valueOf(customer.id), // CRITICAL: Now uses unique ID
+                            String.valueOf(customer.id),
                             customer.maxPatience - customer.stateTimer
                         );
                         customer.state      = Customer.CustomerState.WAITING_FOR_FOOD;
@@ -144,7 +144,8 @@ public class ControllerSystem extends IteratingSystem {
 
                 boolean sorted = gameScreenUI.isQueueSortedByUrgency();
                 gameScreenUI.setLastSubmitSorted(sorted);
-                gameScreenUI.startCookingFor(gameScreenUI.getFirstCustomerId());
+
+                // FIX: Only sets the flag! ChefSystem is now responsible for starting the UI color swap.
                 gameScreenUI.setChefReady(true);
 
                 Gdx.app.log("BUZZER", "submitted: " + firstDish + " | sorted=" + sorted);
@@ -177,7 +178,7 @@ public class ControllerSystem extends IteratingSystem {
         customer.servedSorted = gameScreenUI.wasLastSubmitSorted();
         customer.servedLate   = customer.leftAngry;
 
-        gameScreenUI.removeOrder(String.valueOf(customer.id)); // CRITICAL: Remove by unique ID
+        gameScreenUI.removeOrder(String.valueOf(customer.id));
 
         customer.state      = Customer.CustomerState.EATING;
         customer.stateTimer = 0f;
