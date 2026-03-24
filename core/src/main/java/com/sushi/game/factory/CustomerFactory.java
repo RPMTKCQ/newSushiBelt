@@ -33,7 +33,6 @@ public class CustomerFactory extends EntityFactory {
     public Entity createCustomer(float x, float y) {
         int spriteIdx = MathUtils.random(0, 2);
 
-
         Entity entity = createBase(x, y, 5, SPRITE_NAMES[spriteIdx]);
 
         // customer component
@@ -62,7 +61,8 @@ public class CustomerFactory extends EntityFactory {
         Vector2 spawnPos = new Vector2(x, y).scl(SushiGame.UNIT_SCALE);
 
         BodyDef bodyDef = new BodyDef();
-        bodyDef.type = BodyDef.BodyType.StaticBody;
+        // CHANGED: KinematicBody prevents physics engine conflicts when moving/teleporting
+        bodyDef.type = BodyDef.BodyType.KinematicBody;
         bodyDef.position.set(spawnPos);
         bodyDef.fixedRotation = true;
 

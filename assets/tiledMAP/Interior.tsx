@@ -146,7 +146,7 @@
   <properties>
    <property name="atlasAsset" value="OBJECTS"/>
    <property name="restitution" type="float" value="1"/>
-   <property name="seats" type="int" value="4"/>
+   <property name="seats" type="int" value="2"/>
    <property name="sensor" type="bool" value="true"/>
    <property name="tableId" type="int" value="0"/>
   </properties>

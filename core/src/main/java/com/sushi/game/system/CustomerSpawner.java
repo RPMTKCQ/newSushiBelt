@@ -17,14 +17,10 @@ import com.badlogic.gdx.utils.Array;
 
 public class CustomerSpawner {
 
-    // base interval — starts at 10s, drops 0.5s per 2000 score, floors at 3s
     private static final float BASE_SPAWN_INTERVAL  = 10f;
-    private static final float INTERVAL_REDUCTION   = 0.5f;   // per 2000 score bracket
+    private static final float INTERVAL_REDUCTION   = 0.5f;
     private static final int   SCORE_PER_REDUCTION  = 2000;
     private static final float MIN_SPAWN_INTERVAL   = 3f;
-
-    // max concurrent customers — 12 to match chair count
-    private static final int MAX_CUSTOMERS = 12;
 
     private final CustomerFactory factory;
     private final TableManager tableManager;
@@ -58,7 +54,9 @@ public class CustomerSpawner {
 
     public void update(float delta) {
         if (!tableManager.hasFreeTables()) return;
-        if (currentCustomers >= MAX_CUSTOMERS) return;
+
+        // CHANGED: Use dynamic table capacity instead of hardcoded max
+        if (currentCustomers >= tableManager.getTotalCapacity()) return;
         if (spawnPoints.isEmpty()) return;
         if (getFreeSpawnPoint() == null) return;
 
@@ -70,7 +68,6 @@ public class CustomerSpawner {
         }
     }
 
-    // spawn interval drops 0.5s for every 2000 points scored, floored at MIN
     private float getSpawnInterval() {
         int brackets  = levelSystem.getScore() / SCORE_PER_REDUCTION;
         float interval = BASE_SPAWN_INTERVAL - (brackets * INTERVAL_REDUCTION);
@@ -89,7 +86,7 @@ public class CustomerSpawner {
         if (point == null) return;
         factory.createCustomer(point.x, point.y);
         currentCustomers++;
-        Gdx.app.log("SPAWNER", "spawned customer " + currentCustomers + "/" + MAX_CUSTOMERS
+        Gdx.app.log("SPAWNER", "spawned customer " + currentCustomers + "/" + tableManager.getTotalCapacity()
             + " interval=" + getSpawnInterval() + "s score=" + levelSystem.getScore());
     }
 

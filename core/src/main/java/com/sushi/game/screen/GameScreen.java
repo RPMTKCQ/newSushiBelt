@@ -71,35 +71,29 @@ public class GameScreen extends ScreenAdapter {
     public GameScreen(SushiGame game) {
         this.game = game;
 
-        // core
         this.physicWorld = new World(Vector2.Zero, true);
         this.physicWorld.setAutoClearForces(false);
         this.audioService = game.getAudioService();
         this.engine = new Engine();
 
-        // tiled
         this.tiledService = new TiledService(game.getAssetService(), this.physicWorld);
         this.tiledAshleyConfigurator = new TiledAshleyConfigurator(this.engine, game.getAssetService(), physicWorld);
 
-        // input
         this.keyboardController = new KeyboardController(GameControllerState.class, engine);
 
-        // factories
         this.tableManager    = new TableManager();
         this.customerFactory = new CustomerFactory(engine, physicWorld, game.getAssetService());
         this.chefFactory     = new ChefFactory(engine, game.getAssetService());
         this.chefSpawner     = new ChefSpawner(chefFactory);
 
-        // ui
         this.skin         = game.getAssetService().get(SkinAsset.DEFAULT);
         this.uiViewport   = new FitViewport(1920f, 1080f);
         this.stage        = new Stage(uiViewport, game.getBatch());
-        this.gameScreenUI = new GameScreenUI(stage,
-            game.getAssetService().get(SkinAsset.GAME),
-            game.getAssetService());
 
-        // systems — levelSystem must be created before customerSpawner
-        // so the spawner can read score for dynamic max-customer scaling
+        Skin gameUISkin = game.getAssetService().get(SkinAsset.GAME);
+
+        this.gameScreenUI = new GameScreenUI(stage, gameUISkin, game.getAssetService());
+
         this.powerUpSystem = new PowerUpSystem(engine);
         this.levelSystem   = new LevelSystem(gameScreenUI, powerUpSystem);
 
@@ -110,9 +104,9 @@ public class GameScreen extends ScreenAdapter {
         this.conveyorSystem = new ConveyorSystem();
         this.chefSystem     = new ChefSystem(gameScreenUI, engine, physicWorld, game.getAssetService(), conveyorSystem);
 
-        // CustomerRenderSystem managed manually — NOT added to engine
+        // FIX: Passes the correct UI skin (SkinAsset.GAME) so it finds the "receipt" font for the $$$
         this.customerRenderSystem = new CustomerRenderSystem(
-            game.getCamera(), game.getAssetService(), game.getBatch(), engine);
+            game.getCamera(), gameUISkin, game.getAssetService(), game.getBatch(), engine);
 
         engine.addSystem(new CustomerSystem(physicWorld, tableManager, engine,
             gameScreenUI, levelSystem, strikeSystem));
@@ -121,7 +115,9 @@ public class GameScreen extends ScreenAdapter {
         engine.addSystem(strikeSystem);
         engine.addSystem(chefSystem);
         engine.addSystem(conveyorSystem);
-        engine.addSystem(new ControllerSystem(game.getAudioService(), this.physicWorld, gameScreenUI));
+
+        engine.addSystem(new ControllerSystem(game.getAudioService(), this.physicWorld, gameScreenUI, levelSystem, strikeSystem));
+
         engine.addSystem(new FsmSystem());
         engine.addSystem(new FacingSystem());
         engine.addSystem(new PhysicMoveSystem());
@@ -158,7 +154,6 @@ public class GameScreen extends ScreenAdapter {
             customerSpawner.loadSpawnPoints(objectLayer.getObjects());
             chefSpawner.loadSpawnPoints(objectLayer.getObjects());
         }
-        // belt_spawn and belt_waypoint points can be in any layer — check both
         if (objectLayer != null)      conveyorSystem.loadBelt(objectLayer.getObjects());
         if (smallObjectLayer != null) conveyorSystem.loadBelt(smallObjectLayer.getObjects());
         chefSpawner.spawnAll();
@@ -173,20 +168,16 @@ public class GameScreen extends ScreenAdapter {
     public void render(float delta) {
         delta = Math.min(delta, 1 / 30f);
 
-        // game logic
         customerSpawner.update(delta);
         engine.update(delta);
 
-        // customer bubbles + anger bars — drawn after engine, batch is free
         customerRenderSystem.update(delta);
 
-        // ui
         uiViewport.apply();
         stage.getBatch().setColor(Color.WHITE);
         stage.act(delta);
         stage.draw();
 
-        // tick receipt patience bars
         gameScreenUI.updateReceipts(delta);
     }
 

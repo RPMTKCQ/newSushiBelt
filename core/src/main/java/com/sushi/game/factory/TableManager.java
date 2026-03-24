@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
 import com.sushi.game.SushiGame;
 import com.sushi.game.model.SeatData;
 import com.sushi.game.model.TableData;
@@ -23,32 +22,27 @@ public class TableManager {
                 int tableId = obj.getProperties().get("tableId", 0, Integer.class);
                 int seats = obj.getProperties().get("seats", 2, Integer.class);
 
-                // get table coords
                 float x = obj.getProperties().get("x", 0f, Float.class);
                 float y = obj.getProperties().get("y", 0f, Float.class);
 
+                Gdx.app.log("TABLE", "id=" + tableId + " seats=" + seats + " x=" + x + " y=" + y);
 
-                Gdx.app.log("TABLE", "id=" + tableId + " seats=" + seats + " x=" + x + " y=" + y); // temp log
-
-                //convert pixels to world units
                 Vector2 position = new Vector2(x, y).scl(SushiGame.UNIT_SCALE);
-                tables.add(new TableData(tableId, position, seats));
+                TableData tableData = new TableData(tableId, position, seats);
+                tables.add(tableData);
             }
-        }
-        for (MapObject obj : objects) {
-            if ("seat".equals(obj.getName())) {
-                int tableId = obj.getProperties().get("tableId", 0, Integer.class);
-                int seatIndex = obj.getProperties().get("seatIndex", 2, Integer.class);
+            else if ("seat".equals(obj.getName())) {
 
-                // get seat coords
+                int tableId = obj.getProperties().get("tableId", 0, Integer.class);
+                int seatIndex = obj.getProperties().get("seatIndex", 0, Integer.class);
                 float x = obj.getProperties().get("x", 0f, Float.class);
                 float y = obj.getProperties().get("y", 0f, Float.class);
+
                 Gdx.app.log("SEAT", "loading seat tableId=" + tableId + " seatIndex=" + seatIndex + " x=" + x + " y=" + y);
-                //seat position + new seatData object
+
                 Vector2 position = new Vector2(x, y).scl(SushiGame.UNIT_SCALE);
                 SeatData seatData = new SeatData(tableId, seatIndex, position);
 
-                //find matching table and add seat
                 for (TableData table : tables) {
                     Gdx.app.log("SEAT", "checking table.tableId=" + table.tableId);
                     if (table.tableId == tableId) {
@@ -58,12 +52,9 @@ public class TableManager {
                     }
                 }
             }
-
         }
     }
 
-
-    // return free table
     public TableData claimFreeTable() {
         for (TableData table : tables) {
             if (table.hasFreeSeats() && !table.seats.isEmpty()) {
@@ -71,7 +62,7 @@ public class TableManager {
                 return table;
             }
         }
-        return null; // restaurant is full
+        return null;
     }
 
     public void vacateTable(int tableId) {
@@ -93,6 +84,13 @@ public class TableManager {
     public int getTableCount() {
         return tables.size();
     }
+
+    // ADDED: Calculates absolute maximum capacity based on map layout
+    public int getTotalCapacity() {
+        int capacity = 0;
+        for (TableData table : tables) {
+            capacity += table.totalSeats;
+        }
+        return capacity;
+    }
 }
-
-

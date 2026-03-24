@@ -76,7 +76,6 @@ public class ConveyorSystem extends IteratingSystem {
         DishOnBelt dish = DishOnBelt.MAPPER.get(entity);
 
         if (dish.pickedUp) {
-            // destroy body manually since we're not using Physic component
             if (dish.body != null) {
                 dish.body.getWorld().destroyBody(dish.body);
                 dish.body = null;
@@ -91,7 +90,7 @@ public class ConveyorSystem extends IteratingSystem {
         Vector2 pos = transform.getPosition();
 
         int targetIdx = dish.waypointIndex;
-        if (targetIdx >= waypoints.size()) return;  // at end, stopped
+        if (targetIdx >= waypoints.size()) return;
 
         if (isDishAhead(entity, pos, dish.waypointIndex)) return;
 
@@ -107,23 +106,40 @@ public class ConveyorSystem extends IteratingSystem {
             pos.add(dir.nor().scl(step));
         }
 
-        // sync body position manually (no PhysicSystem involved)
         if (dish.body != null) {
             dish.body.setTransform(pos.x, pos.y, 0f);
         }
     }
 
+    // FIX: Completely resolved the gridlock collision bug.
     private boolean isDishAhead(Entity self, Vector2 myPos, int myWaypointIdx) {
         for (Entity other : getEntities()) {
             if (other == self) continue;
             DishOnBelt otherDish = DishOnBelt.MAPPER.get(other);
-            if (otherDish == null || otherDish.pickedUp) continue;
-            if (otherDish.waypointIndex < myWaypointIdx) continue;
+
+            if (otherDish == null || otherDish.pickedUp || otherDish.waypointIndex >= waypoints.size()) continue;
 
             Transform otherTransform = Transform.MAPPER.get(other);
             if (otherTransform == null) continue;
 
-            if (myPos.dst(otherTransform.getPosition()) < MIN_DISH_SPACING) return true;
+            // If the other dish is aiming for an earlier waypoint, it is behind us.
+            if (otherDish.waypointIndex < myWaypointIdx) continue;
+
+            // If both dishes are aiming for the EXACT same waypoint, determine who is closer to it.
+            if (otherDish.waypointIndex == myWaypointIdx) {
+                Vector2 target = waypoints.get(myWaypointIdx);
+                float myDistToTarget = myPos.dst(target);
+                float otherDistToTarget = otherTransform.getPosition().dst(target);
+
+                // If the other dish is further away from the goal, it is behind us. Ignore it.
+                if (otherDistToTarget > myDistToTarget) {
+                    continue;
+                }
+            }
+
+            // If we get here, the other dish is definitely ahead of us.
+            // Check if we are too close.
+            if (myPos.dst(otherTransform.getPosition()) < (MIN_DISH_SPACING * 0.9f)) return true;
         }
         return false;
     }

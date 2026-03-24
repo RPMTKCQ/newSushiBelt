@@ -17,12 +17,17 @@ public class ControllerSystem extends IteratingSystem {
     private final AudioService audioService;
     private final World world;
     private final GameScreenUI gameScreenUI;
+    private final LevelSystem levelSystem;
+    private final StrikeSystem strikeSystem;
 
-    public ControllerSystem(AudioService audioService, World world, GameScreenUI gameScreenUI) {
+    public ControllerSystem(AudioService audioService, World world, GameScreenUI gameScreenUI,
+                            LevelSystem levelSystem, StrikeSystem strikeSystem) {
         super(Family.all(Controller.class).get());
         this.audioService = audioService;
         this.world        = world;
         this.gameScreenUI = gameScreenUI;
+        this.levelSystem  = levelSystem;
+        this.strikeSystem = strikeSystem;
     }
 
     @Override
@@ -32,7 +37,6 @@ public class ControllerSystem extends IteratingSystem {
             controller.getReleasedCommands().isEmpty()) return;
 
         for (Command command : controller.getPressedCommands()) {
-            Gdx.app.log("CMD", "processing: " + command);
             switch (command) {
                 case UP     -> moveEntity(entity,  0f,  1f);
                 case DOWN   -> moveEntity(entity,  0f, -1f);
@@ -73,7 +77,6 @@ public class ControllerSystem extends IteratingSystem {
 
                 Entity nearby = (Entity) userData;
 
-                // try pick up dish from belt
                 DishOnBelt dish = DishOnBelt.MAPPER.get(nearby);
                 if (dish != null && !dish.pickedUp && !inventory.isFull()) {
                     inventory.addDish(dish.dishId);
@@ -84,7 +87,6 @@ public class ControllerSystem extends IteratingSystem {
                     return false;
                 }
 
-                // try interact with customer
                 Customer     customer     = Customer.MAPPER.get(nearby);
                 Interactable interactable = Interactable.MAPPER.get(nearby);
                 if (customer == null || interactable == null) return true;
@@ -94,13 +96,14 @@ public class ControllerSystem extends IteratingSystem {
                     case ORDERING -> {
                         gameScreenUI.addOrder(
                             customer.orderItemId,
-                            String.valueOf(customer.tableId),
+                            String.valueOf(customer.id), // CRITICAL: Now uses unique ID
                             customer.maxPatience - customer.stateTimer
                         );
                         customer.state      = Customer.CustomerState.WAITING_FOR_FOOD;
                         customer.stateTimer = 0f;
                     }
                     case WAITING_FOR_FOOD -> deliverFood(nearby, customer, playerEntity, inventory);
+                    case PAYING -> collectPayment(nearby, customer);
                     default -> { return true; }
                 }
                 interacted[0] = true;
@@ -111,7 +114,6 @@ public class ControllerSystem extends IteratingSystem {
     }
 
     private void submitReceiptToChef(Entity playerEntity) {
-        // block if chef is already busy
         if (gameScreenUI.isChefReady() || gameScreenUI.isChefCooking()) {
             Gdx.app.log("BUZZER", "chef busy, ignoring");
             return;
@@ -140,10 +142,8 @@ public class ControllerSystem extends IteratingSystem {
                     return false;
                 }
 
-                // snapshot whether the queue was sorted before handing off to chef
                 boolean sorted = gameScreenUI.isQueueSortedByUrgency();
                 gameScreenUI.setLastSubmitSorted(sorted);
-                // pin the cooking bar to this specific card before chef takes over
                 gameScreenUI.startCookingFor(gameScreenUI.getFirstCustomerId());
                 gameScreenUI.setChefReady(true);
 
@@ -173,12 +173,24 @@ public class ControllerSystem extends IteratingSystem {
         }
         inventory.removeDish(customer.orderItemId);
         gameScreenUI.updateInventory(inventory.dishes);
-        gameScreenUI.onOrderDelivered(String.valueOf(customer.tableId));
-        // set to EATING with timer already at max so CustomerSystem triggers
-        // score/level/strike on the very next frame then immediately goes to LEAVING
+
+        customer.servedSorted = gameScreenUI.wasLastSubmitSorted();
+        customer.servedLate   = customer.leftAngry;
+
+        gameScreenUI.removeOrder(String.valueOf(customer.id)); // CRITICAL: Remove by unique ID
+
         customer.state      = Customer.CustomerState.EATING;
-        customer.stateTimer = 999f;
+        customer.stateTimer = 0f;
         Gdx.app.log("DELIVER", "delivered: " + customer.orderItemId);
+    }
+
+    private void collectPayment(Entity customerEntity, Customer customer) {
+        levelSystem.onServeCompleted(customer.servedSorted, customer.servedLate);
+        strikeSystem.onServeCompleted();
+
+        customer.state      = Customer.CustomerState.LEAVING;
+        customer.stateTimer = 0f;
+        Gdx.app.log("PAYMENT", "collected from table " + customer.tableId);
     }
 
     private void moveEntity(Entity entity, float directionX, float directionY) {

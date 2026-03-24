@@ -40,65 +40,57 @@ public class ChefSystem extends IteratingSystem {
 
         switch (chef.state) {
             case IDLE:
-                tryStartCooking(chef);
+                // Check if the player has submitted an order via the buzzer
+                if (gameScreenUI.isChefReady()) {
+                    String dishToCook = gameScreenUI.getFirstDishName();
+                    if (dishToCook != null) {
+                        chef.currentRecipeId = dishToCook;
+                        chef.cookTimer       = 0f;
+                        chef.cookDuration    = 3f; // Base cooking time
+                        chef.state           = Chef.ChefState.COOKING;
+
+                        gameScreenUI.setChefReady(false);
+                        gameScreenUI.setChefCooking(true);
+                        Gdx.app.log("CHEF", "started cooking: " + dishToCook);
+                    }
+                }
                 break;
+
             case COOKING:
                 chef.cookTimer += deltaTime;
-                if (chef.cookDuration > 0f) {
-                    gameScreenUI.updateCookingProgress(chef.cookTimer / chef.cookDuration);
-                }
+                float progress = chef.cookTimer / chef.cookDuration;
+                gameScreenUI.updateCookingProgress(progress);
+
                 if (chef.cookTimer >= chef.cookDuration) {
-                    finishCooking(entity, chef);
+                    chef.state = Chef.ChefState.DONE;
+                    gameScreenUI.setChefCooking(false);
+                    gameScreenUI.resetCookingBar();
                 }
                 break;
+
             case DONE:
+                spawnDishOnBelt(chef.currentRecipeId);
+                chef.state = Chef.ChefState.IDLE;
+                chef.currentRecipeId = null;
+                Gdx.app.log("CHEF", "finished cooking, dish on belt");
                 break;
         }
-    }
-
-    private void tryStartCooking(Chef chef) {
-        if (!gameScreenUI.isChefReady()) return;
-
-        String nextDish = gameScreenUI.getFirstDishName();
-        if (nextDish == null) return;
-
-        chef.currentRecipeId = nextDish;
-        chef.cookDuration    = getCookDuration(nextDish);
-        chef.cookTimer       = 0f;
-        chef.state           = Chef.ChefState.COOKING;
-        gameScreenUI.setChefReady(false);
-        gameScreenUI.setChefCooking(true);
-        Gdx.app.log("CHEF", "started cooking: " + nextDish);
-    }
-
-    private void finishCooking(Entity chefEntity, Chef chef) {
-        chef.cookTimer = 0f;
-        spawnDishOnBelt(chef.currentRecipeId);
-        gameScreenUI.removeFirstOrder();
-        gameScreenUI.setChefCooking(false);
-        gameScreenUI.resetCookingBar();
-        chef.state           = Chef.ChefState.IDLE;
-        chef.currentRecipeId = null;
-        Gdx.app.log("CHEF", "finished cooking, dish on belt");
     }
 
     private void spawnDishOnBelt(String dishId) {
-        if (!conveyorSystem.isBeltLoaded()) {
-            Gdx.app.log("CHEF", "belt not loaded, can't spawn dish!");
-            return;
-        }
+        if (!conveyorSystem.isBeltLoaded()) return;
 
+        Vector2 position = conveyorSystem.getSpawnPoint();
+        TextureAtlas atlas = assetService.get(AtlasAsset.OBJECTS);
         String regionName = "Food/" + dishId.replace("_", "-");
-        TextureAtlas.AtlasRegion region =
-            assetService.get(AtlasAsset.OBJECTS).findRegion(regionName);
+        TextureAtlas.AtlasRegion region = atlas.findRegion(regionName);
+
         if (region == null) {
-            Gdx.app.log("CHEF", "WARNING: region not found: " + regionName);
+            Gdx.app.error("CHEF", "Could not find texture for dish: " + regionName);
             return;
         }
 
-        Vector2 position = conveyorSystem.getSpawnPoint().cpy();
-        Vector2 size = new Vector2(region.getRegionWidth(), region.getRegionHeight())
-            .scl(SushiGame.UNIT_SCALE);
+        Vector2 size = new Vector2(region.getRegionWidth(), region.getRegionHeight()).scl(SushiGame.UNIT_SCALE);
 
         Entity dish = engine.createEntity();
         dish.add(new Transform(position.cpy(), 3, size, new Vector2(1f, 1f), 0f));
@@ -125,21 +117,10 @@ public class ChefSystem extends IteratingSystem {
         body.createFixture(fixtureDef);
         shape.dispose();
 
-        // store body in DishOnBelt — NOT as a Physic component so PhysicSystem
-        // never interpolates the dish transform (which caused the teleport bug)
+        // Store body in DishOnBelt to avoid PhysicSystem interpolation issues
         dishOnBelt.body = body;
 
         engine.addEntity(dish);
-
         Gdx.app.log("CHEF", "spawned " + dishId + " at " + position);
-    }
-
-    private float getCookDuration(String dishId) {
-        switch (dishId) {
-            case "tuna_roll":     return 5f;
-            case "salmon_nigiri": return 6f;
-            case "maguro_nigiri": return 7f;
-            default:              return 5f;
-        }
     }
 }

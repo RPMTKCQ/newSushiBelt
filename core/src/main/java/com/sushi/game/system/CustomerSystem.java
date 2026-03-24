@@ -55,7 +55,6 @@ public class CustomerSystem extends IteratingSystem {
                 break;
 
             case ORDERING:
-                // customer never got their order taken — satisfaction hit, leave
                 if (customer.stateTimer >= customer.maxPatience) {
                     customer.leftAngry  = true;
                     customer.state      = Customer.CustomerState.LEAVING;
@@ -66,24 +65,23 @@ public class CustomerSystem extends IteratingSystem {
                 break;
 
             case WAITING_FOR_FOOD:
-                // timer ran out — satisfaction hit, mark late, but customer STAYS
-                // they will leave when the player eventually delivers (or indefinitely wait)
                 if (!customer.leftAngry && customer.stateTimer >= customer.maxPatience) {
-                    customer.leftAngry = true;   // reuse leftAngry as "delivered late" flag
+                    customer.leftAngry = true;
                     strikeSystem.onCustomerLeft();
                     Gdx.app.log("CUSTOMER", "patience ran out — satisfaction hit, but still waiting");
                 }
                 break;
 
             case EATING:
-                // stateTimer is set to 999f by ControllerSystem on delivery — fires next frame
-                if (customer.stateTimer >= 8f) {
-                    // leftAngry = true means timer already expired before delivery (late)
-                    levelSystem.onServeCompleted(gameScreenUI.wasLastSubmitSorted(), customer.leftAngry);
-                    strikeSystem.onServeCompleted();
-                    customer.state      = Customer.CustomerState.LEAVING;
+                // Eats for exactly 5 seconds
+                if (customer.stateTimer >= 5f) {
+                    customer.state      = Customer.CustomerState.PAYING;
                     customer.stateTimer = 0f;
                 }
+                break;
+
+            case PAYING:
+                // Sits indefinitely waiting for player to collect money
                 break;
 
             case LEAVING:
@@ -123,6 +121,7 @@ public class CustomerSystem extends IteratingSystem {
                     Physic physic = Physic.MAPPER.get(entity);
                     if (physic != null && physic.getBody() != null) {
                         physic.getBody().setTransform(seatPos, 0f);
+                        physic.getPrevPosition().set(seatPos);
                     }
 
                     Animation2D anim = Animation2D.MAPPER.get(entity);
