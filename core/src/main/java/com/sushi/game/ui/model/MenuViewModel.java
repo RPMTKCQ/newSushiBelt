@@ -30,8 +30,12 @@ public class MenuViewModel extends ViewModel{
         this.audioService.setSoundVolume(volume);
     }
 
-    public void startGame() {
-        game.setScreen(GameScreen.class);
+    public void startLevelMode() {
+        game.setScreen(new GameScreen(game, false));
+    }
+
+    public void startEndlessMode() {
+        game.setScreen(new GameScreen(game, true));
     }
 
     public void quitGame() {

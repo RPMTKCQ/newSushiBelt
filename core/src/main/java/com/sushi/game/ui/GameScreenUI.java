@@ -28,14 +28,16 @@ public class GameScreenUI {
     private final Skin skin;
     private final AssetService assetService;
 
+    private Label timerLabel;
     private Label moneyLabel;
     private Label scoreLabel;
     private Label levelLabel;
     private Label satisfactionLabel;
     private ProgressBar xpBar;
 
+    private Table pauseOverlay;
     private Table powerUpOverlay;
-    private Table eventLogTable; // NEW: The RimWorld style event log
+    private Table eventLogTable;
     private final Table[] inventorySlots = new Table[3];
     private Table receiptRow;
     private final List<ReceiptCardData> receiptCards = new ArrayList<>();
@@ -80,7 +82,6 @@ public class GameScreenUI {
         build();
     }
 
-    // NEW METHOD: Adds a fading text log to the bottom right of the screen
     public void addLogEvent(String message, com.badlogic.gdx.graphics.Color color) {
         Label logLabel = new Label(message, skin, "receipt");
         logLabel.setColor(color);
@@ -278,9 +279,13 @@ public class GameScreenUI {
         }
     }
 
+    public void updateTimer(String timeText) {
+        if (timerLabel != null) timerLabel.setText(timeText);
+    }
+
     public void setMoney(int money)              { moneyLabel.setText("Money: " + money + "$"); }
     public void setScore(int score)              { scoreLabel.setText("Score: " + score); }
-    public void setSatisfaction(float pct)       { satisfactionLabel.setText(String.format("Reputation: %.0f%%", pct)); }
+    public void setSatisfaction(float ratio)     { satisfactionLabel.setText(String.format("Satisfaction: %.0f%%", ratio * 100)); }
 
     public void setXp(int xp, int xpToNext, int level) {
         levelLabel.setText("Level: " + level + "/10");
@@ -320,6 +325,40 @@ public class GameScreenUI {
         powerUpOverlay.setTouchable(Touchable.disabled);
     }
 
+    public void togglePauseOverlay(boolean isPaused, Runnable onResume, Runnable onQuit) {
+        if (pauseOverlay == null) {
+            pauseOverlay = new Table();
+            pauseOverlay.setFillParent(true);
+
+            com.badlogic.gdx.graphics.Pixmap pixmap = new com.badlogic.gdx.graphics.Pixmap(1, 1, com.badlogic.gdx.graphics.Pixmap.Format.RGBA8888);
+            pixmap.setColor(new com.badlogic.gdx.graphics.Color(0f, 0f, 0f, 0.75f));
+            pixmap.fill();
+            com.badlogic.gdx.graphics.Texture tex = new com.badlogic.gdx.graphics.Texture(pixmap);
+            pauseOverlay.setBackground(new com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable(tex));
+
+            Label title = new Label("GAME PAUSED", skin, "title");
+            title.setAlignment(Align.center);
+
+            TextButton resumeBtn = new TextButton("Resume", skin);
+            resumeBtn.addListener(new ClickListener() {
+                @Override public void clicked(InputEvent event, float x, float y) { onResume.run(); }
+            });
+
+            TextButton quitBtn = new TextButton("Quit", skin);
+            quitBtn.addListener(new ClickListener() {
+                @Override public void clicked(InputEvent event, float x, float y) { onQuit.run(); }
+            });
+
+            pauseOverlay.add(title).padBottom(40f).row();
+            pauseOverlay.add(resumeBtn).minSize(300f, 80f).padBottom(20f).row();
+            pauseOverlay.add(quitBtn).minSize(300f, 80f);
+
+            stage.addActor(pauseOverlay);
+        }
+        pauseOverlay.setVisible(isPaused);
+        pauseOverlay.toFront();
+    }
+
     private void build() {
         Table root = new Table();
         root.setName("GameScreen");
@@ -343,7 +382,7 @@ public class GameScreenUI {
         midRow.add().grow();
         midRow.add(powerUpOverlay).growX();
         midRow.add().grow();
-        root.add(midRow).grow(); // Ensures the spacer acts as a pillar
+        root.add(midRow).grow();
         root.row();
 
         root.add(buildInventoryRow()).padBottom(40f).growX()
@@ -351,7 +390,6 @@ public class GameScreenUI {
 
         stage.addActor(root);
 
-        // NEW: Build the invisible overlay specifically for the Event Logs
         Table logRoot = new Table();
         logRoot.setFillParent(true);
         logRoot.setTouchable(Touchable.disabled);
@@ -384,9 +422,7 @@ public class GameScreenUI {
 
     private void attachDragListener(Table card, ReceiptCardData data) {
         card.addListener(new DragListener() {
-            {
-                setTapSquareSize(4f);
-            }
+            { setTapSquareSize(4f); }
 
             @Override
             public void dragStart(InputEvent e, float x, float y, int ptr) {
@@ -403,7 +439,6 @@ public class GameScreenUI {
             @Override
             public void drag(InputEvent e, float x, float y, int ptr) {
                 if ((cookingCustomerId != null && data.customerId.equals(cookingCustomerId)) || data.cooked) return;
-
                 card.moveBy(x - card.getWidth() / 2f, 0);
 
                 int from = receiptCards.indexOf(data);
@@ -461,8 +496,11 @@ public class GameScreenUI {
         panel.row();
 
         Table levelRow = new Table();
+        timerLabel = new Label("3:00", skin, "powerup");
         levelLabel = new Label("Level: 1/10", skin, "powerup");
         xpBar = new ProgressBar(0f, 100f, 1f, false, skin, "customerSatisfaction");
+
+        levelRow.add(timerLabel).spaceRight(30f);
         levelRow.add(levelLabel).spaceRight(30f);
         levelRow.add(xpBar).expandX().minHeight(20f);
         panel.add(levelRow).expandX().align(Align.right);
@@ -513,10 +551,7 @@ public class GameScreenUI {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 powerUpSystem.applyPowerUp(type);
-
-                // Add the log event when a power up is successfully picked!
                 addLogEvent("Power-Up Activated: " + type.displayName(), com.badlogic.gdx.graphics.Color.CYAN);
-
                 hideOverlay();
             }
         });

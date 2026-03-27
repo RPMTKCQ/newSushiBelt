@@ -20,6 +20,9 @@ public class LevelSystem extends EntitySystem {
 
     private final GameScreenUI gameScreenUI;
     private final PowerUpSystem powerUpSystem;
+    private final boolean isEndlessMode;
+    private final Runnable onWin;
+    private final Runnable onGameOver;
 
     private int level         = 1;
     private int xp            = 0;
@@ -27,21 +30,63 @@ public class LevelSystem extends EntitySystem {
     private int score         = 0;
     private int money         = 100;
 
-    // Tracks when you hit the 100-point difficulty spikes
     private int lastScoreBracket = 0;
 
-    public LevelSystem(GameScreenUI gameScreenUI, PowerUpSystem powerUpSystem) {
+    // Timer & Game Modes
+    private float timeLeft = 180f; // 3 minutes
+    private static final int FINANCIAL_QUOTA = 200;
+
+    // Reputation Tracking
+    private int successfulServes = 0;
+    private int totalProcessed = 0;
+
+    public LevelSystem(GameScreenUI gameScreenUI, PowerUpSystem powerUpSystem, boolean isEndlessMode, Runnable onWin, Runnable onGameOver) {
         this.gameScreenUI  = gameScreenUI;
         this.powerUpSystem = powerUpSystem;
+        this.isEndlessMode = isEndlessMode;
+        this.onWin = onWin;
+        this.onGameOver = onGameOver;
+
         gameScreenUI.setScore(score);
         gameScreenUI.setMoney(money);
         gameScreenUI.setXp(xp, xpToNextLevel, level);
+
+        if (isEndlessMode) {
+            gameScreenUI.updateTimer("ENDLESS");
+        }
     }
 
     public int getScore() { return score; }
     public int getLevel() { return level; }
+    public int getMoney() { return money; }
+
+    @Override
+    public void update(float deltaTime) {
+        if (!isEndlessMode) {
+            timeLeft -= deltaTime;
+            if (timeLeft < 0) timeLeft = 0;
+
+            int minutes = (int) (timeLeft / 60);
+            int seconds = (int) (timeLeft % 60);
+            gameScreenUI.updateTimer(String.format("%d:%02d", minutes, seconds));
+
+            if (timeLeft <= 0) {
+                if (money >= FINANCIAL_QUOTA) {
+                    onWin.run();
+                } else {
+                    gameScreenUI.addLogEvent("FAILED TO MEET QUOTA!", com.badlogic.gdx.graphics.Color.RED);
+                    onGameOver.run();
+                }
+            }
+        }
+    }
 
     public void onServeCompleted(boolean sortedCorrectly, boolean lateDelivery) {
+        totalProcessed++;
+        if (!lateDelivery) {
+            successfulServes++;
+        }
+
         float scoreMultiplier = powerUpSystem.getRushHourMultiplier();
         float moneyMultiplier = powerUpSystem.getDoubleTipsMultiplier();
 
@@ -59,7 +104,6 @@ public class LevelSystem extends EntitySystem {
         int gainedMoney = (int) (baseMoney * moneyMultiplier);
         money += gainedMoney;
 
-        // Check for Milestone difficulty spikes!
         int newBracket = score / 100;
         if (newBracket > lastScoreBracket) {
             lastScoreBracket = newBracket;
@@ -76,9 +120,29 @@ public class LevelSystem extends EntitySystem {
             levelUp();
         }
 
+        checkReputation();
         gameScreenUI.setScore(score);
         gameScreenUI.setMoney(money);
         gameScreenUI.setXp(xp, xpToNextLevel, level);
+    }
+
+    public void onCustomerLeftAngry() {
+        totalProcessed++;
+        gameScreenUI.addLogEvent("A customer left in anger!", com.badlogic.gdx.graphics.Color.RED);
+        checkReputation();
+    }
+
+    private void checkReputation() {
+        // Grace period of 5 customers before failing you
+        if (totalProcessed >= 5) {
+            float reputation = (float) successfulServes / totalProcessed;
+            gameScreenUI.setSatisfaction(reputation);
+
+            if (reputation < 0.5f) {
+                gameScreenUI.addLogEvent("REPUTATION TOO LOW! RESTAURANT CLOSED!", com.badlogic.gdx.graphics.Color.RED);
+                onGameOver.run();
+            }
+        }
     }
 
     private void levelUp() {

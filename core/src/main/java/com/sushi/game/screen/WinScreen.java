@@ -10,18 +10,18 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.sushi.game.SushiGame;
 import com.sushi.game.asset.SkinAsset;
 
-public class GameOverScreen extends ScreenAdapter {
+public class WinScreen extends ScreenAdapter {
 
     private final SushiGame game;
-    private final Stage     stage;
-    private final int       finalScore;
-    private final boolean   isEndlessMode;
+    private final Stage stage;
+    private final int finalScore;
+    private final int finalMoney;
 
-    public GameOverScreen(SushiGame game, int finalScore, boolean isEndlessMode) {
-        this.game          = game;
-        this.finalScore    = finalScore;
-        this.isEndlessMode = isEndlessMode;
-        this.stage         = new Stage(new FitViewport(1920f, 1080f), game.getBatch());
+    public WinScreen(SushiGame game, int finalScore, int finalMoney) {
+        this.game = game;
+        this.finalScore = finalScore;
+        this.finalMoney = finalMoney;
+        this.stage = new Stage(new FitViewport(1920f, 1080f), game.getBatch());
         build();
     }
 
@@ -32,20 +32,17 @@ public class GameOverScreen extends ScreenAdapter {
         root.setFillParent(true);
         root.center();
 
-        Label title = new Label("GAME OVER", skin, "powerup");
+        Label title = new Label("SUCCESS!", skin, "powerup");
         title.setAlignment(Align.center);
 
-        Label score = new Label("Final Score: " + finalScore, skin, "receipt");
-        score.setAlignment(Align.center);
+        Label subtitle = new Label("Financial Quota Exceeded!", skin, "powerup");
+        subtitle.setAlignment(Align.center);
 
-        TextButton retry = new TextButton("Try Again", skin);
-        retry.addListener(new ClickListener() {
-            @Override public void clicked(InputEvent event, float x, float y) {
-                // FIX: Now we pass the mode back into the new GameScreen!
-                game.setScreen(new GameScreen(game, isEndlessMode));
-                dispose();
-            }
-        });
+        Label moneyLabel = new Label("Cash Earned: $" + finalMoney, skin, "receipt");
+        moneyLabel.setAlignment(Align.center);
+
+        Label scoreLabel = new Label("Reputation Score: " + finalScore, skin, "receipt");
+        scoreLabel.setAlignment(Align.center);
 
         TextButton menu = new TextButton("Main Menu", skin);
         menu.addListener(new ClickListener() {
@@ -55,15 +52,16 @@ public class GameOverScreen extends ScreenAdapter {
             }
         });
 
-        root.add(title).padBottom(40f).row();
-        root.add(score).padBottom(60f).row();
-        root.add(retry).padBottom(20f).minSize(300f, 80f).row();
+        root.add(title).padBottom(20f).row();
+        root.add(subtitle).padBottom(40f).row();
+        root.add(moneyLabel).padBottom(10f).row();
+        root.add(scoreLabel).padBottom(60f).row();
         root.add(menu).minSize(300f, 80f);
 
         stage.addActor(root);
     }
 
-    @Override public void show()  { game.setInputProcessors(stage); }
+    @Override public void show() { game.setInputProcessors(stage); }
     @Override public void render(float delta) {
         stage.act(delta);
         stage.draw();

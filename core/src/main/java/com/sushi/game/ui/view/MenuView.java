@@ -25,8 +25,8 @@ public class MenuView extends View<MenuViewModel> {
     private boolean rightPressed = false;
     private float holdTimer = 0f;
     private float repeatTimer = 0f;
-    private static final float HOLD_DELAY = 0.2f;  // 1 second before fast-sliding starts
-    private static final float REPEAT_RATE = 0.1f; // How fast it slides once holding
+    private static final float HOLD_DELAY = 0.2f;
+    private static final float REPEAT_RATE = 0.1f;
 
     public MenuView(Stage stage, Skin skin, MenuViewModel viewModel) {
         super(stage, skin, viewModel);
@@ -101,14 +101,19 @@ public class MenuView extends View<MenuViewModel> {
         contentTable.padTop(40.0f);
         contentTable.padBottom(43.0f);
 
-        TextButton textButton = new TextButton("Start", skin);
-        textButton.setName(MenuOption.START_GAME.name());
-        textButton.setColor(skin.getColor("white"));
-        onClick(textButton, viewModel::startGame);
-        onEnter(textButton, this::selectMenuItem);
-        contentTable.add(textButton).minWidth(100.0f).fillX();
+        TextButton btnLevel = new TextButton("Level", skin);
+        btnLevel.setName(MenuOption.START_LEVEL.name());
+        btnLevel.setColor(skin.getColor("white"));
+        onClick(btnLevel, viewModel::startLevelMode);
+        onEnter(btnLevel, this::selectMenuItem);
+        contentTable.add(btnLevel).minWidth(150.0f).fillX().row();
 
-        contentTable.row();
+        TextButton btnEndless = new TextButton("Endless", skin);
+        btnEndless.setName(MenuOption.START_ENDLESS.name());
+        btnEndless.setColor(skin.getColor("white"));
+        onClick(btnEndless, viewModel::startEndlessMode);
+        onEnter(btnEndless, this::selectMenuItem);
+        contentTable.add(btnEndless).minWidth(150.0f).fillX().padTop(10f).row();
 
         Slider musicSlider = setupVolumeSlider(contentTable,"Music Volume", MenuOption.MUSIC_VOLUME);
         musicSlider.setValue(viewModel.getMusicVolume());
@@ -153,14 +158,13 @@ public class MenuView extends View<MenuViewModel> {
         super.act(delta);
 
         if (!isInitialSelectionDone) {
-            this.selectedItem = findActor(MenuOption.START_GAME.name());
+            this.selectedItem = findActor(MenuOption.START_LEVEL.name());
             if (this.selectedItem != null) {
                 selectMenuItem(this.selectedItem);
             }
             isInitialSelectionDone = true;
         }
 
-        // Key Repeat Logic for Sliders
         if (leftPressed || rightPressed) {
             holdTimer += delta;
             if (holdTimer >= HOLD_DELAY) {
@@ -196,12 +200,12 @@ public class MenuView extends View<MenuViewModel> {
             return true;
         } else if (keycode == Input.Keys.A || keycode == Input.Keys.LEFT) {
             leftPressed = true;
-            holdTimer = 0f; // Reset hold timer on fresh press
+            holdTimer = 0f;
             adjustSliderViaKeyboard(options[currentIndex], -0.1f);
             return true;
         } else if (keycode == Input.Keys.D || keycode == Input.Keys.RIGHT) {
             rightPressed = true;
-            holdTimer = 0f; // Reset hold timer on fresh press
+            holdTimer = 0f;
             adjustSliderViaKeyboard(options[currentIndex], 0.1f);
             return true;
         } else if (keycode == Input.Keys.SPACE || keycode == Input.Keys.ENTER) {
@@ -246,15 +250,18 @@ public class MenuView extends View<MenuViewModel> {
     }
 
     private void executeActionViaKeyboard(MenuOption option) {
-        if (option == MenuOption.START_GAME) {
-            viewModel.startGame();
+        if (option == MenuOption.START_LEVEL) {
+            viewModel.startLevelMode();
+        } else if (option == MenuOption.START_ENDLESS) {
+            viewModel.startEndlessMode();
         } else if (option == MenuOption.QUIT_GAME) {
             viewModel.quitGame();
         }
     }
 
     enum MenuOption {
-        START_GAME,
+        START_LEVEL,
+        START_ENDLESS,
         MUSIC_VOLUME,
         SOUND_VOLUME,
         QUIT_GAME

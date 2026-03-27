@@ -43,7 +43,6 @@ public class LoadingScreen extends ScreenAdapter {
 
     private void createScreens() {
         this.game.addScreen(new MenuScreen(this.game));
-        this.game.addScreen(new GameScreen(this.game));
-
+        // FIX: Removed the pre-caching of GameScreen so it doesn't crash here.
     }
 }

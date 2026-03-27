@@ -24,19 +24,16 @@ public class CustomerSystem extends IteratingSystem {
     private final TableManager tableManager;
     private final Engine engine;
     private final LevelSystem levelSystem;
-    private final StrikeSystem strikeSystem;
     private final GameScreenUI gameScreenUI;
 
     public CustomerSystem(World world, TableManager tableManager, Engine engine,
-                          GameScreenUI gameScreenUI, LevelSystem levelSystem,
-                          StrikeSystem strikeSystem) {
+                          GameScreenUI gameScreenUI, LevelSystem levelSystem) {
         super(Family.all(Customer.class, Transform.class).get());
         this.world        = world;
         this.tableManager = tableManager;
         this.engine       = engine;
-        this.gameScreenUI = gameScreenUI;
         this.levelSystem  = levelSystem;
-        this.strikeSystem = strikeSystem;
+        this.gameScreenUI = gameScreenUI;
     }
 
     @Override
@@ -55,21 +52,19 @@ public class CustomerSystem extends IteratingSystem {
                 break;
 
             case ORDERING:
-                // Timer fills — when it expires, customer leaves and satisfaction is penalised
                 if (customer.stateTimer >= customer.maxPatience) {
                     customer.leftAngry  = true;
                     customer.state      = Customer.CustomerState.LEAVING;
                     customer.stateTimer = 0f;
-                    strikeSystem.onCustomerLeft();
+                    levelSystem.onCustomerLeftAngry();
                     Gdx.app.log("CUSTOMER", "left angry during ordering");
                 }
                 break;
 
             case WAITING_FOR_FOOD:
-                // Bar drains to 0 — satisfaction is hit once, but customer stays seated indefinitely
                 if (!customer.leftAngry && customer.stateTimer >= customer.maxPatience) {
                     customer.leftAngry = true;
-                    strikeSystem.onCustomerLeft();
+                    levelSystem.onCustomerLeftAngry();
                     Gdx.app.log("CUSTOMER", "patience ran out — satisfaction hit, still waiting");
                 }
                 break;
@@ -128,7 +123,6 @@ public class CustomerSystem extends IteratingSystem {
                     break;
                 }
             }
-            //YELLOW BAR PATIENCE TIMER
             customer.orderItemId = POSSIBLE_ORDERS[MathUtils.random(0, POSSIBLE_ORDERS.length - 1)];
             customer.maxPatience = MathUtils.random(20f, 40f);
         }

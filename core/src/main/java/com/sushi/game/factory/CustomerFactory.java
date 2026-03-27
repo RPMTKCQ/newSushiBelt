@@ -35,8 +35,6 @@ public class CustomerFactory extends EntityFactory {
 
         Customer customer = new Customer();
         customer.spriteIndex = spriteIdx;
-
-        // patience timer random between 40 to 50 secs
         customer.maxPatience = MathUtils.random(40f, 50f);
 
         entity.add(customer);
@@ -62,8 +60,9 @@ public class CustomerFactory extends EntityFactory {
         Body body = world.createBody(bodyDef);
         body.setUserData(entity);
 
+        // FIX: Reduced radius from 0.8f to 0.35f so it stays strictly within the visual bounds!
         CircleShape sensorShape = new CircleShape();
-        sensorShape.setRadius(0.8f);
+        sensorShape.setRadius(0.35f);
         sensorShape.setPosition(new Vector2(0.5f, 0.5f));
 
         FixtureDef sensorFixture = new FixtureDef();

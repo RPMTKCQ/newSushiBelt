@@ -3,6 +3,7 @@ package com.sushi.game.screen;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -34,41 +35,36 @@ import java.util.function.Consumer;
 
 public class GameScreen extends ScreenAdapter {
 
-    // core
     private final SushiGame game;
     private final Engine engine;
     private final World physicWorld;
     private final AudioService audioService;
 
-    // tiled
     private final TiledService tiledService;
     private final TiledAshleyConfigurator tiledAshleyConfigurator;
 
-    // input
     private final KeyboardController keyboardController;
 
-    // factory / spawning
     private final TableManager tableManager;
     private final CustomerFactory customerFactory;
     private final CustomerSpawner customerSpawner;
     private final ChefFactory chefFactory;
     private final ChefSpawner chefSpawner;
 
-    // ui
     private final Skin skin;
     private final Viewport uiViewport;
     private final Stage stage;
     private final GameScreenUI gameScreenUI;
 
-    // systems
     private final PowerUpSystem powerUpSystem;
-    private final LevelSystem levelSystem;
-    private final StrikeSystem strikeSystem;
+    private LevelSystem levelSystem = null;
     private final ChefSystem chefSystem;
     private final ConveyorSystem conveyorSystem;
     private final CustomerRenderSystem customerRenderSystem;
 
-    public GameScreen(SushiGame game) {
+    private boolean isPaused = false;
+
+    public GameScreen(SushiGame game, boolean isEndlessMode) {
         this.game = game;
 
         this.physicWorld = new World(Vector2.Zero, true);
@@ -91,32 +87,27 @@ public class GameScreen extends ScreenAdapter {
         this.stage        = new Stage(uiViewport, game.getBatch());
 
         Skin gameUISkin = game.getAssetService().get(SkinAsset.GAME);
-
         this.gameScreenUI = new GameScreenUI(stage, gameUISkin, game.getAssetService());
 
         this.powerUpSystem = new PowerUpSystem(engine);
-        this.levelSystem   = new LevelSystem(gameScreenUI, powerUpSystem);
+
+        this.levelSystem = new LevelSystem(gameScreenUI, powerUpSystem, isEndlessMode,
+            () -> game.setScreen(new WinScreen(game, levelSystem.getScore(), levelSystem.getMoney())),
+            () -> game.setScreen(new GameOverScreen(game, levelSystem.getScore(), isEndlessMode)));
 
         this.customerSpawner = new CustomerSpawner(customerFactory, tableManager, engine, levelSystem);
 
-        this.strikeSystem   = new StrikeSystem(gameScreenUI, () ->
-            game.setScreen(new GameOverScreen(game, levelSystem.getScore())));
         this.conveyorSystem = new ConveyorSystem();
         this.chefSystem     = new ChefSystem(gameScreenUI, engine, physicWorld, game.getAssetService(), conveyorSystem);
+        this.customerRenderSystem = new CustomerRenderSystem(game.getCamera(), gameUISkin, game.getAssetService(), game.getBatch(), engine);
 
-        // FIX: Passes the correct UI skin (SkinAsset.GAME) so it finds the "receipt" font for the $$$
-        this.customerRenderSystem = new CustomerRenderSystem(
-            game.getCamera(), gameUISkin, game.getAssetService(), game.getBatch(), engine);
-
-        engine.addSystem(new CustomerSystem(physicWorld, tableManager, engine,
-            gameScreenUI, levelSystem, strikeSystem));
+        engine.addSystem(new CustomerSystem(physicWorld, tableManager, engine, gameScreenUI, levelSystem));
         engine.addSystem(powerUpSystem);
         engine.addSystem(levelSystem);
-        engine.addSystem(strikeSystem);
         engine.addSystem(chefSystem);
         engine.addSystem(conveyorSystem);
 
-        engine.addSystem(new ControllerSystem(game.getAudioService(), this.physicWorld, gameScreenUI, levelSystem, strikeSystem));
+        engine.addSystem(new ControllerSystem(game.getAudioService(), this.physicWorld, gameScreenUI, levelSystem));
 
         engine.addSystem(new FsmSystem());
         engine.addSystem(new FacingSystem());
@@ -125,7 +116,6 @@ public class GameScreen extends ScreenAdapter {
         engine.addSystem(new AnimationSystem(game.getAssetService()));
         engine.addSystem(new CameraSystem(game.getCamera()));
         engine.addSystem(new RenderSystem(game.getBatch(), game.getViewport(), game.getCamera()));
-//        engine.addSystem(new PhysicDebugRenderSystem(physicWorld, game.getCamera()));
 
         game.getCamera().zoom = 1f;
     }
@@ -157,34 +147,72 @@ public class GameScreen extends ScreenAdapter {
         if (objectLayer != null)      conveyorSystem.loadBelt(objectLayer.getObjects());
         if (smallObjectLayer != null) conveyorSystem.loadBelt(smallObjectLayer.getObjects());
         chefSpawner.spawnAll();
+    }
 
-        for (TextureAtlas.AtlasRegion r : game.getAssetService().get(AtlasAsset.OBJECTS).getRegions()) {
-            Gdx.app.log("ATLAS", r.name);
+    // --- NEW PAUSE LOGIC ---
+    public void resumeGame() {
+        isPaused = false;
+        // Turn all logic systems back ON
+        for (EntitySystem system : engine.getSystems()) {
+            if (system instanceof RenderSystem || system instanceof CameraSystem || system instanceof PhysicDebugRenderSystem) {
+                continue;
+            }
+            system.setProcessing(true);
         }
-        Gdx.app.log("TABLES", "loaded tables: " + tableManager.getTableCount());
+        // Force the UI to hide
+        gameScreenUI.togglePauseOverlay(false, null, null);
+    }
+
+    public void pauseGame() {
+        isPaused = true;
+        // Turn all logic systems OFF (but keep RenderSystem running!)
+        for (EntitySystem system : engine.getSystems()) {
+            if (system instanceof RenderSystem || system instanceof CameraSystem || system instanceof PhysicDebugRenderSystem) {
+                continue;
+            }
+            system.setProcessing(false);
+        }
+        // Show the UI and assign the resume/quit actions
+        gameScreenUI.togglePauseOverlay(true, this::resumeGame, () -> game.setScreen(new MenuScreen(game)));
     }
 
     @Override
     public void render(float delta) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            if (isPaused) {
+                resumeGame();
+            } else {
+                pauseGame();
+            }
+        }
+
         delta = Math.min(delta, 1 / 30f);
 
-        customerSpawner.update(delta);
+        if (!isPaused) {
+            customerSpawner.update(delta);
+        }
+
+        // We ALWAYS update the engine now, so RenderSystem draws the game!
+        // (Paused systems will just internally skip themselves)
         engine.update(delta);
 
-        customerRenderSystem.update(delta);
+        if (!isPaused) {
+            customerRenderSystem.update(delta);
+            gameScreenUI.updateReceipts(delta);
+        } else {
+            // Keep drawing the customer bubbles while paused, but freeze their timers
+            customerRenderSystem.update(0f);
+        }
 
         uiViewport.apply();
         stage.getBatch().setColor(Color.WHITE);
+
         stage.act(delta);
         stage.draw();
-
-        gameScreenUI.updateReceipts(delta);
     }
 
     @Override
-    public void resize(int width, int height) {
-        uiViewport.update(width, height, true);
-    }
+    public void resize(int width, int height) { uiViewport.update(width, height, true); }
 
     @Override
     public void hide() {
@@ -195,9 +223,7 @@ public class GameScreen extends ScreenAdapter {
     @Override
     public void dispose() {
         for (EntitySystem system : engine.getSystems()) {
-            if (system instanceof Disposable disposable) {
-                disposable.dispose();
-            }
+            if (system instanceof Disposable disposable) disposable.dispose();
         }
         customerRenderSystem.dispose();
         physicWorld.dispose();

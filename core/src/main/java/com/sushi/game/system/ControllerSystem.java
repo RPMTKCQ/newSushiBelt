@@ -19,16 +19,14 @@ public class ControllerSystem extends IteratingSystem {
     private final World world;
     private final GameScreenUI gameScreenUI;
     private final LevelSystem levelSystem;
-    private final StrikeSystem strikeSystem;
 
     public ControllerSystem(AudioService audioService, World world, GameScreenUI gameScreenUI,
-                            LevelSystem levelSystem, StrikeSystem strikeSystem) {
+                            LevelSystem levelSystem) {
         super(Family.all(Controller.class).get());
         this.audioService = audioService;
         this.world        = world;
         this.gameScreenUI = gameScreenUI;
         this.levelSystem  = levelSystem;
-        this.strikeSystem = strikeSystem;
     }
 
     @Override
@@ -95,7 +93,6 @@ public class ControllerSystem extends IteratingSystem {
                 switch (customer.state) {
                     case WAITING -> seatCustomer(nearby, customer);
                     case ORDERING -> {
-                        // waiting for food i think
                         customer.maxPatience = MathUtils.random(20f, 60f);
                         customer.stateTimer = 0f;
 
@@ -190,7 +187,6 @@ public class ControllerSystem extends IteratingSystem {
 
     private void collectPayment(Entity customerEntity, Customer customer) {
         levelSystem.onServeCompleted(customer.servedSorted, customer.servedLate);
-        strikeSystem.onServeCompleted();
 
         customer.state      = Customer.CustomerState.LEAVING;
         customer.stateTimer = 0f;
