@@ -1,6 +1,7 @@
 package com.sushi.game.ui.model;
 
 public enum PowerUpType {
+    // TYPE OF POWER UP (NAME, DESCRIPTION, ICON(Currently unavailable), Multiplier
     MOVEMENT_SPEED {
         @Override public String displayName()  { return "Movement Speed"; }
         @Override public String description()  { return "Increase movement speed by 10%"; }
@@ -26,6 +27,7 @@ public enum PowerUpType {
         @Override public float  multiplier()   { return 2.00f; }
     };
 
+    // fields
     public abstract String displayName();
     public abstract String description();
     public abstract String iconName();

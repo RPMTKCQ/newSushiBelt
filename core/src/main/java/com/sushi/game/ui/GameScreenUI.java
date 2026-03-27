@@ -280,7 +280,7 @@ public class GameScreenUI {
 
     public void setMoney(int money)              { moneyLabel.setText("Money: " + money + "$"); }
     public void setScore(int score)              { scoreLabel.setText("Score: " + score); }
-    public void setSatisfaction(float pct)       { satisfactionLabel.setText(String.format("Satisfaction: %.0f%%", pct)); }
+    public void setSatisfaction(float pct)       { satisfactionLabel.setText(String.format("Reputation: %.0f%%", pct)); }
 
     public void setXp(int xp, int xpToNext, int level) {
         levelLabel.setText("Level: " + level + "/10");

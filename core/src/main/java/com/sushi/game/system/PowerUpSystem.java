@@ -23,6 +23,7 @@ public class PowerUpSystem extends IteratingSystem {
         this.engine = engine;
     }
 
+
     public void applyPowerUp(PowerUpType type) {
         for (Entity existing : getEntities()) {
             PowerUp old = PowerUp.MAPPER.get(existing);
@@ -38,6 +39,7 @@ public class PowerUpSystem extends IteratingSystem {
         powerUp.type = type;
         powerUp.active = true;
 
+        // switch case for the different types of power up, can add more here
         switch (type) {
             case MOVEMENT_SPEED -> {
                 powerUp.appliedMultiplier = type.multiplier();
@@ -62,13 +64,15 @@ public class PowerUpSystem extends IteratingSystem {
         Gdx.app.log("POWERUP", "Applied: " + type.displayName());
     }
 
+    //methods specific power ups
+    // movemement speed, take player entity then set the max speed to the set multiplier (which is 8%)
     private void applyMovementSpeed(float multiplier) {
         for (Entity e : engine.getEntitiesFor(Family.all(Move.class).get())) {
             Move move = Move.MAPPER.get(e);
             move.setMaxSpeed(move.getMaxSpeed() * multiplier);
         }
     }
-
+    // cooking speed
     private void applyCookingSpeed(float multiplier) {
         for (Entity e : engine.getEntitiesFor(Family.all(Chef.class).get())) {
             Chef chef = Chef.MAPPER.get(e);
@@ -76,6 +80,7 @@ public class PowerUpSystem extends IteratingSystem {
         }
     }
 
+    // in cases where power up will be reverted
     private void revertPowerUp(PowerUp old) {
         switch (old.type) {
             case MOVEMENT_SPEED -> {
@@ -101,6 +106,7 @@ public class PowerUpSystem extends IteratingSystem {
         }
     }
 
+    //getter methods
     public float getRushHourMultiplier() { return rushHourScoreMultiplier; }
     public float getDoubleTipsMultiplier() { return doubleTipsMultiplier; }
 
