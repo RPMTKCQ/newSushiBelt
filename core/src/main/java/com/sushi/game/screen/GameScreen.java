@@ -91,7 +91,8 @@ public class GameScreen extends ScreenAdapter {
         this.stage        = new Stage(uiViewport, game.getBatch());
 
         Skin gameUISkin = game.getAssetService().get(SkinAsset.GAME);
-        // FIX: Passed audioService globally into the UI!
+
+        // FIX: AudioService injected cleanly into the UI!
         this.gameScreenUI = new GameScreenUI(stage, gameUISkin, game.getAssetService(), this.audioService);
 
         this.powerUpSystem = new PowerUpSystem(engine);
@@ -172,7 +173,6 @@ public class GameScreen extends ScreenAdapter {
         multiplexer.addProcessor(stage);
         Gdx.input.setInputProcessor(multiplexer);
 
-        // CLEANED UP
         gameScreenUI.togglePauseOverlay(false, null, null);
     }
 
@@ -188,7 +188,6 @@ public class GameScreen extends ScreenAdapter {
         keyboardController.reset();
         Gdx.input.setInputProcessor(stage);
 
-        // CLEANED UP
         gameScreenUI.togglePauseOverlay(true, this::resumeGame, () -> {
             game.setScreen(new MenuScreen(game));
         });

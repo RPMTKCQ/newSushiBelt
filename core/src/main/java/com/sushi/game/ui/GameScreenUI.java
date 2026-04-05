@@ -32,7 +32,7 @@ public class GameScreenUI {
     private final Stage stage;
     private final Skin skin;
     private final AssetService assetService;
-    private final AudioService audioService; // GLOBAL ACCESS TO SOUNDS
+    private final AudioService audioService; // Global context for UI sounds
 
     private Label timerLabel;
     private Label moneyLabel;
@@ -101,7 +101,7 @@ public class GameScreenUI {
         this.stage = stage;
         this.skin = skin;
         this.assetService = assetService;
-        this.audioService = audioService; // Set audio context immediately!
+        this.audioService = audioService;
         build();
     }
 
@@ -340,7 +340,7 @@ public class GameScreenUI {
     }
 
     public void showPowerUpOverlay(PowerUpSystem powerUpSystem) {
-        audioService.playSound(SoundAsset.LEVEL_UP); // FIX: LEVEL UP SOUND HOOK
+        audioService.playSound(SoundAsset.LEVEL_UP); // PLAY LEVEL UP SOUND
 
         powerUpOverlay.clearChildren();
 
@@ -414,7 +414,7 @@ public class GameScreenUI {
 
                     if (keycode == Input.Keys.SPACE || keycode == Input.Keys.ENTER) {
                         if (pauseSelectedItem != null && pauseSelectedItem.getUserObject() instanceof Runnable action) {
-                            executeSafeAction(action);
+                            action.run();
                             return true;
                         }
                     }
@@ -527,12 +527,18 @@ public class GameScreenUI {
 
         TextButton resumeBtn = new TextButton("Resume", skin);
         resumeBtn.setColor(skin.getColor("white"));
-        resumeBtn.setUserObject((Runnable) onResume);
+
+        // Unified Action: Sound + Logic combined safely
+        Runnable resumeAction = () -> {
+            audioService.playSound(SoundAsset.MENU_SELECT);
+            executeSafeAction(onResume);
+        };
+        resumeBtn.setUserObject(resumeAction);
+
         resumeBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                audioService.playSound(SoundAsset.MENU_SELECT);
-                executeSafeAction(onResume);
+                resumeAction.run();
             }
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
@@ -594,13 +600,18 @@ public class GameScreenUI {
 
         TextButton quitBtn = new TextButton("Quit", skin);
         quitBtn.setColor(skin.getColor("white"));
-        Runnable confirmQuitAction = () -> buildConfirmQuitScreen(onResume, onQuit);
+
+        // Unified Action: Sound + Logic combined safely
+        Runnable confirmQuitAction = () -> {
+            audioService.playSound(SoundAsset.MENU_SELECT);
+            executeSafeAction(() -> buildConfirmQuitScreen(onResume, onQuit));
+        };
         quitBtn.setUserObject(confirmQuitAction);
+
         quitBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                audioService.playSound(SoundAsset.MENU_SELECT);
-                executeSafeAction(confirmQuitAction);
+                confirmQuitAction.run();
             }
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
@@ -643,12 +654,18 @@ public class GameScreenUI {
 
         TextButton yesBtn = new TextButton("Yes", skin);
         yesBtn.setColor(skin.getColor("white"));
-        yesBtn.setUserObject((Runnable) onQuit);
+
+        // Unified Action
+        Runnable yesAction = () -> {
+            audioService.playSound(SoundAsset.MENU_SELECT);
+            executeSafeAction(onQuit);
+        };
+        yesBtn.setUserObject(yesAction);
+
         yesBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                audioService.playSound(SoundAsset.MENU_SELECT);
-                executeSafeAction(onQuit);
+                yesAction.run();
             }
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
@@ -660,13 +677,18 @@ public class GameScreenUI {
 
         TextButton noBtn = new TextButton("No", skin);
         noBtn.setColor(skin.getColor("white"));
-        Runnable noAction = () -> buildMainPauseScreen(onResume, onQuit);
+
+        // Unified Action
+        Runnable noAction = () -> {
+            audioService.playSound(SoundAsset.MENU_BACK);
+            executeSafeAction(() -> buildMainPauseScreen(onResume, onQuit));
+        };
         noBtn.setUserObject(noAction);
+
         noBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                audioService.playSound(SoundAsset.MENU_BACK);
-                executeSafeAction(noAction);
+                noAction.run();
             }
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
@@ -916,7 +938,7 @@ public class GameScreenUI {
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
                 card.addAction(Actions.color(skin.getColor("sand"), 0.1f));
-                audioService.playSound(SoundAsset.MENU_HOVER); // FIX: SWITCH SOUND HOOK
+                audioService.playSound(SoundAsset.MENU_HOVER);
             }
 
             @Override
@@ -927,7 +949,7 @@ public class GameScreenUI {
         card.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                audioService.playSound(SoundAsset.MENU_SELECT); // FIX: CHOOSE SOUND HOOK
+                audioService.playSound(SoundAsset.MENU_SELECT);
                 powerUpSystem.applyPowerUp(type);
                 addLogEvent("Power-Up Activated: " + type.displayName(), com.badlogic.gdx.graphics.Color.CYAN);
                 hideOverlay();

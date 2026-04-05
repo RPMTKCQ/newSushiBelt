@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Align;
 import com.sushi.game.asset.MapAsset;
+import com.sushi.game.asset.SoundAsset;
 import com.sushi.game.ui.model.MenuViewModel;
 
 import java.util.ArrayList;
@@ -23,12 +24,16 @@ public class MenuView extends View<MenuViewModel> {
     private boolean leftPressed = false;
     private boolean rightPressed = false;
     private float holdTimer = 0f;
-    private static final float REPEAT_RATE = 0.08f; // Slower repeat for distinct clicks
+    private static final float REPEAT_RATE = 0.08f;
 
     private List<Group> mainMenuItems;
     private List<Group> modeMenuItems;
     private List<Group> levelMenuItems;
     private List<Group> currentMenuItems;
+
+    // FIX: Store these at the class level so we don't have to overwrite the button's UserObject!
+    private Table modeStageTable;
+    private Table modeEndlessTable;
 
     private enum MenuState { MAIN, MODE, LEVEL }
     private MenuState currentState = MenuState.MAIN;
@@ -54,18 +59,18 @@ public class MenuView extends View<MenuViewModel> {
         buildModeSelectMenu();
         buildLevelSelectMenu();
 
-        // Start with the Main Menu
         showMainMenu();
 
         stage.addListener(new InputListener() {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
-                // ESC, SHIFT, or Backspace to go back
                 if (keycode == Input.Keys.ESCAPE || keycode == Input.Keys.SHIFT_LEFT || keycode == Input.Keys.SHIFT_RIGHT) {
                     if (currentState == MenuState.MODE) {
+                        viewModel.playSound(SoundAsset.MENU_BACK);
                         showMainMenu();
                         return true;
                     } else if (currentState == MenuState.LEVEL) {
+                        viewModel.playSound(SoundAsset.MENU_BACK);
                         showModeSelectMenu();
                         return true;
                     }
@@ -82,9 +87,11 @@ public class MenuView extends View<MenuViewModel> {
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 if (button == Input.Buttons.RIGHT) {
                     if (currentState == MenuState.MODE) {
+                        viewModel.playSound(SoundAsset.MENU_BACK);
                         showMainMenu();
                         return true;
                     } else if (currentState == MenuState.LEVEL) {
+                        viewModel.playSound(SoundAsset.MENU_BACK);
                         showModeSelectMenu();
                         return true;
                     }
@@ -107,29 +114,27 @@ public class MenuView extends View<MenuViewModel> {
     }
 
     private void buildModeSelectMenu() {
-        Table stageTable = new Table();
+        // FIX: Initialize the class-level tables
+        modeStageTable = new Table();
         TextButton stageBtn = createButton("Stage", () -> showLevelSelectMenu(false));
-        stageTable.add(stageBtn).padBottom(10.0f).minWidth(150.0f).maxWidth(150.0f).row();
+        modeStageTable.add(stageBtn).padBottom(10.0f).minWidth(150.0f).maxWidth(150.0f).row();
 
         Label stageDesc = new Label("Reach the quota within a limited amount of time!", skin, "small");
         stageDesc.setAlignment(Align.center);
         stageDesc.setWrap(true);
-        stageTable.add(stageDesc).padTop(10.0f).minWidth(150.0f);
+        modeStageTable.add(stageDesc).padTop(10.0f).minWidth(150.0f);
 
-        Table endlessTable = new Table();
+        modeEndlessTable = new Table();
         TextButton endlessBtn = createButton("Endless", () -> showLevelSelectMenu(true));
-        endlessTable.add(endlessBtn).padBottom(10.0f).minWidth(150.0f).maxWidth(150.0f).row();
+        modeEndlessTable.add(endlessBtn).padBottom(10.0f).minWidth(150.0f).maxWidth(150.0f).row();
 
         Label endlessDesc = new Label("Keep the reputation up as long as possible!", skin, "small");
         endlessDesc.setAlignment(Align.center);
         endlessDesc.setWrap(true);
-        endlessTable.add(endlessDesc).padTop(10.0f).minWidth(150.0f);
+        modeEndlessTable.add(endlessDesc).padTop(10.0f).minWidth(150.0f);
 
         modeMenuItems.add(stageBtn);
         modeMenuItems.add(endlessBtn);
-
-        stageBtn.setUserObject(stageTable);
-        endlessBtn.setUserObject(endlessTable);
     }
 
     private void buildLevelSelectMenu() {
@@ -145,6 +150,7 @@ public class MenuView extends View<MenuViewModel> {
     private void showMainMenu() {
         currentState = MenuState.MAIN;
         clearChildren();
+        this.selectedItem = null;
 
         Label title = new Label("Sushi Belt", skin, "title");
         add(title).row();
@@ -175,20 +181,18 @@ public class MenuView extends View<MenuViewModel> {
     private void showModeSelectMenu() {
         currentState = MenuState.MODE;
         clearChildren();
+        this.selectedItem = null;
 
         Label title = new Label("Choose Game Mode", skin, "title");
         add(title).padBottom(30f).row();
 
         Table optionsTable = new Table();
 
-        Table stageTable = (Table) modeMenuItems.get(0).getUserObject();
-        Table endlessTable = (Table) modeMenuItems.get(1).getUserObject();
-
-        optionsTable.add(stageTable).padRight(30.0f).minSize(100.0f);
-        optionsTable.add(endlessTable).padLeft(30.0f).minSize(100.0f);
+        // FIX: Retrieve tables directly from class fields, cleanly isolating the Action Runnables!
+        optionsTable.add(modeStageTable).padRight(30.0f).minSize(100.0f);
+        optionsTable.add(modeEndlessTable).padLeft(30.0f).minSize(100.0f);
 
         add(optionsTable).padBottom(20f).row();
-
 
         currentMenuItems = modeMenuItems;
         pack();
@@ -202,6 +206,7 @@ public class MenuView extends View<MenuViewModel> {
         currentState = MenuState.LEVEL;
         selectedIsEndless = isEndless;
         clearChildren();
+        this.selectedItem = null;
 
         Label title = new Label("Choose Level", skin, "title");
         add(title).padBottom(30f).row();
@@ -225,10 +230,16 @@ public class MenuView extends View<MenuViewModel> {
         TextButton button = new TextButton(text, skin);
         button.setColor(skin.getColor("white"));
 
+        Runnable unifiedAction = () -> {
+            viewModel.playSound(SoundAsset.MENU_SELECT);
+            onClick.run();
+        };
+        button.setUserObject(unifiedAction);
+
         button.addListener(new com.badlogic.gdx.scenes.scene2d.utils.ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                onClick.run();
+                unifiedAction.run();
             }
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
@@ -248,7 +259,6 @@ public class MenuView extends View<MenuViewModel> {
         label.setColor(skin.getColor("black"));
         table.add(label).row();
 
-        // FIX: Step size changed to 0.1f (10 hard ticks)
         Slider slider = new Slider(0f, 1f, 0.1f, false, skin);
         slider.setValue(initialValue);
 
@@ -256,6 +266,7 @@ public class MenuView extends View<MenuViewModel> {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 onUpdate.accept(slider.getValue());
+                viewModel.playSound(SoundAsset.MENU_HOVER);
             }
         });
 
@@ -283,27 +294,38 @@ public class MenuView extends View<MenuViewModel> {
         label.setColor(skin.getColor("white"));
         table.add(label);
 
+        Runnable unifiedAction = () -> {
+            viewModel.playSound(SoundAsset.MENU_SELECT);
+            onClick.run();
+        };
+        table.setUserObject(unifiedAction);
+
         table.addListener(new com.badlogic.gdx.scenes.scene2d.utils.ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                onClick.run();
+                unifiedAction.run();
             }
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
                 selectMenuItem(table);
             }
         });
-        table.setUserObject(onClick);
         return table;
     }
 
     private void selectMenuItem(Group group) {
+        if (this.selectedItem == group) return;
+
         if (this.selectedItem instanceof Button oldButton) {
             oldButton.setChecked(false);
         }
 
         if (selectionImg.getParent() != null) {
             selectionImg.getParent().removeActor(selectionImg);
+        }
+
+        if (this.selectedItem != null) {
+            viewModel.playSound(SoundAsset.MENU_HOVER);
         }
 
         this.selectedItem = group;
@@ -353,12 +375,11 @@ public class MenuView extends View<MenuViewModel> {
             isInitialSelectionDone = true;
         }
 
-        // Distinct discrete ticks when holding keys
         if (leftPressed || rightPressed) {
             holdTimer += delta;
             while (holdTimer >= REPEAT_RATE) {
                 holdTimer -= REPEAT_RATE;
-                adjustSlider(leftPressed ? -0.1f : 0.1f); // 10% jumps
+                adjustSlider(leftPressed ? -0.1f : 0.1f);
             }
         }
     }
@@ -383,11 +404,11 @@ public class MenuView extends View<MenuViewModel> {
             } else if (keycode == Input.Keys.A || keycode == Input.Keys.LEFT) {
                 leftPressed = true;
                 holdTimer = 0f;
-                adjustSlider(-0.1f); // Instant jump on press
+                adjustSlider(-0.1f);
             } else if (keycode == Input.Keys.D || keycode == Input.Keys.RIGHT) {
                 rightPressed = true;
                 holdTimer = 0f;
-                adjustSlider(0.1f); // Instant jump on press
+                adjustSlider(0.1f);
             }
         }
 
@@ -420,16 +441,8 @@ public class MenuView extends View<MenuViewModel> {
     }
 
     private void executeSelectedAction() {
-        if (selectedItem != null) {
-            if (selectedItem instanceof TextButton button) {
-                InputEvent event = new InputEvent();
-                event.setType(InputEvent.Type.touchDown);
-                button.fire(event);
-                event.setType(InputEvent.Type.touchUp);
-                button.fire(event);
-            } else if (selectedItem.getUserObject() instanceof Runnable action) {
-                action.run();
-            }
+        if (selectedItem != null && selectedItem.getUserObject() instanceof Runnable action) {
+            action.run();
         }
     }
 
