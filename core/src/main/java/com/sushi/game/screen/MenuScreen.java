@@ -35,7 +35,7 @@ public class MenuScreen extends ScreenAdapter {
         this.game.setInputProcessors(stage);
 
         this.stage.addActor(new MenuView(stage, skin, new MenuViewModel(game)));
-        this.game.getAudioService().playMusic(MusicAsset.BACKGROUND);
+        this.game.getAudioService().playMusic(MusicAsset.MENU);
     }
 
     @Override

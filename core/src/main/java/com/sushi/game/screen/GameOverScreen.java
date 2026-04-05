@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.sushi.game.SushiGame;
+import com.sushi.game.asset.MapAsset;
 import com.sushi.game.asset.SkinAsset;
 
 public class GameOverScreen extends ScreenAdapter {
@@ -15,11 +16,13 @@ public class GameOverScreen extends ScreenAdapter {
     private final SushiGame game;
     private final Stage     stage;
     private final int       finalScore;
+    private final MapAsset  currentStage;
     private final boolean   isEndlessMode;
 
-    public GameOverScreen(SushiGame game, int finalScore, boolean isEndlessMode) {
+    public GameOverScreen(SushiGame game, int finalScore, MapAsset currentStage, boolean isEndlessMode) {
         this.game          = game;
         this.finalScore    = finalScore;
+        this.currentStage  = currentStage;
         this.isEndlessMode = isEndlessMode;
         this.stage         = new Stage(new FitViewport(1920f, 1080f), game.getBatch());
         build();
@@ -41,8 +44,8 @@ public class GameOverScreen extends ScreenAdapter {
         TextButton retry = new TextButton("Try Again", skin);
         retry.addListener(new ClickListener() {
             @Override public void clicked(InputEvent event, float x, float y) {
-                // FIX: Now we pass the mode back into the new GameScreen!
-                game.setScreen(new GameScreen(game, isEndlessMode));
+                // Restarts the exact stage and mode the player died on
+                game.setScreen(new GameScreen(game, currentStage, isEndlessMode));
                 dispose();
             }
         });

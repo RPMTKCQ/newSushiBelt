@@ -6,21 +6,21 @@ filter: Linear, Linear
 repeat: none
 banner
   rotate: false
-  xy: 1, 700
+  xy: 1, 665
   size: 632, 164
   orig: 632, 164
   offset: 0, 0
   index: -1
 bar
   rotate: false
-  xy: 133, 690
+  xy: 515, 655
   size: 107, 8
   orig: 107, 8
   offset: 0, 0
   index: -1
 bar_frame
   rotate: false
-  xy: 1, 682
+  xy: 635, 813
   size: 130, 16
   split: 3, 3, 3, 2
   orig: 130, 16
@@ -28,7 +28,7 @@ bar_frame
   index: -1
 button
   rotate: false
-  xy: 635, 729
+  xy: 767, 813
   size: 32, 16
   split: 5, 5, 8, 6
   orig: 32, 16
@@ -36,7 +36,7 @@ button
   index: -1
 frame
   rotate: false
-  xy: 635, 747
+  xy: 1, 132
   size: 129, 117
   split: 46, 49, 30, 54
   orig: 129, 117
@@ -44,42 +44,42 @@ frame
   index: -1
 life_00
   rotate: false
-  xy: 669, 729
+  xy: 669, 697
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 life_01
   rotate: false
-  xy: 35, 566
+  xy: 765, 761
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 life_02
   rotate: false
-  xy: 766, 748
+  xy: 515, 631
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 life_03
   rotate: false
-  xy: 816, 814
+  xy: 1, 14
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 life_04
   rotate: false
-  xy: 850, 848
+  xy: 51, 80
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 selection
   rotate: false
-  xy: 635, 702
+  xy: 132, 190
   size: 24, 25
   split: 8, 8, 9, 9
   orig: 24, 25
@@ -87,7 +87,15 @@ selection
   index: -1
 button-green
   rotate: false
-  xy: 816, 832
+  xy: 765, 779
+  size: 32, 32
+  split: 5, 5, 10, 10
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+button-green-over
+  rotate: false
+  xy: 1, 32
   size: 32, 32
   split: 5, 5, 10, 10
   orig: 32, 32
@@ -95,7 +103,7 @@ button-green
   index: -1
 cs-bar
   rotate: false
-  xy: 242, 696
+  xy: 801, 827
   size: 30, 2
   split: 0, 0, 0, 0
   orig: 30, 2
@@ -103,7 +111,7 @@ cs-bar
   index: -1
 cs-bar-bg
   rotate: false
-  xy: 133, 684
+  xy: 515, 649
   size: 32, 4
   split: 1, 1, 1, 1
   orig: 32, 4
@@ -111,30 +119,37 @@ cs-bar-bg
   index: -1
 fd-border
   rotate: false
-  xy: 1, 530
+  xy: 166, 231
   size: 18, 18
   orig: 18, 18
   offset: 0, 0
   index: -1
 knob
   rotate: false
-  xy: 766, 766
+  xy: 635, 681
   size: 32, 32
   split: 14, 15, 14, 13
   pad: 16, 15, 14, 13
   orig: 32, 32
   offset: 0, 0
   index: -1
+level-1
+  rotate: false
+  xy: 1, 251
+  size: 512, 412
+  orig: 512, 412
+  offset: 0, 0
+  index: -1
 maguro-nigiri
   rotate: false
-  xy: 1, 517
+  xy: 85, 119
   size: 14, 11
   orig: 14, 11
   offset: 0, 0
   index: -1
 menu-bg
   rotate: false
-  xy: 1, 584
+  xy: 635, 715
   size: 128, 96
   split: 4, 4, 4, 4
   orig: 128, 96
@@ -142,7 +157,7 @@ menu-bg
   index: -1
 rct-border
   rotate: false
-  xy: 766, 800
+  xy: 1, 66
   size: 48, 64
   split: 1, 1, 1, 1
   orig: 48, 64
@@ -150,14 +165,22 @@ rct-border
   index: -1
 salmon-nigiri
   rotate: false
-  xy: 800, 787
+  xy: 635, 668
   size: 14, 11
   orig: 14, 11
   offset: 0, 0
   index: -1
+selection-2
+  rotate: false
+  xy: 51, 98
+  size: 32, 32
+  split: 4, 4, 4, 4
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
 track
   rotate: false
-  xy: 1, 550
+  xy: 132, 217
   size: 32, 32
   split: 1, 1, 15, 14
   orig: 32, 32
@@ -165,7 +188,7 @@ track
   index: -1
 tuna-roll
   rotate: false
-  xy: 661, 714
+  xy: 35, 51
   size: 14, 13
   orig: 14, 13
   offset: 0, 0

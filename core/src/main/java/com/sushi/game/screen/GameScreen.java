@@ -64,8 +64,15 @@ public class GameScreen extends ScreenAdapter {
 
     private boolean isPaused = false;
 
-    public GameScreen(SushiGame game, boolean isEndlessMode) {
+    // FIX: Added the missing fields
+    private final MapAsset currentStage;
+    private final boolean isEndlessMode;
+
+    // FIX: Reordered parameters to match what MenuViewModel is passing
+    public GameScreen(SushiGame game, MapAsset currentStage, boolean isEndlessMode) {
         this.game = game;
+        this.currentStage = currentStage;
+        this.isEndlessMode = isEndlessMode;
 
         this.physicWorld = new World(Vector2.Zero, true);
         this.physicWorld.setAutoClearForces(false);
@@ -93,7 +100,8 @@ public class GameScreen extends ScreenAdapter {
 
         this.levelSystem = new LevelSystem(gameScreenUI, powerUpSystem, isEndlessMode,
             () -> game.setScreen(new WinScreen(game, levelSystem.getScore(), levelSystem.getMoney())),
-            () -> game.setScreen(new GameOverScreen(game, levelSystem.getScore(), isEndlessMode)));
+            // FIX: Passes the currentStage into GameOverScreen so you can restart the same level
+            () -> game.setScreen(new GameOverScreen(game, levelSystem.getScore(), this.currentStage, isEndlessMode)));
 
         this.customerSpawner = new CustomerSpawner(customerFactory, tableManager, engine, levelSystem);
 
@@ -133,7 +141,8 @@ public class GameScreen extends ScreenAdapter {
         tiledService.setLoadObjectConsumer(tiledAshleyConfigurator::onLoadObject);
         tiledService.setLoadTileConsumer(tiledAshleyConfigurator::onLoadTile);
 
-        TiledMap tiledMap = tiledService.loadMap(MapAsset.MAIN);
+        // FIX: Replaced hardcoded STAGE_1 with the currentStage variable
+        TiledMap tiledMap = tiledService.loadMap(this.currentStage);
         tiledService.setMap(tiledMap);
 
         MapLayer objectLayer      = tiledMap.getLayers().get("objects");
@@ -149,30 +158,25 @@ public class GameScreen extends ScreenAdapter {
         chefSpawner.spawnAll();
     }
 
-    // --- NEW PAUSE LOGIC ---
     public void resumeGame() {
         isPaused = false;
-        // Turn all logic systems back ON
         for (EntitySystem system : engine.getSystems()) {
             if (system instanceof RenderSystem || system instanceof CameraSystem || system instanceof PhysicDebugRenderSystem) {
                 continue;
             }
             system.setProcessing(true);
         }
-        // Force the UI to hide
         gameScreenUI.togglePauseOverlay(false, null, null);
     }
 
     public void pauseGame() {
         isPaused = true;
-        // Turn all logic systems OFF (but keep RenderSystem running!)
         for (EntitySystem system : engine.getSystems()) {
             if (system instanceof RenderSystem || system instanceof CameraSystem || system instanceof PhysicDebugRenderSystem) {
                 continue;
             }
             system.setProcessing(false);
         }
-        // Show the UI and assign the resume/quit actions
         gameScreenUI.togglePauseOverlay(true, this::resumeGame, () -> game.setScreen(new MenuScreen(game)));
     }
 
@@ -192,15 +196,12 @@ public class GameScreen extends ScreenAdapter {
             customerSpawner.update(delta);
         }
 
-        // We ALWAYS update the engine now, so RenderSystem draws the game!
-        // (Paused systems will just internally skip themselves)
         engine.update(delta);
 
         if (!isPaused) {
             customerRenderSystem.update(delta);
             gameScreenUI.updateReceipts(delta);
         } else {
-            // Keep drawing the customer bubbles while paused, but freeze their timers
             customerRenderSystem.update(0f);
         }
 

@@ -2,21 +2,18 @@ package com.sushi.game.ui.view;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Interpolation;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Event;
-import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Align;
 import com.sushi.game.ui.model.MenuViewModel;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MenuView extends View<MenuViewModel> {
 
-    private final Image selectionImg;
+    private Image selectionImg;
     private Group selectedItem;
     private boolean isInitialSelectionDone = false;
 
@@ -28,17 +25,40 @@ public class MenuView extends View<MenuViewModel> {
     private static final float HOLD_DELAY = 0.2f;
     private static final float REPEAT_RATE = 0.1f;
 
+    private List<Group> mainMenuItems;
+    private List<Group> modeMenuItems;
+    private List<Group> currentMenuItems;
+
+    private boolean inModeSelect = false;
+
     public MenuView(Stage stage, Skin skin, MenuViewModel viewModel) {
         super(stage, skin, viewModel);
+    }
 
-        this.selectionImg = new Image(skin, "selection");
+    @Override
+    protected void setupUI() {
+        mainMenuItems = new ArrayList<>();
+        modeMenuItems = new ArrayList<>();
+
+        this.selectionImg = new Image(skin, "selection-2");
         this.selectionImg.setTouchable(Touchable.disabled);
 
-        stage.setKeyboardFocus(this);
+        setFillParent(true);
 
-        this.addListener(new InputListener() {
+        buildMainMenu();
+        buildModeSelectMenu();
+
+        // Start with the Main Menu
+        showMainMenu();
+
+        stage.addListener(new InputListener() {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
+                // SHIFT to go back
+                if (inModeSelect && (keycode == Input.Keys.SHIFT_LEFT || keycode == Input.Keys.SHIFT_RIGHT)) {
+                    showMainMenu();
+                    return true;
+                }
                 return handleKeyDown(keycode);
             }
 
@@ -46,170 +66,228 @@ public class MenuView extends View<MenuViewModel> {
             public boolean keyUp(InputEvent event, int keycode) {
                 return handleKeyUp(keycode);
             }
+
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                // RIGHT CLICK to go back
+                if (inModeSelect && button == Input.Buttons.RIGHT) {
+                    showMainMenu();
+                    return true;
+                }
+                return false;
+            }
         });
     }
 
-    private void selectMenuItem(Group menuItem) {
-        if(selectionImg.getParent() != null) {
+    private void buildMainMenu() {
+        TextButton playBtn = createButton("Play", this::showModeSelectMenu);
+        Table musicSlider = createSlider("Music Volume", viewModel.getMusicVolume(), viewModel::setMusicVolume);
+        Table soundSlider = createSlider("Sound Volume", viewModel.getSoundVolume(), viewModel::setSoundVolume);
+        TextButton quitBtn = createButton("Quit", viewModel::quitGame);
+
+        mainMenuItems.add(playBtn);
+        mainMenuItems.add(musicSlider);
+        mainMenuItems.add(soundSlider);
+        mainMenuItems.add(quitBtn);
+    }
+
+    private void buildModeSelectMenu() {
+        TextButton stageBtn = createButton("Stage Mode", viewModel::startLevelMode);
+        TextButton endlessBtn = createButton("Endless Mode", viewModel::startEndlessMode);
+
+        modeMenuItems.add(stageBtn);
+        modeMenuItems.add(endlessBtn);
+    }
+
+    private void showMainMenu() {
+        inModeSelect = false;
+        clearChildren();
+
+        Label title = new Label("Sushi Belt", skin, "title");
+        add(title).row();
+
+        Table menuBox = new Table();
+        menuBox.setBackground(skin.getDrawable("menu-bg"));
+        menuBox.padTop(40.0f).padBottom(43.0f).padLeft(25.0f).padRight(25.0f);
+
+        menuBox.add(mainMenuItems.get(0)).minWidth(150f).fillX().row();
+        menuBox.add(mainMenuItems.get(1)).padTop(10f).fillX().row();
+        menuBox.add(mainMenuItems.get(2)).padTop(10f).fillX().row();
+        menuBox.add(mainMenuItems.get(3)).minWidth(100f).padTop(10f).fillX();
+
+        add(menuBox).padTop(30.0f).row();
+
+        Label footer = new Label("Three Bits", skin, "small");
+        footer.setColor(skin.getColor("white"));
+        add(footer).padTop(10.0f).expandX().align(Align.bottom);
+
+        currentMenuItems = mainMenuItems;
+
+        // Force LibGDX to calculate the dimensions before we try to size the selection ring!
+        pack();
+
+        if (!currentMenuItems.isEmpty()) {
+            selectMenuItem(currentMenuItems.get(0));
+        }
+    }
+
+    private void showModeSelectMenu() {
+        inModeSelect = true;
+        clearChildren();
+
+        Label title = new Label("Sushi Belt", skin, "title");
+        add(title).row();
+
+        Table menuBox = new Table();
+        menuBox.setBackground(skin.getDrawable("menu-bg"));
+        menuBox.padTop(40.0f).padBottom(43.0f).padLeft(25.0f).padRight(25.0f);
+
+        Label modeTitle = new Label("Choose Mode", skin);
+        modeTitle.setColor(skin.getColor("black"));
+        menuBox.add(modeTitle).padBottom(20f).colspan(2).row();
+
+        menuBox.add(modeMenuItems.get(0)).minWidth(120f).padRight(10f); // Stage
+        menuBox.add(modeMenuItems.get(1)).minWidth(120f);               // Endless
+
+        add(menuBox).padTop(30.0f).row();
+
+        Label footer = new Label("Three Bits", skin, "small");
+        footer.setColor(skin.getColor("white"));
+        add(footer).padTop(10.0f).expandX().align(Align.bottom);
+
+        currentMenuItems = modeMenuItems;
+
+        pack();
+
+        if (!currentMenuItems.isEmpty()) {
+            selectMenuItem(currentMenuItems.get(0));
+        }
+    }
+
+    private TextButton createButton(String text, Runnable onClick) {
+        TextButton button = new TextButton(text, skin);
+        button.setColor(skin.getColor("white"));
+
+        button.addListener(new com.badlogic.gdx.scenes.scene2d.utils.ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                onClick.run();
+            }
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                selectMenuItem(button);
+            }
+        });
+        button.setUserObject(onClick);
+        return button;
+    }
+
+    private Table createSlider(String labelText, float initialValue, java.util.function.Consumer<Float> onUpdate) {
+        Table table = new Table();
+        table.setColor(skin.getColor("black"));
+
+        Label label = new Label(labelText, skin);
+        label.setColor(skin.getColor("black"));
+        table.add(label).row();
+
+        Slider slider = new Slider(0f, 1f, 0.05f, false, skin);
+        slider.setValue(initialValue);
+
+        slider.addListener(new com.badlogic.gdx.scenes.scene2d.utils.ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                onUpdate.accept(slider.getValue());
+            }
+        });
+
+        table.add(slider).growX();
+
+        table.addListener(new InputListener() {
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                selectMenuItem(table);
+            }
+        });
+        table.setUserObject(slider);
+        return table;
+    }
+
+    private void selectMenuItem(Group group) {
+        if (selectionImg.getParent() != null) {
             selectionImg.getParent().removeActor(selectionImg);
         }
-        this.selectedItem = menuItem;
+        this.selectedItem = group;
 
-        float extraSize = 0f;
-        float halfExtraSize = extraSize * 0.5f;
+        // TextButton and Table are both Groups natively in LibGDX!
+        group.addActor(selectionImg);
+        selectionImg.toBack();
+
+        float extraSize = 10f;
+        float halfExtra = extraSize * 0.5f;
         float resizeTime = 0.2f;
 
-        menuItem.addActor(selectionImg);
-        selectionImg.setPosition(-halfExtraSize, -halfExtraSize);
-
-        selectionImg.setSize(menuItem.getWidth() + extraSize, menuItem.getHeight() + extraSize);
+        selectionImg.setSize(group.getWidth() + extraSize, group.getHeight() + extraSize);
+        selectionImg.setPosition(-halfExtra, -halfExtra);
 
         selectionImg.clearActions();
         selectionImg.addAction(Actions.forever(Actions.sequence(
             Actions.parallel(
                 Actions.sizeBy(extraSize, extraSize, resizeTime, Interpolation.linear),
-                Actions.moveBy(-halfExtraSize, -halfExtraSize, resizeTime, Interpolation.linear)
+                Actions.moveBy(-halfExtra, -halfExtra, resizeTime, Interpolation.linear)
             ),
             Actions.parallel(
                 Actions.sizeBy(-extraSize, -extraSize, resizeTime, Interpolation.linear),
-                Actions.moveBy(halfExtraSize, halfExtraSize, resizeTime, Interpolation.linear)
+                Actions.moveBy(halfExtra, halfExtra, resizeTime, Interpolation.linear)
             )
         )));
-    }
-
-    @Override
-    protected void setupUI() {
-        setFillParent(true);
-
-        Label label = new Label("Sushi Belt", skin, "title");
-        add(label);
-
-        setupMenuContent();
-
-        row();
-        label = new Label("Three Bits", skin, "small");
-        label.setColor(skin.getColor("white"));
-        add(label).padTop(10.0f).expandX().align(Align.bottom);
-    }
-
-    private void setupMenuContent() {
-        row();
-        Table contentTable = new Table();
-        contentTable.setBackground(skin.getDrawable("menu-bg"));
-        contentTable.padLeft(25.0f);
-        contentTable.padRight(25.0f);
-        contentTable.padTop(40.0f);
-        contentTable.padBottom(43.0f);
-
-        TextButton btnLevel = new TextButton("Level", skin);
-        btnLevel.setName(MenuOption.START_LEVEL.name());
-        btnLevel.setColor(skin.getColor("white"));
-        onClick(btnLevel, viewModel::startLevelMode);
-        onEnter(btnLevel, this::selectMenuItem);
-        contentTable.add(btnLevel).minWidth(150.0f).fillX().row();
-
-        TextButton btnEndless = new TextButton("Endless", skin);
-        btnEndless.setName(MenuOption.START_ENDLESS.name());
-        btnEndless.setColor(skin.getColor("white"));
-        onClick(btnEndless, viewModel::startEndlessMode);
-        onEnter(btnEndless, this::selectMenuItem);
-        contentTable.add(btnEndless).minWidth(150.0f).fillX().padTop(10f).row();
-
-        Slider musicSlider = setupVolumeSlider(contentTable,"Music Volume", MenuOption.MUSIC_VOLUME);
-        musicSlider.setValue(viewModel.getMusicVolume());
-        onChange(musicSlider, (slider-> viewModel.setMusicVolume(slider.getValue())));
-
-        Slider soundSlider = setupVolumeSlider(contentTable,"Sound Volume", MenuOption.SOUND_VOLUME);
-        onChange(soundSlider, (slider-> viewModel.setSoundVolume(slider.getValue())));
-        soundSlider.setValue(viewModel.getSoundVolume());
-
-        contentTable.row();
-
-        TextButton quitButton = new TextButton("Quit", skin);
-        quitButton.setName(MenuOption.QUIT_GAME.name());
-        contentTable.add(quitButton).padTop(10.0f).minWidth(100.0f).fillX();
-        onClick(quitButton, viewModel::quitGame);
-        onEnter(quitButton, this::selectMenuItem);
-
-        add(contentTable).padTop(30.0f);
-    }
-
-    private Slider setupVolumeSlider(Table contentTable, String title, MenuOption volume) {
-        Table table = new Table();
-        table.setName(volume.name());
-        table.setColor(skin.getColor("black"));
-
-        Label label = new Label(title, skin);
-        label.setColor(skin.getColor("black"));
-        table.add(label);
-
-        table.row();
-        Slider slider = new Slider(0f, 1f, 0.1f, false, skin);
-
-        table.add(slider).growX();
-        contentTable.add(table).padTop(10.0f).fillX().row();
-
-        onEnter(table, this::selectMenuItem);
-        return slider;
     }
 
     @Override
     public void act(float delta) {
         super.act(delta);
 
-        if (!isInitialSelectionDone) {
-            this.selectedItem = findActor(MenuOption.START_LEVEL.name());
-            if (this.selectedItem != null) {
-                selectMenuItem(this.selectedItem);
-            }
+        if (!isInitialSelectionDone && currentMenuItems != null && !currentMenuItems.isEmpty()) {
+            selectMenuItem(currentMenuItems.get(0));
             isInitialSelectionDone = true;
         }
 
-        if (leftPressed || rightPressed) {
-            holdTimer += delta;
-            if (holdTimer >= HOLD_DELAY) {
-                repeatTimer += delta;
-                if (repeatTimer >= REPEAT_RATE) {
-                    repeatTimer = 0f;
-                    MenuOption currentOption = MenuOption.valueOf(selectedItem.getName());
-                    adjustSliderViaKeyboard(currentOption, leftPressed ? -0.1f : 0.1f);
-                }
-            }
-        }
+        handleKeyHold(delta);
     }
 
     private boolean handleKeyDown(int keycode) {
-        if (selectedItem == null) return false;
+        if (currentMenuItems == null || currentMenuItems.isEmpty()) return false;
 
-        MenuOption[] options = MenuOption.values();
-        int currentIndex = 0;
-        for (int i = 0; i < options.length; i++) {
-            if (options[i].name().equals(selectedItem.getName())) {
-                currentIndex = i;
-                break;
+        int currentIndex = currentMenuItems.indexOf(selectedItem);
+        int newIndex = currentIndex;
+
+        if (inModeSelect) {
+            if (keycode == Input.Keys.A || keycode == Input.Keys.LEFT) {
+                newIndex = (currentIndex - 1 + currentMenuItems.size()) % currentMenuItems.size();
+            } else if (keycode == Input.Keys.D || keycode == Input.Keys.RIGHT) {
+                newIndex = (currentIndex + 1) % currentMenuItems.size();
+            }
+        } else {
+            if (keycode == Input.Keys.W || keycode == Input.Keys.UP) {
+                newIndex = (currentIndex - 1 + currentMenuItems.size()) % currentMenuItems.size();
+            } else if (keycode == Input.Keys.S || keycode == Input.Keys.DOWN) {
+                newIndex = (currentIndex + 1) % currentMenuItems.size();
+            } else if (keycode == Input.Keys.A || keycode == Input.Keys.LEFT) {
+                leftPressed = true;
+                holdTimer = 0f;
+                adjustSlider(-0.05f);
+            } else if (keycode == Input.Keys.D || keycode == Input.Keys.RIGHT) {
+                rightPressed = true;
+                holdTimer = 0f;
+                adjustSlider(0.05f);
             }
         }
 
-        if (keycode == Input.Keys.W || keycode == Input.Keys.UP) {
-            currentIndex = Math.max(0, currentIndex - 1);
-            updateSelectionFromKeyboard(options[currentIndex]);
-            return true;
-        } else if (keycode == Input.Keys.S || keycode == Input.Keys.DOWN) {
-            currentIndex = Math.min(options.length - 1, currentIndex + 1);
-            updateSelectionFromKeyboard(options[currentIndex]);
-            return true;
-        } else if (keycode == Input.Keys.A || keycode == Input.Keys.LEFT) {
-            leftPressed = true;
-            holdTimer = 0f;
-            adjustSliderViaKeyboard(options[currentIndex], -0.1f);
-            return true;
-        } else if (keycode == Input.Keys.D || keycode == Input.Keys.RIGHT) {
-            rightPressed = true;
-            holdTimer = 0f;
-            adjustSliderViaKeyboard(options[currentIndex], 0.1f);
-            return true;
-        } else if (keycode == Input.Keys.SPACE || keycode == Input.Keys.ENTER) {
-            executeActionViaKeyboard(options[currentIndex]);
+        if (keycode == Input.Keys.SPACE || keycode == Input.Keys.ENTER) {
+            executeSelectedAction();
+        }
+
+        if (newIndex != currentIndex) {
+            selectMenuItem(currentMenuItems.get(newIndex));
             return true;
         }
         return false;
@@ -218,53 +296,37 @@ public class MenuView extends View<MenuViewModel> {
     private boolean handleKeyUp(int keycode) {
         if (keycode == Input.Keys.A || keycode == Input.Keys.LEFT) {
             leftPressed = false;
-            holdTimer = 0f;
             return true;
         } else if (keycode == Input.Keys.D || keycode == Input.Keys.RIGHT) {
             rightPressed = false;
-            holdTimer = 0f;
             return true;
         }
         return false;
     }
 
-    private void updateSelectionFromKeyboard(MenuOption option) {
-        Group actor = findActor(option.name());
-        if (actor != null) {
-            selectMenuItem(actor);
-        }
-    }
-
-    private void adjustSliderViaKeyboard(MenuOption option, float amount) {
-        if (option == MenuOption.MUSIC_VOLUME || option == MenuOption.SOUND_VOLUME) {
-            Group actor = findActor(option.name());
-            if (actor != null) {
-                for (Actor child : actor.getChildren()) {
-                    if (child instanceof Slider slider) {
-                        slider.setValue(slider.getValue() + amount);
-                        break;
-                    }
+    private void handleKeyHold(float delta) {
+        if (leftPressed || rightPressed) {
+            holdTimer += delta;
+            if (holdTimer >= HOLD_DELAY) {
+                repeatTimer += delta;
+                if (repeatTimer >= REPEAT_RATE) {
+                    repeatTimer = 0f;
+                    adjustSlider(leftPressed ? -0.05f : 0.05f);
                 }
             }
         }
     }
 
-    private void executeActionViaKeyboard(MenuOption option) {
-        if (option == MenuOption.START_LEVEL) {
-            viewModel.startLevelMode();
-        } else if (option == MenuOption.START_ENDLESS) {
-            viewModel.startEndlessMode();
-        } else if (option == MenuOption.QUIT_GAME) {
-            viewModel.quitGame();
+    private void adjustSlider(float amount) {
+        if (selectedItem != null && selectedItem.getUserObject() instanceof Slider slider) {
+            slider.setValue(slider.getValue() + amount);
         }
     }
 
-    enum MenuOption {
-        START_LEVEL,
-        START_ENDLESS,
-        MUSIC_VOLUME,
-        SOUND_VOLUME,
-        QUIT_GAME
+    private void executeSelectedAction() {
+        if (selectedItem != null && selectedItem.getUserObject() instanceof Runnable action) {
+            action.run();
+        }
     }
 
     @Override

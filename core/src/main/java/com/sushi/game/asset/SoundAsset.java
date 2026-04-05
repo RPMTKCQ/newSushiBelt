@@ -9,7 +9,7 @@ public enum SoundAsset implements Asset<Sound> {
     private final AssetDescriptor<Sound> descriptor;
 
     SoundAsset(String musicFile){
-        this.descriptor = new AssetDescriptor<>("audio/"+musicFile, Sound.class);
+        this.descriptor = new AssetDescriptor<>("audio/sound/"+musicFile, Sound.class);
     }
 
     @Override

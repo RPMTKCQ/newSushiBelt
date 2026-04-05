@@ -2,10 +2,11 @@ package com.sushi.game.ui.model;
 
 import com.badlogic.gdx.Gdx;
 import com.sushi.game.SushiGame;
+import com.sushi.game.asset.MapAsset;
 import com.sushi.game.audio.AudioService;
 import com.sushi.game.screen.GameScreen;
 
-public class MenuViewModel extends ViewModel{
+public class MenuViewModel extends ViewModel {
 
     private final AudioService audioService;
 
@@ -31,11 +32,11 @@ public class MenuViewModel extends ViewModel{
     }
 
     public void startLevelMode() {
-        game.setScreen(new GameScreen(game, false));
+        game.setScreen(new GameScreen(game, MapAsset.STAGE_1, false));
     }
 
     public void startEndlessMode() {
-        game.setScreen(new GameScreen(game, true));
+        game.setScreen(new GameScreen(game, MapAsset.STAGE_1, true));
     }
 
     public void quitGame() {
