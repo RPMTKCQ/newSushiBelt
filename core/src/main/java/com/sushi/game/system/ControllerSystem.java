@@ -102,6 +102,7 @@ public class ControllerSystem extends IteratingSystem {
                             customer.maxPatience
                         );
 
+                        audioService.playSound(SoundAsset.CUSTOMER_ORDER);
                         customer.state = Customer.CustomerState.WAITING_FOR_FOOD;
                     }
                     case WAITING_FOR_FOOD -> deliverFood(nearby, customer, playerEntity, inventory);
@@ -148,6 +149,8 @@ public class ControllerSystem extends IteratingSystem {
                 gameScreenUI.setLastSubmitSorted(sorted);
                 gameScreenUI.setChefReady(true);
 
+                audioService.playSound(SoundAsset.RECEIPT_SUBMIT);
+
                 Gdx.app.log("BUZZER", "submitted: " + firstDish + " | sorted=" + sorted);
                 found[0] = true;
                 return false;
@@ -157,6 +160,7 @@ public class ControllerSystem extends IteratingSystem {
     }
 
     private void seatCustomer(Entity customerEntity, Customer customer) {
+        audioService.playSound(SoundAsset.CUSTOMER_SIT);
         customer.state      = Customer.CustomerState.SEATING;
         customer.stateTimer = 0f;
         customer.clickable  = false;
@@ -180,6 +184,8 @@ public class ControllerSystem extends IteratingSystem {
 
         gameScreenUI.removeOrder(String.valueOf(customer.id));
 
+        audioService.playSound(SoundAsset.SERVE_FOOD);
+
         customer.state      = Customer.CustomerState.EATING;
         customer.stateTimer = 0f;
         Gdx.app.log("DELIVER", "delivered: " + customer.orderItemId);
@@ -187,6 +193,8 @@ public class ControllerSystem extends IteratingSystem {
 
     private void collectPayment(Entity customerEntity, Customer customer) {
         levelSystem.onServeCompleted(customer.servedSorted, customer.servedLate);
+
+        audioService.playSound(SoundAsset.TAKE_MONEY);
 
         customer.state      = Customer.CustomerState.LEAVING;
         customer.stateTimer = 0f;
@@ -197,8 +205,8 @@ public class ControllerSystem extends IteratingSystem {
         Move move = Move.MAPPER.get(entity);
         if (move == null) return;
 
+        // Removed the WALKING sound effect play method here!
 
-        // FIX: Clamping the velocity prevents ANY possibility of infinite speed stacking!
         move.getDirection().x = MathUtils.clamp(move.getDirection().x + directionX, -1f, 1f);
         move.getDirection().y = MathUtils.clamp(move.getDirection().y + directionY, -1f, 1f);
     }

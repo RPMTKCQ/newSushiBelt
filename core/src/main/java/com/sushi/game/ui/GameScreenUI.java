@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
 import com.sushi.game.asset.AssetService;
 import com.sushi.game.asset.AtlasAsset;
+import com.sushi.game.asset.SoundAsset;
 import com.sushi.game.audio.AudioService;
 import com.sushi.game.system.PowerUpSystem;
 import com.sushi.game.ui.model.PowerUpType;
@@ -31,6 +32,7 @@ public class GameScreenUI {
     private final Stage stage;
     private final Skin skin;
     private final AssetService assetService;
+    private final AudioService audioService; // GLOBAL ACCESS TO SOUNDS
 
     private Label timerLabel;
     private Label moneyLabel;
@@ -63,7 +65,7 @@ public class GameScreenUI {
     private boolean leftPressed = false;
     private boolean rightPressed = false;
     private float holdTimer = 0f;
-    private static final float REPEAT_RATE = 0.15f; // Slower repeat for distinct clicks
+    private static final float REPEAT_RATE = 0.15f;
 
     private enum PauseState {MAIN, CONFIRM_QUIT}
 
@@ -95,10 +97,11 @@ public class GameScreenUI {
         }
     }
 
-    public GameScreenUI(Stage stage, Skin skin, AssetService assetService) {
+    public GameScreenUI(Stage stage, Skin skin, AssetService assetService, AudioService audioService) {
         this.stage = stage;
         this.skin = skin;
         this.assetService = assetService;
+        this.audioService = audioService; // Set audio context immediately!
         build();
     }
 
@@ -337,6 +340,8 @@ public class GameScreenUI {
     }
 
     public void showPowerUpOverlay(PowerUpSystem powerUpSystem) {
+        audioService.playSound(SoundAsset.LEVEL_UP); // FIX: LEVEL UP SOUND HOOK
+
         powerUpOverlay.clearChildren();
 
         List<PowerUpType> allTypes = new ArrayList<>(Arrays.asList(PowerUpType.values()));
@@ -379,16 +384,10 @@ public class GameScreenUI {
         }
     }
 
-    public void togglePauseOverlay(boolean isPaused, Runnable onResume, Runnable onQuit, AudioService audioService) {
+    public void togglePauseOverlay(boolean isPaused, Runnable onResume, Runnable onQuit) {
         if (pauseOverlay == null) {
             pauseOverlay = new Table();
             pauseOverlay.setFillParent(true);
-
-            com.badlogic.gdx.graphics.Pixmap pixmap = new com.badlogic.gdx.graphics.Pixmap(1, 1, com.badlogic.gdx.graphics.Pixmap.Format.RGBA8888);
-            pixmap.setColor(new com.badlogic.gdx.graphics.Color(0f, 0f, 0f, 0.75f));
-            pixmap.fill();
-            com.badlogic.gdx.graphics.Texture tex = new com.badlogic.gdx.graphics.Texture(pixmap);
-            pauseOverlay.setBackground(new com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable(tex));
 
             pauseSelectionImg = new Image(skin, "selection-2");
             pauseSelectionImg.setTouchable(Touchable.disabled);
@@ -402,10 +401,12 @@ public class GameScreenUI {
                         return true;
                     }
 
-                    if (keycode == Input.Keys.SHIFT_LEFT || keycode == Input.Keys.SHIFT_RIGHT) {
+                    if (keycode == Input.Keys.SHIFT_LEFT || keycode == Input.Keys.SHIFT_RIGHT || keycode == Input.Keys.ESCAPE) {
                         if (currentPauseState == PauseState.CONFIRM_QUIT) {
-                            buildMainPauseScreen(onResume, onQuit, audioService);
+                            audioService.playSound(SoundAsset.MENU_BACK);
+                            buildMainPauseScreen(onResume, onQuit);
                         } else {
+                            audioService.playSound(SoundAsset.MENU_BACK);
                             executeSafeAction(onResume);
                         }
                         return true;
@@ -436,11 +437,11 @@ public class GameScreenUI {
                         } else if (keycode == Input.Keys.A || keycode == Input.Keys.LEFT) {
                             leftPressed = true;
                             holdTimer = 0f;
-                            adjustPauseSlider(-0.1f); // Instant jump on press
+                            adjustPauseSlider(-0.1f);
                         } else if (keycode == Input.Keys.D || keycode == Input.Keys.RIGHT) {
                             rightPressed = true;
                             holdTimer = 0f;
-                            adjustPauseSlider(0.1f); // Instant jump on press
+                            adjustPauseSlider(0.1f);
                         }
                     }
 
@@ -464,8 +465,10 @@ public class GameScreenUI {
 
                     if (button == Input.Buttons.RIGHT) {
                         if (currentPauseState == PauseState.CONFIRM_QUIT) {
-                            buildMainPauseScreen(onResume, onQuit, audioService);
+                            audioService.playSound(SoundAsset.MENU_BACK);
+                            buildMainPauseScreen(onResume, onQuit);
                         } else {
+                            audioService.playSound(SoundAsset.MENU_BACK);
                             executeSafeAction(onResume);
                         }
                         return true;
@@ -483,7 +486,7 @@ public class GameScreenUI {
             inputLocked = false;
             pauseOverlay.toFront();
             stage.setKeyboardFocus(pauseOverlay);
-            buildMainPauseScreen(onResume, onQuit, audioService);
+            buildMainPauseScreen(onResume, onQuit);
         } else {
             stage.setKeyboardFocus(null);
         }
@@ -502,7 +505,7 @@ public class GameScreenUI {
         });
     }
 
-    private void buildMainPauseScreen(Runnable onResume, Runnable onQuit, AudioService audioService) {
+    private void buildMainPauseScreen(Runnable onResume, Runnable onQuit) {
         currentPauseState = PauseState.MAIN;
         pauseOverlay.clearChildren();
         pauseMenuItems.clear();
@@ -511,22 +514,26 @@ public class GameScreenUI {
         pixmap.setColor(new com.badlogic.gdx.graphics.Color(0f, 0f, 0f, 0.75f));
         pixmap.fill();
         com.badlogic.gdx.graphics.Texture tex = new com.badlogic.gdx.graphics.Texture(pixmap);
-        pauseOverlay.setBackground(new com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable(tex));
+
+        Image darkBg = new Image(tex);
+        darkBg.setSize(20000f, 20000f);
+        darkBg.setPosition(-10000f, -10000f);
+        pauseOverlay.addActor(darkBg);
+        darkBg.toBack();
 
         Label title = new Label("GAME PAUSED", skin, "title");
         title.setAlignment(Align.center);
         pauseOverlay.add(title).padBottom(40f).row();
 
-        // 1. Resume Button
         TextButton resumeBtn = new TextButton("Resume", skin);
         resumeBtn.setColor(skin.getColor("white"));
         resumeBtn.setUserObject((Runnable) onResume);
         resumeBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                audioService.playSound(SoundAsset.MENU_SELECT);
                 executeSafeAction(onResume);
             }
-
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
                 selectPauseItem(resumeBtn);
@@ -535,19 +542,18 @@ public class GameScreenUI {
         pauseMenuItems.add(resumeBtn);
         pauseOverlay.add(resumeBtn).minSize(300f, 80f).padBottom(20f).row();
 
-        // 2. Music Slider
         Table musicTable = new Table();
         Label musicLabel = new Label("Music Volume", skin, "default");
         musicLabel.setColor(skin.getColor("white"));
         musicTable.add(musicLabel).padBottom(5f).row();
 
-        // FIX: Step size changed to 0.1f (10 hard ticks)
         Slider musicSlider = new Slider(0f, 1f, 0.1f, false, skin);
         musicSlider.setValue(audioService.getMusicVolume());
         musicSlider.addListener(new com.badlogic.gdx.scenes.scene2d.utils.ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 audioService.setMusicVolume(musicSlider.getValue());
+                audioService.playSound(SoundAsset.MENU_HOVER);
             }
         });
         musicTable.add(musicSlider).width(290f);
@@ -561,19 +567,18 @@ public class GameScreenUI {
         pauseMenuItems.add(musicTable);
         pauseOverlay.add(musicTable).padBottom(20f).row();
 
-        // 3. Sound Slider
         Table soundTable = new Table();
         Label soundLabel = new Label("Sound Volume", skin, "default");
         soundLabel.setColor(skin.getColor("white"));
         soundTable.add(soundLabel).padBottom(5f).row();
 
-        // FIX: Step size changed to 0.1f (10 hard ticks)
         Slider soundSlider = new Slider(0f, 1f, 0.1f, false, skin);
         soundSlider.setValue(audioService.getSoundVolume());
         soundSlider.addListener(new com.badlogic.gdx.scenes.scene2d.utils.ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 audioService.setSoundVolume(soundSlider.getValue());
+                audioService.playSound(SoundAsset.MENU_HOVER);
             }
         });
         soundTable.add(soundSlider).width(290f);
@@ -587,17 +592,16 @@ public class GameScreenUI {
         pauseMenuItems.add(soundTable);
         pauseOverlay.add(soundTable).padBottom(40f).row();
 
-        // 4. Quit Button
         TextButton quitBtn = new TextButton("Quit", skin);
         quitBtn.setColor(skin.getColor("white"));
-        Runnable confirmQuitAction = () -> buildConfirmQuitScreen(onResume, onQuit, audioService);
+        Runnable confirmQuitAction = () -> buildConfirmQuitScreen(onResume, onQuit);
         quitBtn.setUserObject(confirmQuitAction);
         quitBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                audioService.playSound(SoundAsset.MENU_SELECT);
                 executeSafeAction(confirmQuitAction);
             }
-
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
                 selectPauseItem(quitBtn);
@@ -610,10 +614,21 @@ public class GameScreenUI {
         if (!pauseMenuItems.isEmpty()) selectPauseItem(pauseMenuItems.get(0));
     }
 
-    private void buildConfirmQuitScreen(Runnable onResume, Runnable onQuit, AudioService audioService) {
+    private void buildConfirmQuitScreen(Runnable onResume, Runnable onQuit) {
         currentPauseState = PauseState.CONFIRM_QUIT;
         pauseOverlay.clearChildren();
         pauseMenuItems.clear();
+
+        com.badlogic.gdx.graphics.Pixmap pixmap = new com.badlogic.gdx.graphics.Pixmap(1, 1, com.badlogic.gdx.graphics.Pixmap.Format.RGBA8888);
+        pixmap.setColor(new com.badlogic.gdx.graphics.Color(0f, 0f, 0f, 0.75f));
+        pixmap.fill();
+        com.badlogic.gdx.graphics.Texture tex = new com.badlogic.gdx.graphics.Texture(pixmap);
+
+        Image darkBg = new Image(tex);
+        darkBg.setSize(20000f, 20000f);
+        darkBg.setPosition(-10000f, -10000f);
+        pauseOverlay.addActor(darkBg);
+        darkBg.toBack();
 
         Label title = new Label("Quit to Menu?", skin, "title");
         title.setAlignment(Align.center);
@@ -632,9 +647,9 @@ public class GameScreenUI {
         yesBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                audioService.playSound(SoundAsset.MENU_SELECT);
                 executeSafeAction(onQuit);
             }
-
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
                 selectPauseItem(yesBtn);
@@ -645,14 +660,14 @@ public class GameScreenUI {
 
         TextButton noBtn = new TextButton("No", skin);
         noBtn.setColor(skin.getColor("white"));
-        Runnable noAction = () -> buildMainPauseScreen(onResume, onQuit, audioService);
+        Runnable noAction = () -> buildMainPauseScreen(onResume, onQuit);
         noBtn.setUserObject(noAction);
         noBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                audioService.playSound(SoundAsset.MENU_BACK);
                 executeSafeAction(noAction);
             }
-
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
                 selectPauseItem(noBtn);
@@ -674,12 +689,18 @@ public class GameScreenUI {
     }
 
     private void selectPauseItem(Group group) {
+        if (this.pauseSelectedItem == group) return;
+
         if (this.pauseSelectedItem instanceof Button oldButton) {
             oldButton.setChecked(false);
         }
 
         if (pauseSelectionImg.getParent() != null) {
             pauseSelectionImg.getParent().removeActor(pauseSelectionImg);
+        }
+
+        if (this.pauseSelectedItem != null) {
+            audioService.playSound(SoundAsset.MENU_HOVER);
         }
 
         this.pauseSelectedItem = group;
@@ -895,6 +916,7 @@ public class GameScreenUI {
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
                 card.addAction(Actions.color(skin.getColor("sand"), 0.1f));
+                audioService.playSound(SoundAsset.MENU_HOVER); // FIX: SWITCH SOUND HOOK
             }
 
             @Override
@@ -905,6 +927,7 @@ public class GameScreenUI {
         card.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                audioService.playSound(SoundAsset.MENU_SELECT); // FIX: CHOOSE SOUND HOOK
                 powerUpSystem.applyPowerUp(type);
                 addLogEvent("Power-Up Activated: " + type.displayName(), com.badlogic.gdx.graphics.Color.CYAN);
                 hideOverlay();

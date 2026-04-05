@@ -31,6 +31,11 @@ public class MenuViewModel extends ViewModel {
         this.audioService.setSoundVolume(volume);
     }
 
+    // NEW: Expose audio service for UI sounds
+    public void playSound(com.sushi.game.asset.SoundAsset sound) {
+        audioService.playSound(sound);
+    }
+
     // Unified start game method taking mode and stage
     public void startGame(boolean isEndlessMode, MapAsset stage) {
         game.setScreen(new GameScreen(game, stage, isEndlessMode));
