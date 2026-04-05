@@ -1,0 +1,172 @@
+
+gameSkin.png
+size: 1024, 1024
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+banner
+  rotate: false
+  xy: 1, 700
+  size: 632, 164
+  orig: 632, 164
+  offset: 0, 0
+  index: -1
+bar
+  rotate: false
+  xy: 133, 690
+  size: 107, 8
+  orig: 107, 8
+  offset: 0, 0
+  index: -1
+bar_frame
+  rotate: false
+  xy: 1, 682
+  size: 130, 16
+  split: 3, 3, 3, 2
+  orig: 130, 16
+  offset: 0, 0
+  index: -1
+button
+  rotate: false
+  xy: 635, 729
+  size: 32, 16
+  split: 5, 5, 8, 6
+  orig: 32, 16
+  offset: 0, 0
+  index: -1
+frame
+  rotate: false
+  xy: 635, 747
+  size: 129, 117
+  split: 46, 49, 30, 54
+  orig: 129, 117
+  offset: 0, 0
+  index: -1
+life_00
+  rotate: false
+  xy: 669, 729
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+life_01
+  rotate: false
+  xy: 35, 566
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+life_02
+  rotate: false
+  xy: 766, 748
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+life_03
+  rotate: false
+  xy: 816, 814
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+life_04
+  rotate: false
+  xy: 850, 848
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+selection
+  rotate: false
+  xy: 635, 702
+  size: 24, 25
+  split: 8, 8, 9, 9
+  orig: 24, 25
+  offset: 0, 0
+  index: -1
+button-green
+  rotate: false
+  xy: 816, 832
+  size: 32, 32
+  split: 5, 5, 10, 10
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+cs-bar
+  rotate: false
+  xy: 242, 696
+  size: 30, 2
+  split: 0, 0, 0, 0
+  orig: 30, 2
+  offset: 0, 0
+  index: -1
+cs-bar-bg
+  rotate: false
+  xy: 133, 684
+  size: 32, 4
+  split: 1, 1, 1, 1
+  orig: 32, 4
+  offset: 0, 0
+  index: -1
+fd-border
+  rotate: false
+  xy: 1, 530
+  size: 18, 18
+  orig: 18, 18
+  offset: 0, 0
+  index: -1
+knob
+  rotate: false
+  xy: 766, 766
+  size: 32, 32
+  split: 14, 15, 14, 13
+  pad: 16, 15, 14, 13
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+maguro-nigiri
+  rotate: false
+  xy: 1, 517
+  size: 14, 11
+  orig: 14, 11
+  offset: 0, 0
+  index: -1
+menu-bg
+  rotate: false
+  xy: 1, 584
+  size: 128, 96
+  split: 4, 4, 4, 4
+  orig: 128, 96
+  offset: 0, 0
+  index: -1
+rct-border
+  rotate: false
+  xy: 766, 800
+  size: 48, 64
+  split: 1, 1, 1, 1
+  orig: 48, 64
+  offset: 0, 0
+  index: -1
+salmon-nigiri
+  rotate: false
+  xy: 800, 787
+  size: 14, 11
+  orig: 14, 11
+  offset: 0, 0
+  index: -1
+track
+  rotate: false
+  xy: 1, 550
+  size: 32, 32
+  split: 1, 1, 15, 14
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+tuna-roll
+  rotate: false
+  xy: 661, 714
+  size: 14, 13
+  orig: 14, 13
+  offset: 0, 0
+  index: -1

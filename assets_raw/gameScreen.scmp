@@ -2680,7 +2680,7 @@ preferences: {
 	}
 	last-import-export-path: {
 		class: java.lang.String
-		value: C:/Users/Wyshcen/Documents/Java/newSushiBelt/assets/ui/skin.json
+		value: C:/Users/Wyshcen/Documents/Java/newSushiBelt/assets/ui/gameSkin.json
 	}
 	resources-relative: {
 		class: java.lang.Boolean

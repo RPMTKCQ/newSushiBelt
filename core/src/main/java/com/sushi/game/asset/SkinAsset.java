@@ -4,8 +4,8 @@ import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 public enum SkinAsset implements Asset<Skin> {
-    DEFAULT("skin.json"),
-    GAME("skin2.json");
+    DEFAULT("menuSkin.json"),
+    GAME("gameSkin.json");
 
     private final AssetDescriptor<Skin> descriptor;
 
