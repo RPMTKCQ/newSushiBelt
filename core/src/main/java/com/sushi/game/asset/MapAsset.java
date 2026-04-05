@@ -6,7 +6,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 
 public enum MapAsset implements Asset<TiledMap> {
-    MAIN("restaurant-1.tmx");
+    EASY("restaurant-1.tmx");
 
     private final AssetDescriptor<TiledMap> descriptor;
 

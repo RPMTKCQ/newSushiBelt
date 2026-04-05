@@ -17,9 +17,9 @@ import com.badlogic.gdx.utils.Array;
 
 public class CustomerSpawner {
 
-    private static final float BASE_SPAWN_INTERVAL  = 12f;
+    private static final float BASE_SPAWN_INTERVAL  = 7f;
     private static final float INTERVAL_REDUCTION   = 1f;
-    private static final int   SCORE_PER_REDUCTION  = 100; // Every 100 points = harder game!
+    private static final int   SCORE_PER_REDUCTION  = 100;
     private static final float MIN_SPAWN_INTERVAL   = 4f;
 
     private final CustomerFactory factory;
