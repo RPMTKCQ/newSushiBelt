@@ -33,7 +33,7 @@ public class MenuScreen extends ScreenAdapter {
 
     @Override
     public void show() {
-        // FIX: Force LibGDX to directly use the Menu Stage!
+
         Gdx.input.setInputProcessor(stage);
 
         this.stage.addActor(new MenuView(stage, skin, new MenuViewModel(game)));
