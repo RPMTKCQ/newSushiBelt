@@ -87,8 +87,8 @@
             "scale": 1.5,
             "selectedLayer": 4,
             "viewCenter": {
-                "x": 237.66666666666666,
-                "y": 145.66666666666663
+                "x": 378.3333333333333,
+                "y": 204.33333333333337
             }
         },
         "restaurant-2.tmx": {
@@ -98,8 +98,8 @@
             "scale": 2,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 204.75,
-                "y": 21.25
+                "x": 240.25,
+                "y": 159.75
             }
         },
         "restaurant-3.tmx": {
@@ -109,8 +109,8 @@
             "scale": 1,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 160.5,
-                "y": 82.5
+                "x": 239.5,
+                "y": 159.5
             }
         },
         "restaurant.tmx": {
