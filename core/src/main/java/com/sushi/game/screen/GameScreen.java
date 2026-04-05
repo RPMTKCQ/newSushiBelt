@@ -4,9 +4,9 @@ import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Vector2;
@@ -17,7 +17,6 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sushi.game.SushiGame;
-import com.sushi.game.asset.AtlasAsset;
 import com.sushi.game.asset.MapAsset;
 import com.sushi.game.asset.SkinAsset;
 import com.sushi.game.audio.AudioService;
@@ -64,11 +63,9 @@ public class GameScreen extends ScreenAdapter {
 
     private boolean isPaused = false;
 
-    // FIX: Added the missing fields
     private final MapAsset currentStage;
     private final boolean isEndlessMode;
 
-    // FIX: Reordered parameters to match what MenuViewModel is passing
     public GameScreen(SushiGame game, MapAsset currentStage, boolean isEndlessMode) {
         this.game = game;
         this.currentStage = currentStage;
@@ -100,7 +97,6 @@ public class GameScreen extends ScreenAdapter {
 
         this.levelSystem = new LevelSystem(gameScreenUI, powerUpSystem, isEndlessMode,
             () -> game.setScreen(new WinScreen(game, levelSystem.getScore(), levelSystem.getMoney())),
-            // FIX: Passes the currentStage into GameOverScreen so you can restart the same level
             () -> game.setScreen(new GameOverScreen(game, levelSystem.getScore(), this.currentStage, isEndlessMode)));
 
         this.customerSpawner = new CustomerSpawner(customerFactory, tableManager, engine, levelSystem);
@@ -130,7 +126,11 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void show() {
-        game.setInputProcessors(keyboardController, stage);
+        InputMultiplexer multiplexer = new InputMultiplexer();
+        multiplexer.addProcessor(keyboardController);
+        multiplexer.addProcessor(stage);
+        Gdx.input.setInputProcessor(multiplexer);
+
         keyboardController.setActiveState(GameControllerState.class);
 
         Consumer<TiledMap> renderConsumer = engine.getSystem(RenderSystem.class)::setMap;
@@ -141,7 +141,6 @@ public class GameScreen extends ScreenAdapter {
         tiledService.setLoadObjectConsumer(tiledAshleyConfigurator::onLoadObject);
         tiledService.setLoadTileConsumer(tiledAshleyConfigurator::onLoadTile);
 
-        // FIX: Replaced hardcoded STAGE_1 with the currentStage variable
         TiledMap tiledMap = tiledService.loadMap(this.currentStage);
         tiledService.setMap(tiledMap);
 
@@ -166,7 +165,13 @@ public class GameScreen extends ScreenAdapter {
             }
             system.setProcessing(true);
         }
-        gameScreenUI.togglePauseOverlay(false, null, null);
+
+        InputMultiplexer multiplexer = new InputMultiplexer();
+        multiplexer.addProcessor(keyboardController);
+        multiplexer.addProcessor(stage);
+        Gdx.input.setInputProcessor(multiplexer);
+
+        gameScreenUI.togglePauseOverlay(false, null, null, audioService);
     }
 
     public void pauseGame() {
@@ -177,17 +182,20 @@ public class GameScreen extends ScreenAdapter {
             }
             system.setProcessing(false);
         }
-        gameScreenUI.togglePauseOverlay(true, this::resumeGame, () -> game.setScreen(new MenuScreen(game)));
+
+        keyboardController.reset();
+        Gdx.input.setInputProcessor(stage);
+
+        gameScreenUI.togglePauseOverlay(true, this::resumeGame, () -> {
+            game.setScreen(new MenuScreen(game));
+        }, audioService);
     }
 
     @Override
     public void render(float delta) {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            if (isPaused) {
-                resumeGame();
-            } else {
-                pauseGame();
-            }
+        // Only pause the game if ESC is pressed. Resuming is handled by the UI now!
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) && !isPaused) {
+            pauseGame();
         }
 
         delta = Math.min(delta, 1 / 30f);
@@ -198,11 +206,13 @@ public class GameScreen extends ScreenAdapter {
 
         engine.update(delta);
 
+        // Separate logic block for updating systems based on the pause state
         if (!isPaused) {
             customerRenderSystem.update(delta);
             gameScreenUI.updateReceipts(delta);
         } else {
             customerRenderSystem.update(0f);
+            gameScreenUI.updatePauseMenu(delta); // Let the UI read the held slider keys!
         }
 
         uiViewport.apply();

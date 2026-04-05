@@ -196,8 +196,10 @@ public class ControllerSystem extends IteratingSystem {
     private void moveEntity(Entity entity, float directionX, float directionY) {
         Move move = Move.MAPPER.get(entity);
         if (move == null) return;
-        audioService.playSound(SoundAsset.WALKING);
-        move.getDirection().x += directionX;
-        move.getDirection().y += directionY;
+
+
+        // FIX: Clamping the velocity prevents ANY possibility of infinite speed stacking!
+        move.getDirection().x = MathUtils.clamp(move.getDirection().x + directionX, -1f, 1f);
+        move.getDirection().y = MathUtils.clamp(move.getDirection().y + directionY, -1f, 1f);
     }
 }

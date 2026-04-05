@@ -19,13 +19,11 @@ public class MenuView extends View<MenuViewModel> {
     private Group selectedItem;
     private boolean isInitialSelectionDone = false;
 
-    // Key Repeat Variables
+    // Discrete Slider Variables
     private boolean leftPressed = false;
     private boolean rightPressed = false;
     private float holdTimer = 0f;
-    private float repeatTimer = 0f;
-    private static final float HOLD_DELAY = 0.2f;
-    private static final float REPEAT_RATE = 0.1f;
+    private static final float REPEAT_RATE = 0.08f; // Slower repeat for distinct clicks
 
     private List<Group> mainMenuItems;
     private List<Group> modeMenuItems;
@@ -62,12 +60,15 @@ public class MenuView extends View<MenuViewModel> {
         stage.addListener(new InputListener() {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
-                if (currentState == MenuState.MODE && (keycode == Input.Keys.SHIFT_LEFT || keycode == Input.Keys.SHIFT_RIGHT)) {
-                    showMainMenu();
-                    return true;
-                } else if (currentState == MenuState.LEVEL && (keycode == Input.Keys.SHIFT_LEFT || keycode == Input.Keys.SHIFT_RIGHT)) {
-                    showModeSelectMenu();
-                    return true;
+                // ESC, SHIFT, or Backspace to go back
+                if (keycode == Input.Keys.ESCAPE || keycode == Input.Keys.SHIFT_LEFT || keycode == Input.Keys.SHIFT_RIGHT) {
+                    if (currentState == MenuState.MODE) {
+                        showMainMenu();
+                        return true;
+                    } else if (currentState == MenuState.LEVEL) {
+                        showModeSelectMenu();
+                        return true;
+                    }
                 }
                 return handleKeyDown(keycode);
             }
@@ -79,12 +80,14 @@ public class MenuView extends View<MenuViewModel> {
 
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                if (currentState == MenuState.MODE && button == Input.Buttons.RIGHT) {
-                    showMainMenu();
-                    return true;
-                } else if (currentState == MenuState.LEVEL && button == Input.Buttons.RIGHT) {
-                    showModeSelectMenu();
-                    return true;
+                if (button == Input.Buttons.RIGHT) {
+                    if (currentState == MenuState.MODE) {
+                        showMainMenu();
+                        return true;
+                    } else if (currentState == MenuState.LEVEL) {
+                        showModeSelectMenu();
+                        return true;
+                    }
                 }
                 return false;
             }
@@ -104,31 +107,27 @@ public class MenuView extends View<MenuViewModel> {
     }
 
     private void buildModeSelectMenu() {
-        // Group 1: Stage Mode Button & Description
         Table stageTable = new Table();
         TextButton stageBtn = createButton("Stage", () -> showLevelSelectMenu(false));
-        stageTable.add(stageBtn).padBottom(10.0f).minWidth(100.0f).maxWidth(100.0f).row();
+        stageTable.add(stageBtn).padBottom(10.0f).minWidth(150.0f).maxWidth(150.0f).row();
 
-        Label stageDesc = new Label("Reach the quota within a limited set amount of time!", skin, "small");
+        Label stageDesc = new Label("Reach the quota within a limited amount of time!", skin, "small");
         stageDesc.setAlignment(Align.center);
         stageDesc.setWrap(true);
-        stageTable.add(stageDesc).padTop(10.0f).minWidth(100.0f);
+        stageTable.add(stageDesc).padTop(10.0f).minWidth(150.0f);
 
-        // Group 2: Endless Mode Button & Description
         Table endlessTable = new Table();
         TextButton endlessBtn = createButton("Endless", () -> showLevelSelectMenu(true));
-        endlessTable.add(endlessBtn).padBottom(10.0f).minWidth(100.0f).maxWidth(100.0f).row();
+        endlessTable.add(endlessBtn).padBottom(10.0f).minWidth(150.0f).maxWidth(150.0f).row();
 
         Label endlessDesc = new Label("Keep the reputation up as long as possible!", skin, "small");
         endlessDesc.setAlignment(Align.center);
         endlessDesc.setWrap(true);
-        endlessTable.add(endlessDesc).padTop(10.0f).minWidth(100.0f);
+        endlessTable.add(endlessDesc).padTop(10.0f).minWidth(150.0f);
 
-        // We only add the buttons to the list so the keyboard can navigate to them
         modeMenuItems.add(stageBtn);
         modeMenuItems.add(endlessBtn);
 
-        // Attach the tables as user objects to the buttons, so we can retrieve them in showModeSelectMenu
         stageBtn.setUserObject(stageTable);
         endlessBtn.setUserObject(endlessTable);
     }
@@ -190,9 +189,6 @@ public class MenuView extends View<MenuViewModel> {
 
         add(optionsTable).padBottom(20f).row();
 
-//        Label footer = new Label("Three Bits", skin, "small");
-//        footer.setColor(skin.getColor("white"));
-//        add(footer).padTop(30.0f).expandX().align(Align.bottom);
 
         currentMenuItems = modeMenuItems;
         pack();
@@ -216,10 +212,6 @@ public class MenuView extends View<MenuViewModel> {
         levelsRow.add(levelMenuItems.get(2));
 
         add(levelsRow).padBottom(20f).row();
-
-        Label footer = new Label("Three Bits", skin, "small");
-        footer.setColor(skin.getColor("white"));
-        add(footer).padTop(30.0f).expandX().align(Align.bottom);
 
         currentMenuItems = levelMenuItems;
         pack();
@@ -256,7 +248,8 @@ public class MenuView extends View<MenuViewModel> {
         label.setColor(skin.getColor("black"));
         table.add(label).row();
 
-        Slider slider = new Slider(0f, 1f, 0.05f, false, skin);
+        // FIX: Step size changed to 0.1f (10 hard ticks)
+        Slider slider = new Slider(0f, 1f, 0.1f, false, skin);
         slider.setValue(initialValue);
 
         slider.addListener(new com.badlogic.gdx.scenes.scene2d.utils.ChangeListener() {
@@ -360,7 +353,14 @@ public class MenuView extends View<MenuViewModel> {
             isInitialSelectionDone = true;
         }
 
-        handleKeyHold(delta);
+        // Distinct discrete ticks when holding keys
+        if (leftPressed || rightPressed) {
+            holdTimer += delta;
+            while (holdTimer >= REPEAT_RATE) {
+                holdTimer -= REPEAT_RATE;
+                adjustSlider(leftPressed ? -0.1f : 0.1f); // 10% jumps
+            }
+        }
     }
 
     private boolean handleKeyDown(int keycode) {
@@ -383,11 +383,11 @@ public class MenuView extends View<MenuViewModel> {
             } else if (keycode == Input.Keys.A || keycode == Input.Keys.LEFT) {
                 leftPressed = true;
                 holdTimer = 0f;
-                adjustSlider(-0.05f);
+                adjustSlider(-0.1f); // Instant jump on press
             } else if (keycode == Input.Keys.D || keycode == Input.Keys.RIGHT) {
                 rightPressed = true;
                 holdTimer = 0f;
-                adjustSlider(0.05f);
+                adjustSlider(0.1f); // Instant jump on press
             }
         }
 
@@ -411,19 +411,6 @@ public class MenuView extends View<MenuViewModel> {
             return true;
         }
         return false;
-    }
-
-    private void handleKeyHold(float delta) {
-        if (leftPressed || rightPressed) {
-            holdTimer += delta;
-            if (holdTimer >= HOLD_DELAY) {
-                repeatTimer += delta;
-                if (repeatTimer >= REPEAT_RATE) {
-                    repeatTimer = 0f;
-                    adjustSlider(leftPressed ? -0.05f : 0.05f);
-                }
-            }
-        }
     }
 
     private void adjustSlider(float amount) {

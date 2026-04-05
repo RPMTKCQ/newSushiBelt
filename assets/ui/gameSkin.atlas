@@ -51,28 +51,28 @@ life_00
   index: -1
 life_01
   rotate: false
-  xy: 35, 566
+  xy: 766, 748
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 life_02
   rotate: false
-  xy: 766, 748
+  xy: 816, 814
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 life_03
   rotate: false
-  xy: 816, 814
+  xy: 850, 848
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 life_04
   rotate: false
-  xy: 850, 848
+  xy: 1, 498
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
@@ -111,7 +111,7 @@ cs-bar-bg
   index: -1
 fd-border
   rotate: false
-  xy: 1, 530
+  xy: 35, 564
   size: 18, 18
   orig: 18, 18
   offset: 0, 0
@@ -127,7 +127,7 @@ knob
   index: -1
 maguro-nigiri
   rotate: false
-  xy: 1, 517
+  xy: 35, 551
   size: 14, 11
   orig: 14, 11
   offset: 0, 0
@@ -153,6 +153,14 @@ salmon-nigiri
   xy: 800, 787
   size: 14, 11
   orig: 14, 11
+  offset: 0, 0
+  index: -1
+selection-2
+  rotate: false
+  xy: 1, 516
+  size: 32, 32
+  split: 4, 4, 4, 4
+  orig: 32, 32
   offset: 0, 0
   index: -1
 track

@@ -38,20 +38,29 @@ public class KeyboardController extends InputAdapter {
         if (controllerState == null) {
             throw new GdxRuntimeException("No state with class " + stateClass + " found in the state cache");
         }
-
-        for (Command command : Command.values()) {
-            if (this.activeState != null && this.commandState[command.ordinal()]) {
-                this.activeState.keyUp(command);
-            }
-            this.commandState[command.ordinal()] = false;
-        }
+        reset();
         this.activeState = controllerState;
+    }
+
+    public void reset() {
+        for (Command command : Command.values()) {
+            if (this.commandState[command.ordinal()]) {
+                this.commandState[command.ordinal()] = false;
+                if (this.activeState != null) {
+                    this.activeState.keyUp(command);
+                }
+            }
+        }
     }
 
     @Override
     public boolean keyDown(int keycode) {
         Command command = KEY_MAPPING.get(keycode);
         if (command == null) return false;
+
+        // FIX: Safely consumes OS repeat keys without passing them to the Stage!
+        if (this.commandState[command.ordinal()]) return true;
+
         this.commandState[command.ordinal()] = true;
         this.activeState.keyDown(command);
         return true;
@@ -61,7 +70,9 @@ public class KeyboardController extends InputAdapter {
     public boolean keyUp(int keycode) {
         Command command = KEY_MAPPING.get(keycode);
         if (command == null) return false;
+
         if (!this.commandState[command.ordinal()]) return false;
+
         this.commandState[command.ordinal()] = false;
         this.activeState.keyUp(command);
         return true;
