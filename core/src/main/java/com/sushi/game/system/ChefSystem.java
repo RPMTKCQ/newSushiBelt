@@ -44,7 +44,6 @@ public class ChefSystem extends IteratingSystem {
                     String customerId = gameScreenUI.getFirstCustomerId();
                     String dishToCook = gameScreenUI.getFirstDishName();
 
-                    // FIX: Chef pulls the ID and guarantees the UI syncs exactly with what is being cooked
                     if (dishToCook != null && customerId != null) {
                         chef.currentRecipeId = dishToCook;
                         chef.cookTimer       = 0f;
@@ -57,7 +56,7 @@ public class ChefSystem extends IteratingSystem {
 
                         Gdx.app.log("CHEF", "started cooking: " + dishToCook);
                     } else {
-                        gameScreenUI.setChefReady(false); // Failsafe
+                        gameScreenUI.setChefReady(false);
                     }
                 }
                 break;
@@ -76,6 +75,7 @@ public class ChefSystem extends IteratingSystem {
 
             case DONE:
                 spawnDishOnBelt(chef.currentRecipeId);
+                gameScreenUI.playCookingDoneSound(); // FIX: SOUND IS FINALLY HOOKED UP!
                 chef.state = Chef.ChefState.IDLE;
                 chef.currentRecipeId = null;
                 Gdx.app.log("CHEF", "finished cooking, dish on belt");

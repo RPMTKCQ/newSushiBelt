@@ -69,6 +69,8 @@ public class GameScreenUI {
 
     private PauseState currentPauseState = PauseState.MAIN;
 
+    private com.badlogic.gdx.graphics.Texture darkOverlayTexture;
+
     private static class ReceiptCardData {
         Table card;
         Image dishImage;
@@ -103,7 +105,6 @@ public class GameScreenUI {
         build();
     }
 
-    // HELPER: Play the cooking sound from ChefSystem.java!
     public void playCookingDoneSound() {
         if (audioService != null) audioService.playSound(SoundAsset.COOKING_DONE);
     }
@@ -392,6 +393,8 @@ public class GameScreenUI {
             pauseOverlay = new Table();
             pauseOverlay.setFillParent(true);
 
+            pauseOverlay.setBackground(new com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable(darkOverlayTexture));
+
             pauseOverlay.addListener(new InputListener() {
                 @Override
                 public boolean keyDown(InputEvent event, int keycode) {
@@ -506,7 +509,8 @@ public class GameScreenUI {
     }
 
     private TextButton createPauseButton(String text, Runnable onClick) {
-        TextButton.TextButtonStyle customStyle = new TextButton.TextButtonStyle(skin.get(TextButton.TextButtonStyle.class));
+        // FIX: Grab the 'menu' style specifically to make the buttons larger!
+        TextButton.TextButtonStyle customStyle = new TextButton.TextButtonStyle(skin.get("menu", TextButton.TextButtonStyle.class));
         customStyle.over = null;
         customStyle.checkedOver = null;
         customStyle.down = null;
@@ -541,18 +545,7 @@ public class GameScreenUI {
         currentPauseState = PauseState.MAIN;
         pauseOverlay.clearChildren();
         pauseMenuItems.clear();
-        this.pauseSelectedItem = null; // Clean reset
-
-        com.badlogic.gdx.graphics.Pixmap pixmap = new com.badlogic.gdx.graphics.Pixmap(1, 1, com.badlogic.gdx.graphics.Pixmap.Format.RGBA8888);
-        pixmap.setColor(new com.badlogic.gdx.graphics.Color(0f, 0f, 0f, 0.75f));
-        pixmap.fill();
-        com.badlogic.gdx.graphics.Texture tex = new com.badlogic.gdx.graphics.Texture(pixmap);
-
-        Image darkBg = new Image(tex);
-        darkBg.setSize(20000f, 20000f);
-        darkBg.setPosition(-10000f, -10000f);
-        pauseOverlay.addActor(darkBg);
-        darkBg.toBack();
+        this.pauseSelectedItem = null;
 
         Label title = new Label("GAME PAUSED", skin, "title");
         title.setAlignment(Align.center);
@@ -566,7 +559,8 @@ public class GameScreenUI {
         musicTable.setOrigin(Align.center);
         musicTable.setColor(Color.LIGHT_GRAY);
 
-        Label musicLabel = new Label("Music Volume", skin, "default");
+        // FIX: Switch to the chunkier "receipt" style for larger labels
+        Label musicLabel = new Label("Music Volume", skin, "powerup");
         musicLabel.setColor(skin.getColor("white"));
         musicTable.add(musicLabel).padBottom(5f).row();
 
@@ -595,7 +589,8 @@ public class GameScreenUI {
         soundTable.setOrigin(Align.center);
         soundTable.setColor(Color.LIGHT_GRAY);
 
-        Label soundLabel = new Label("Sound Volume", skin, "default");
+        // FIX: Switch to the chunkier "receipt" style for larger labels
+        Label soundLabel = new Label("Sound Volume", skin, "powerup");
         soundLabel.setColor(skin.getColor("white"));
         soundTable.add(soundLabel).padBottom(5f).row();
 
@@ -623,7 +618,10 @@ public class GameScreenUI {
         pauseOverlay.add(quitBtn).minSize(300f, 80f);
 
         pauseOverlay.pack();
-        if (!pauseMenuItems.isEmpty()) selectPauseItem(pauseMenuItems.get(0));
+        if (!pauseMenuItems.isEmpty()) {
+            stage.act(0f);
+            selectPauseItem(pauseMenuItems.get(0));
+        }
     }
 
     private void buildConfirmQuitScreen(Runnable onResume, Runnable onQuit) {
@@ -632,22 +630,12 @@ public class GameScreenUI {
         pauseMenuItems.clear();
         this.pauseSelectedItem = null;
 
-        com.badlogic.gdx.graphics.Pixmap pixmap = new com.badlogic.gdx.graphics.Pixmap(1, 1, com.badlogic.gdx.graphics.Pixmap.Format.RGBA8888);
-        pixmap.setColor(new com.badlogic.gdx.graphics.Color(0f, 0f, 0f, 0.75f));
-        pixmap.fill();
-        com.badlogic.gdx.graphics.Texture tex = new com.badlogic.gdx.graphics.Texture(pixmap);
-
-        Image darkBg = new Image(tex);
-        darkBg.setSize(20000f, 20000f);
-        darkBg.setPosition(-10000f, -10000f);
-        pauseOverlay.addActor(darkBg);
-        darkBg.toBack();
-
         Label title = new Label("Quit to Menu?", skin, "title");
         title.setAlignment(Align.center);
         pauseOverlay.add(title).padBottom(40f).row();
 
-        Label subTitle = new Label("Progress will be lost", skin, "default");
+        // FIX: Switch to the chunkier "receipt" style for larger labels
+        Label subTitle = new Label("Progress will be lost", skin, "powerup");
         subTitle.setColor(skin.getColor("white"));
         subTitle.setAlignment(Align.center);
         pauseOverlay.add(subTitle).padBottom(40f).row();
@@ -655,15 +643,18 @@ public class GameScreenUI {
         Table buttonsTable = new Table();
 
         TextButton yesBtn = createPauseButton("Yes", onQuit);
-        buttonsTable.add(yesBtn).minSize(150f, 60f).padRight(30f);
+        buttonsTable.add(yesBtn).minSize(250f, 80f).padRight(50f);
 
         TextButton noBtn = createPauseButton("No", () -> buildMainPauseScreen(onResume, onQuit));
-        buttonsTable.add(noBtn).minSize(150f, 60f);
+        buttonsTable.add(noBtn).minSize(250f, 80f);
 
         pauseOverlay.add(buttonsTable);
         pauseOverlay.pack();
 
-        if (!pauseMenuItems.isEmpty()) selectPauseItem(pauseMenuItems.get(1));
+        if (!pauseMenuItems.isEmpty()) {
+            stage.act(0f);
+            selectPauseItem(pauseMenuItems.get(1));
+        }
     }
 
     private void adjustPauseSlider(float amount) {
@@ -688,7 +679,7 @@ public class GameScreenUI {
         this.pauseSelectedItem = group;
 
         if (this.pauseSelectedItem != null) {
-            this.pauseSelectedItem.setOrigin(Align.center);
+            this.pauseSelectedItem.setOrigin(this.pauseSelectedItem.getWidth() / 2f, this.pauseSelectedItem.getHeight() / 2f);
             this.pauseSelectedItem.clearActions();
             this.pauseSelectedItem.setScale(1.15f);
             this.pauseSelectedItem.setColor(Color.WHITE);
@@ -696,6 +687,12 @@ public class GameScreenUI {
     }
 
     private void build() {
+        com.badlogic.gdx.graphics.Pixmap pixmap = new com.badlogic.gdx.graphics.Pixmap(1, 1, com.badlogic.gdx.graphics.Pixmap.Format.RGBA8888);
+        pixmap.setColor(new com.badlogic.gdx.graphics.Color(0f, 0f, 0f, 0.75f));
+        pixmap.fill();
+        darkOverlayTexture = new com.badlogic.gdx.graphics.Texture(pixmap);
+        pixmap.dispose();
+
         Table root = new Table();
         root.setName("GameScreen");
         root.setFillParent(true);

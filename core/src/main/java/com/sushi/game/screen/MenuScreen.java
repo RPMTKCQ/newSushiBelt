@@ -2,7 +2,6 @@ package com.sushi.game.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -19,8 +18,18 @@ public class MenuScreen extends ScreenAdapter {
     private final Skin skin;
     private final Viewport uiViewport;
 
+    // NEW: Flag to track if we should skip the Title Screen
+    private final boolean jumpToModeSelect;
+
+    // Default Constructor (Normal Boot)
     public MenuScreen(SushiGame game) {
+        this(game, false);
+    }
+
+    // Overloaded Constructor (End Screen Boot)
+    public MenuScreen(SushiGame game, boolean jumpToModeSelect) {
         this.game = game;
+        this.jumpToModeSelect = jumpToModeSelect;
         this.uiViewport = new FitViewport(800f, 450f);
         this.stage = new Stage(uiViewport, game.getBatch());
         this.skin = game.getAssetService().get(SkinAsset.DEFAULT);
@@ -33,10 +42,16 @@ public class MenuScreen extends ScreenAdapter {
 
     @Override
     public void show() {
-
         Gdx.input.setInputProcessor(stage);
 
-        this.stage.addActor(new MenuView(stage, skin, new MenuViewModel(game)));
+        MenuView menuView = new MenuView(stage, skin, new MenuViewModel(game));
+
+        // FIX: Tell the view to instantly swap menus before it even renders!
+        if (jumpToModeSelect) {
+            menuView.jumpToModeSelect();
+        }
+
+        this.stage.addActor(menuView);
         this.game.getAudioService().playMusic(MusicAsset.MENU);
     }
 

@@ -560,6 +560,186 @@ atlasData: {
 			type: NINE_PATCH
 			hidden: false
 		}
+		{
+			file: C:/Users/Wyshcen/Documents/Java/newSushiBelt/assets_raw/ui/player-icon.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: player-icon
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			tvgData: null
+			type: TEXTURE
+			hidden: false
+		}
+		{
+			file: C:/Users/Wyshcen/Documents/Java/newSushiBelt/assets_raw/ui/money.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: money
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			tvgData: null
+			type: TEXTURE
+			hidden: false
+		}
+		{
+			file: C:/Users/Wyshcen/Documents/Java/newSushiBelt/assets_raw/ui/bell.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: bell
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			tvgData: null
+			type: TEXTURE
+			hidden: false
+		}
+		{
+			file: C:/Users/Wyshcen/Documents/Java/newSushiBelt/assets_raw/ui/xpBarBG.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: xpBarBG
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			tvgData: null
+			type: NINE_PATCH
+			hidden: false
+		}
+		{
+			file: C:/Users/Wyshcen/Documents/Java/newSushiBelt/assets_raw/ui/xpBar.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: xpBar
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			tvgData: null
+			type: NINE_PATCH
+			hidden: false
+		}
+		{
+			file: C:/Users/Wyshcen/Documents/Java/newSushiBelt/assets_raw/ui/reputationBarBG.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: reputationBarBG
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			tvgData: null
+			type: NINE_PATCH
+			hidden: false
+		}
+		{
+			file: C:/Users/Wyshcen/Documents/Java/newSushiBelt/assets_raw/ui/reputationBar.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: reputationBar
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			tvgData: null
+			type: NINE_PATCH
+			hidden: false
+		}
+		{
+			file: C:/Users/Wyshcen/Documents/Java/newSushiBelt/assets_raw/ui/powerUpIconBG.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: powerUpIconBG
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			tvgData: null
+			type: TEXTURE
+			hidden: false
+		}
+		{
+			file: C:/Users/Wyshcen/Documents/Java/newSushiBelt/assets_raw/ui/servicePowerUpIcon.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: servicePowerUpIcon
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			tvgData: null
+			type: TEXTURE
+			hidden: false
+		}
 	]
 	fontDrawables: []
 }
@@ -578,12 +758,32 @@ jsonData: {
 		{
 			class: com.ray3k.skincomposer.data.ColorData
 			color: {
+				r: 0.35686275
+				g: 0.35686275
+				b: 0.35686275
+				a: 1
+			}
+			name: GREY
+		}
+		{
+			class: com.ray3k.skincomposer.data.ColorData
+			color: {
 				r: 0.9647059
 				g: 0.8901961
 				b: 0.74509805
 				a: 1
 			}
 			name: sand
+		}
+		{
+			class: com.ray3k.skincomposer.data.ColorData
+			color: {
+				r: 0.87058824
+				g: 0.14117648
+				b: 0.14117648
+				a: 1
+			}
+			name: Text_RED
 		}
 		{
 			class: com.ray3k.skincomposer.data.ColorData
@@ -639,6 +839,35 @@ jsonData: {
 		}
 		{
 			class: com.ray3k.skincomposer.data.FreeTypeFontData
+			name: Pixellari-huge
+			file: C:/Users/Wyshcen/Documents/Fonts/Pixellari/Pixellari.ttf
+			previewTTF: IBMPlexSerif-Medium
+			useCustomSerializer: true
+			size: 120
+			mono: false
+			hinting: AutoMedium
+			color: WHITE
+			gamma: 1.8
+			renderCount: 2
+			borderWidth: 0
+			borderColor: null
+			borderStraight: false
+			borderGamma: 1.8
+			shadowOffsetX: 0
+			shadowOffsetY: 0
+			shadowColor: null
+			spaceX: 0
+			spaceY: 0
+			characters: " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789()#:$!?.,'-_/\\@%+="
+			kerning: true
+			flip: false
+			genMipMaps: false
+			minFilter: Nearest
+			magFilter: Nearest
+			incremental: false
+		}
+		{
+			class: com.ray3k.skincomposer.data.FreeTypeFontData
 			name: pixellari-powerup
 			file: C:/Users/Wyshcen/Documents/Fonts/Pixellari/Pixellari.ttf
 			previewTTF: IBMPlexSerif-Medium
@@ -658,7 +887,7 @@ jsonData: {
 			shadowColor: null
 			spaceX: 0
 			spaceY: 0
-			characters: " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789()#:$!?.,'-_/\\@%+="
+			characters: " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789()#:$!?.,'-_/\\@%+=[]"
 			kerning: true
 			flip: false
 			genMipMaps: false
@@ -730,7 +959,7 @@ jsonData: {
 			file: C:/Users/Wyshcen/Documents/Fonts/Pixellari/Pixellari.ttf
 			previewTTF: IBMPlexSerif-Medium
 			useCustomSerializer: true
-			size: 12
+			size: 18
 			mono: false
 			hinting: AutoMedium
 			color: WHITE
@@ -1903,6 +2132,33 @@ jsonData: {
 				deletable: true
 				parent: null
 			}
+			{
+				class: com.ray3k.skincomposer.data.StyleData
+				name: huge
+				clazz: com.badlogic.gdx.scenes.scene2d.ui.Label
+				properties: {
+					font: {
+						type: com.badlogic.gdx.graphics.g2d.BitmapFont
+						name: font
+						optional: false
+						value: Pixellari-huge
+					}
+					fontColor: {
+						type: com.badlogic.gdx.graphics.Color
+						name: fontColor
+						optional: true
+						value: white
+					}
+					background: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: background
+						optional: true
+						value: null
+					}
+				}
+				deletable: true
+				parent: null
+			}
 		]
 		com.badlogic.gdx.scenes.scene2d.ui.ScrollPane: [
 			{
@@ -2666,6 +2922,120 @@ jsonData: {
 						name: knobBefore
 						optional: true
 						value: cs-bar10
+					}
+					disabledKnobBefore: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: disabledKnobBefore
+						optional: true
+						value: null
+					}
+					knobAfter: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: knobAfter
+						optional: true
+						value: null
+					}
+					disabledKnobAfter: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: disabledKnobAfter
+						optional: true
+						value: null
+					}
+				}
+				deletable: true
+				parent: null
+			}
+			{
+				class: com.ray3k.skincomposer.data.StyleData
+				name: xpBar
+				clazz: com.badlogic.gdx.scenes.scene2d.ui.ProgressBar
+				properties: {
+					background: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: background
+						optional: false
+						value: xpBarBG
+					}
+					disabledBackground: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: disabledBackground
+						optional: true
+						value: null
+					}
+					knob: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: knob
+						optional: true
+						value: null
+					}
+					disabledKnob: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: disabledKnob
+						optional: true
+						value: null
+					}
+					knobBefore: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: knobBefore
+						optional: true
+						value: xpBar
+					}
+					disabledKnobBefore: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: disabledKnobBefore
+						optional: true
+						value: null
+					}
+					knobAfter: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: knobAfter
+						optional: true
+						value: null
+					}
+					disabledKnobAfter: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: disabledKnobAfter
+						optional: true
+						value: null
+					}
+				}
+				deletable: true
+				parent: null
+			}
+			{
+				class: com.ray3k.skincomposer.data.StyleData
+				name: reputationBar
+				clazz: com.badlogic.gdx.scenes.scene2d.ui.ProgressBar
+				properties: {
+					background: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: background
+						optional: false
+						value: reputationBarBG
+					}
+					disabledBackground: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: disabledBackground
+						optional: true
+						value: null
+					}
+					knob: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: knob
+						optional: true
+						value: null
+					}
+					disabledKnob: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: disabledKnob
+						optional: true
+						value: null
+					}
+					knobBefore: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: knobBefore
+						optional: true
+						value: reputationBar
 					}
 					disabledKnobBefore: {
 						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
@@ -3623,7 +3993,7 @@ sceneComposer: {
 								column: 0
 								padLeft: 0
 								padRight: 0
-								padTop: 0
+								padTop: 30
 								padBottom: 0
 								spaceLeft: 0
 								spaceRight: 0
@@ -3656,111 +4026,145 @@ sceneComposer: {
 												cells: [
 													{
 														child: {
-															class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimLabel
-															name: Money
-															style: {
-																name: powerup
-																clazz: com.badlogic.gdx.scenes.scene2d.ui.Label
-																properties: {
-																	font: {
-																		type: com.badlogic.gdx.graphics.g2d.BitmapFont
-																		name: font
-																		optional: false
-																		value: pixellari-powerup
+															class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimTable
+															cells: [
+																{
+																	child: {
+																		class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimImage
+																		name: moneyimg
+																		drawable: {
+																			file: C:/Users/Wyshcen/Documents/Java/newSushiBelt/assets_raw/ui/money.png
+																			bgColor: {
+																				r: 1
+																				g: 1
+																				b: 1
+																				a: 1
+																			}
+																			tint: null
+																			tintName: null
+																			name: money
+																			tiled: false
+																			minWidth: -1
+																			minHeight: -1
+																			customized: false
+																			tenPatchData: null
+																			tvgData: null
+																			type: TEXTURE
+																			hidden: false
+																		}
+																		scaling: fit
+																		touchable: enabled
+																		visible: true
 																	}
-																	fontColor: {
-																		type: com.badlogic.gdx.graphics.Color
-																		name: fontColor
-																		optional: true
-																		value: null
-																	}
-																	background: {
-																		type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
-																		name: background
-																		optional: true
-																		value: null
-																	}
+																	row: 0
+																	column: 0
+																	padLeft: 0
+																	padRight: 15
+																	padTop: 0
+																	padBottom: 0
+																	spaceLeft: 0
+																	spaceRight: 0
+																	spaceTop: 0
+																	spaceBottom: 0
+																	expandX: false
+																	expandY: false
+																	fillX: false
+																	fillY: false
+																	growX: false
+																	growY: false
+																	alignment: 1
+																	minWidth: 32
+																	minHeight: 32
+																	maxWidth: -1
+																	maxHeight: -1
+																	preferredWidth: -1
+																	preferredHeight: -1
+																	uniformX: false
+																	uniformY: false
+																	colSpan: 1
 																}
-																deletable: true
-																parent: null
-															}
-															text: "Money: 100$ "
-															textAlignment: 8
-															ellipsis: false
-															ellipsisString: ...
-															wrap: false
+																{
+																	child: {
+																		class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimLabel
+																		name: moneylabel
+																		style: {
+																			name: powerup
+																			clazz: com.badlogic.gdx.scenes.scene2d.ui.Label
+																			properties: {
+																				font: {
+																					type: com.badlogic.gdx.graphics.g2d.BitmapFont
+																					name: font
+																					optional: false
+																					value: pixellari-powerup
+																				}
+																				fontColor: {
+																					type: com.badlogic.gdx.graphics.Color
+																					name: fontColor
+																					optional: true
+																					value: null
+																				}
+																				background: {
+																					type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+																					name: background
+																					optional: true
+																					value: null
+																				}
+																			}
+																			deletable: true
+																			parent: null
+																		}
+																		text: 0
+																		textAlignment: 8
+																		ellipsis: false
+																		ellipsisString: ...
+																		wrap: false
+																		color: null
+																		touchable: enabled
+																		visible: true
+																	}
+																	row: 0
+																	column: 1
+																	padLeft: 0
+																	padRight: 0
+																	padTop: 0
+																	padBottom: 0
+																	spaceLeft: 0
+																	spaceRight: 0
+																	spaceTop: 0
+																	spaceBottom: 0
+																	expandX: false
+																	expandY: false
+																	fillX: false
+																	fillY: false
+																	growX: false
+																	growY: false
+																	alignment: 1
+																	minWidth: 0
+																	minHeight: -1
+																	maxWidth: -1
+																	maxHeight: -1
+																	preferredWidth: -1
+																	preferredHeight: -1
+																	uniformX: false
+																	uniformY: false
+																	colSpan: 1
+																}
+															]
+															name: Money
+															background: null
 															color: null
-															touchable: enabled
+															padLeft: 0
+															padRight: 0
+															padTop: 0
+															padBottom: 0
+															paddingEnabled: false
+															alignment: 8
+															fillParent: false
+															touchable: childrenOnly
 															visible: true
 														}
 														row: 0
 														column: 0
-														padLeft: 0
-														padRight: 30
-														padTop: 0
-														padBottom: 0
-														spaceLeft: 0
-														spaceRight: 20
-														spaceTop: 0
-														spaceBottom: 0
-														expandX: false
-														expandY: false
-														fillX: false
-														fillY: false
-														growX: false
-														growY: false
-														alignment: 1
-														minWidth: -1
-														minHeight: -1
-														maxWidth: -1
-														maxHeight: -1
-														preferredWidth: -1
-														preferredHeight: -1
-														uniformX: false
-														uniformY: false
-														colSpan: 1
-													}
-													{
-														child: {
-															class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimLabel
-															name: Score
-															style: {
-																name: powerup
-																clazz: com.badlogic.gdx.scenes.scene2d.ui.Label
-																properties: {
-																	font: {
-																		type: com.badlogic.gdx.graphics.g2d.BitmapFont
-																		name: font
-																		optional: false
-																		value: pixellari-powerup
-																	}
-																	fontColor: {
-																		type: com.badlogic.gdx.graphics.Color
-																		name: fontColor
-																		optional: true
-																		value: null
-																	}
-																	background: {
-																		type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
-																		name: background
-																		optional: true
-																		value: null
-																	}
-																}
-																deletable: true
-																parent: null
-															}
-															text: Score: 10000
-															textAlignment: 8
-															ellipsis: false
-															ellipsisString: ...
-															wrap: false
-															color: null
-															touchable: enabled
-															visible: true
-														}
-														row: 0
-														column: 1
 														padLeft: 0
 														padRight: 30
 														padTop: 0
@@ -3775,8 +4179,8 @@ sceneComposer: {
 														fillY: false
 														growX: false
 														growY: false
-														alignment: 1
-														minWidth: -1
+														alignment: 16
+														minWidth: 300
 														minHeight: -1
 														maxWidth: -1
 														maxHeight: -1
@@ -3833,51 +4237,151 @@ sceneComposer: {
 												cells: [
 													{
 														child: {
-															class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimLabel
-															name: LevelText
-															style: {
-																name: powerup
-																clazz: com.badlogic.gdx.scenes.scene2d.ui.Label
-																properties: {
-																	font: {
-																		type: com.badlogic.gdx.graphics.g2d.BitmapFont
-																		name: font
-																		optional: false
-																		value: pixellari-powerup
+															class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimTable
+															cells: [
+																{
+																	child: {
+																		class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimImage
+																		name: null
+																		drawable: {
+																			file: C:/Users/Wyshcen/Documents/Java/newSushiBelt/assets_raw/ui/bell.png
+																			bgColor: {
+																				r: 1
+																				g: 1
+																				b: 1
+																				a: 1
+																			}
+																			tint: null
+																			tintName: null
+																			name: bell
+																			tiled: false
+																			minWidth: -1
+																			minHeight: -1
+																			customized: false
+																			tenPatchData: null
+																			tvgData: null
+																			type: TEXTURE
+																			hidden: false
+																		}
+																		scaling: fit
+																		touchable: enabled
+																		visible: true
 																	}
-																	fontColor: {
-																		type: com.badlogic.gdx.graphics.Color
-																		name: fontColor
-																		optional: true
-																		value: null
-																	}
-																	background: {
-																		type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
-																		name: background
-																		optional: true
-																		value: null
-																	}
+																	row: 0
+																	column: 0
+																	padLeft: 0
+																	padRight: 15
+																	padTop: 0
+																	padBottom: 0
+																	spaceLeft: 0
+																	spaceRight: 0
+																	spaceTop: 0
+																	spaceBottom: 0
+																	expandX: false
+																	expandY: false
+																	fillX: false
+																	fillY: false
+																	growX: false
+																	growY: false
+																	alignment: 1
+																	minWidth: 32
+																	minHeight: 32
+																	maxWidth: -1
+																	maxHeight: -1
+																	preferredWidth: -1
+																	preferredHeight: -1
+																	uniformX: false
+																	uniformY: false
+																	colSpan: 1
 																}
-																deletable: true
-																parent: null
-															}
-															text: Level: 1/10
-															textAlignment: 8
-															ellipsis: false
-															ellipsisString: ...
-															wrap: false
+																{
+																	child: {
+																		class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimLabel
+																		name: scorelabel
+																		style: {
+																			name: powerup
+																			clazz: com.badlogic.gdx.scenes.scene2d.ui.Label
+																			properties: {
+																				font: {
+																					type: com.badlogic.gdx.graphics.g2d.BitmapFont
+																					name: font
+																					optional: false
+																					value: pixellari-powerup
+																				}
+																				fontColor: {
+																					type: com.badlogic.gdx.graphics.Color
+																					name: fontColor
+																					optional: true
+																					value: null
+																				}
+																				background: {
+																					type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+																					name: background
+																					optional: true
+																					value: null
+																				}
+																			}
+																			deletable: true
+																			parent: null
+																		}
+																		text: 0
+																		textAlignment: 8
+																		ellipsis: false
+																		ellipsisString: ...
+																		wrap: false
+																		color: null
+																		touchable: enabled
+																		visible: true
+																	}
+																	row: 0
+																	column: 1
+																	padLeft: 0
+																	padRight: 0
+																	padTop: 0
+																	padBottom: 0
+																	spaceLeft: 0
+																	spaceRight: 0
+																	spaceTop: 0
+																	spaceBottom: 0
+																	expandX: false
+																	expandY: false
+																	fillX: false
+																	fillY: false
+																	growX: false
+																	growY: false
+																	alignment: 1
+																	minWidth: -1
+																	minHeight: -1
+																	maxWidth: -1
+																	maxHeight: -1
+																	preferredWidth: -1
+																	preferredHeight: -1
+																	uniformX: false
+																	uniformY: false
+																	colSpan: 1
+																}
+															]
+															name: Score
+															background: null
 															color: null
-															touchable: enabled
+															padLeft: 0
+															padRight: 0
+															padTop: 0
+															padBottom: 0
+															paddingEnabled: false
+															alignment: 8
+															fillParent: false
+															touchable: childrenOnly
 															visible: true
 														}
 														row: 0
 														column: 0
 														padLeft: 0
-														padRight: 0
+														padRight: 30
 														padTop: 0
 														padBottom: 0
 														spaceLeft: 0
-														spaceRight: 30
+														spaceRight: 0
 														spaceTop: 0
 														spaceBottom: 0
 														expandX: false
@@ -3887,7 +4391,7 @@ sceneComposer: {
 														growX: false
 														growY: false
 														alignment: 1
-														minWidth: -1
+														minWidth: 300
 														minHeight: -1
 														maxWidth: -1
 														maxHeight: -1
@@ -3897,108 +4401,8 @@ sceneComposer: {
 														uniformY: false
 														colSpan: 1
 													}
-													{
-														child: {
-															class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimProgressBar
-															name: null
-															style: {
-																name: customerSatisfaction
-																clazz: com.badlogic.gdx.scenes.scene2d.ui.ProgressBar
-																properties: {
-																	background: {
-																		type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
-																		name: background
-																		optional: false
-																		value: cs-bar-bg
-																	}
-																	disabledBackground: {
-																		type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
-																		name: disabledBackground
-																		optional: true
-																		value: null
-																	}
-																	knob: {
-																		type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
-																		name: knob
-																		optional: true
-																		value: null
-																	}
-																	disabledKnob: {
-																		type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
-																		name: disabledKnob
-																		optional: true
-																		value: null
-																	}
-																	knobBefore: {
-																		type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
-																		name: knobBefore
-																		optional: true
-																		value: cs-bar10
-																	}
-																	disabledKnobBefore: {
-																		type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
-																		name: disabledKnobBefore
-																		optional: true
-																		value: null
-																	}
-																	knobAfter: {
-																		type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
-																		name: knobAfter
-																		optional: true
-																		value: null
-																	}
-																	disabledKnobAfter: {
-																		type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
-																		name: disabledKnobAfter
-																		optional: true
-																		value: null
-																	}
-																}
-																deletable: true
-																parent: null
-															}
-															disabled: false
-															value: 0
-															minimum: 0
-															maximum: 100
-															increment: 1
-															vertical: false
-															animationDuration: 0
-															animateInterpolation: LINEAR
-															round: true
-															visualInterpolation: LINEAR
-															touchable: enabled
-															visible: true
-														}
-														row: 0
-														column: 1
-														padLeft: 0
-														padRight: 0
-														padTop: 0
-														padBottom: 0
-														spaceLeft: 0
-														spaceRight: 0
-														spaceTop: 0
-														spaceBottom: 0
-														expandX: true
-														expandY: false
-														fillX: false
-														fillY: false
-														growX: false
-														growY: false
-														alignment: 1
-														minWidth: -1
-														minHeight: 20
-														maxWidth: -1
-														maxHeight: -1
-														preferredWidth: -1
-														preferredHeight: -1
-														uniformX: false
-														uniformY: false
-														colSpan: 1
-													}
 												]
-												name: Level
+												name: Score
 												background: null
 												color: null
 												padLeft: 0
@@ -4055,8 +4459,8 @@ sceneComposer: {
 								row: 0
 								column: 1
 								padLeft: 0
-								padRight: 0
-								padTop: 0
+								padRight: 50
+								padTop: 30
 								padBottom: 0
 								spaceLeft: 0
 								spaceRight: 0
@@ -4118,8 +4522,8 @@ sceneComposer: {
 					growX: true
 					growY: false
 					alignment: 8
-					minWidth: 1
-					minHeight: 280
+					minWidth: -1
+					minHeight: -1
 					maxWidth: -1
 					maxHeight: -1
 					preferredWidth: -1
@@ -4145,11 +4549,11 @@ sceneComposer: {
 								spaceTop: 0
 								spaceBottom: 0
 								expandX: true
-								expandY: true
+								expandY: false
 								fillX: true
-								fillY: true
+								fillY: false
 								growX: true
-								growY: true
+								growY: false
 								alignment: 1
 								minWidth: -1
 								minHeight: -1
@@ -4174,7 +4578,33 @@ sceneComposer: {
 															class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimTable
 															cells: [
 																{
-																	child: null
+																	child: {
+																		class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimImage
+																		name: powerUpIcon
+																		drawable: {
+																			file: C:/Users/Wyshcen/Documents/Java/newSushiBelt/assets_raw/ui/servicePowerUpIcon.png
+																			bgColor: {
+																				r: 1
+																				g: 1
+																				b: 1
+																				a: 1
+																			}
+																			tint: null
+																			tintName: null
+																			name: servicePowerUpIcon
+																			tiled: false
+																			minWidth: -1
+																			minHeight: -1
+																			customized: false
+																			tenPatchData: null
+																			tvgData: null
+																			type: TEXTURE
+																			hidden: false
+																		}
+																		scaling: fit
+																		touchable: enabled
+																		visible: true
+																	}
 																	row: 0
 																	column: 0
 																	padLeft: 0
@@ -4192,10 +4622,10 @@ sceneComposer: {
 																	growX: false
 																	growY: false
 																	alignment: 1
-																	minWidth: 30
-																	minHeight: 30
-																	maxWidth: 30
-																	maxHeight: 30
+																	minWidth: 50
+																	minHeight: 50
+																	maxWidth: -1
+																	maxHeight: -1
 																	preferredWidth: -1
 																	preferredHeight: -1
 																	uniformX: false
@@ -4205,7 +4635,7 @@ sceneComposer: {
 															]
 															name: null
 															background: {
-																file: C:/Users/Wyshcen/Documents/Java/newSushiBelt/assets_raw/ui/fd-border.png
+																file: C:/Users/Wyshcen/Documents/Java/newSushiBelt/assets_raw/ui/powerUpIconBG.png
 																bgColor: {
 																	r: 1
 																	g: 1
@@ -4214,7 +4644,7 @@ sceneComposer: {
 																}
 																tint: null
 																tintName: null
-																name: fd-border
+																name: powerUpIconBG
 																tiled: false
 																minWidth: -1
 																minHeight: -1
@@ -4239,12 +4669,12 @@ sceneComposer: {
 														column: 0
 														padLeft: 0
 														padRight: 0
-														padTop: 30
+														padTop: 0
 														padBottom: 0
 														spaceLeft: 0
 														spaceRight: 0
 														spaceTop: 0
-														spaceBottom: 30
+														spaceBottom: 0
 														expandX: false
 														expandY: false
 														fillX: false
@@ -4264,61 +4694,373 @@ sceneComposer: {
 													}
 													{
 														child: {
-															class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimLabel
-															name: null
-															style: {
-																name: powerup
-																clazz: com.badlogic.gdx.scenes.scene2d.ui.Label
-																properties: {
-																	font: {
-																		type: com.badlogic.gdx.graphics.g2d.BitmapFont
-																		name: font
-																		optional: false
-																		value: pixellari-powerup
+															class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimTable
+															cells: [
+																{
+																	child: {
+																		class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimLabel
+																		name: powerupType
+																		style: {
+																			name: powerup
+																			clazz: com.badlogic.gdx.scenes.scene2d.ui.Label
+																			properties: {
+																				font: {
+																					type: com.badlogic.gdx.graphics.g2d.BitmapFont
+																					name: font
+																					optional: false
+																					value: pixellari-powerup
+																				}
+																				fontColor: {
+																					type: com.badlogic.gdx.graphics.Color
+																					name: fontColor
+																					optional: true
+																					value: null
+																				}
+																				background: {
+																					type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+																					name: background
+																					optional: true
+																					value: null
+																				}
+																			}
+																			deletable: true
+																			parent: null
+																		}
+																		text: "[Service]"
+																		textAlignment: 8
+																		ellipsis: false
+																		ellipsisString: ...
+																		wrap: false
+																		color: {
+																			color: {
+																				r: 0
+																				g: 0
+																				b: 0
+																				a: 1
+																			}
+																			name: black
+																		}
+																		touchable: enabled
+																		visible: true
 																	}
-																	fontColor: {
-																		type: com.badlogic.gdx.graphics.Color
-																		name: fontColor
-																		optional: true
-																		value: null
-																	}
-																	background: {
-																		type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
-																		name: background
-																		optional: true
-																		value: null
-																	}
+																	row: 0
+																	column: 0
+																	padLeft: 0
+																	padRight: 0
+																	padTop: 0
+																	padBottom: 10
+																	spaceLeft: 0
+																	spaceRight: 0
+																	spaceTop: 0
+																	spaceBottom: 0
+																	expandX: false
+																	expandY: false
+																	fillX: false
+																	fillY: false
+																	growX: false
+																	growY: false
+																	alignment: 1
+																	minWidth: -1
+																	minHeight: -1
+																	maxWidth: -1
+																	maxHeight: -1
+																	preferredWidth: -1
+																	preferredHeight: -1
+																	uniformX: false
+																	uniformY: false
+																	colSpan: 1
 																}
-																deletable: true
-																parent: null
-															}
-															text: MOVEMENT SPEED
-															textAlignment: 1
-															ellipsis: false
-															ellipsisString: ...
-															wrap: true
-															color: {
-																color: {
-																	r: 0
-																	g: 0
-																	b: 0
-																	a: 1
+																{
+																	child: {
+																		class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimLabel
+																		name: null
+																		style: {
+																			name: receipt
+																			clazz: com.badlogic.gdx.scenes.scene2d.ui.Label
+																			properties: {
+																				font: {
+																					type: com.badlogic.gdx.graphics.g2d.BitmapFont
+																					name: font
+																					optional: false
+																					value: pixellari-receipt
+																				}
+																				fontColor: {
+																					type: com.badlogic.gdx.graphics.Color
+																					name: fontColor
+																					optional: true
+																					value: null
+																				}
+																				background: {
+																					type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+																					name: background
+																					optional: true
+																					value: null
+																				}
+																			}
+																			deletable: true
+																			parent: null
+																		}
+																		text: Pristine Kitchen
+																		textAlignment: 8
+																		ellipsis: false
+																		ellipsisString: ...
+																		wrap: false
+																		color: {
+																			color: {
+																				r: 0
+																				g: 0
+																				b: 0
+																				a: 1
+																			}
+																			name: black
+																		}
+																		touchable: enabled
+																		visible: true
+																	}
+																	row: 1
+																	column: 0
+																	padLeft: 0
+																	padRight: 0
+																	padTop: 0
+																	padBottom: 20
+																	spaceLeft: 0
+																	spaceRight: 0
+																	spaceTop: 0
+																	spaceBottom: 0
+																	expandX: false
+																	expandY: false
+																	fillX: false
+																	fillY: false
+																	growX: false
+																	growY: false
+																	alignment: 1
+																	minWidth: -1
+																	minHeight: -1
+																	maxWidth: -1
+																	maxHeight: -1
+																	preferredWidth: -1
+																	preferredHeight: -1
+																	uniformX: false
+																	uniformY: false
+																	colSpan: 1
 																}
-																name: black
-															}
-															touchable: enabled
+																{
+																	child: {
+																		class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimTable
+																		cells: [
+																			{
+																				child: {
+																					class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimLabel
+																					name: null
+																					style: {
+																						name: small
+																						clazz: com.badlogic.gdx.scenes.scene2d.ui.Label
+																						properties: {
+																							font: {
+																								type: com.badlogic.gdx.graphics.g2d.BitmapFont
+																								name: font
+																								optional: false
+																								value: pixellari-small
+																							}
+																							fontColor: {
+																								type: com.badlogic.gdx.graphics.Color
+																								name: fontColor
+																								optional: true
+																								value: white
+																							}
+																							background: {
+																								type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+																								name: background
+																								optional: true
+																								value: null
+																							}
+																						}
+																						deletable: true
+																						parent: null
+																					}
+																					text: "While reputation is at full amount, all money gained is doubled"
+																					textAlignment: 8
+																					ellipsis: false
+																					ellipsisString: ...
+																					wrap: true
+																					color: {
+																						color: {
+																							r: 0
+																							g: 0
+																							b: 0
+																							a: 1
+																						}
+																						name: black
+																					}
+																					touchable: enabled
+																					visible: true
+																				}
+																				row: 0
+																				column: 0
+																				padLeft: 0
+																				padRight: 0
+																				padTop: 0
+																				padBottom: 0
+																				spaceLeft: 0
+																				spaceRight: 0
+																				spaceTop: 0
+																				spaceBottom: 0
+																				expandX: true
+																				expandY: false
+																				fillX: true
+																				fillY: false
+																				growX: true
+																				growY: false
+																				alignment: 1
+																				minWidth: -1
+																				minHeight: -1
+																				maxWidth: -1
+																				maxHeight: -1
+																				preferredWidth: -1
+																				preferredHeight: -1
+																				uniformX: false
+																				uniformY: false
+																				colSpan: 1
+																			}
+																			{
+																				child: {
+																					class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimLabel
+																					name: null
+																					style: {
+																						name: small
+																						clazz: com.badlogic.gdx.scenes.scene2d.ui.Label
+																						properties: {
+																							font: {
+																								type: com.badlogic.gdx.graphics.g2d.BitmapFont
+																								name: font
+																								optional: false
+																								value: pixellari-small
+																							}
+																							fontColor: {
+																								type: com.badlogic.gdx.graphics.Color
+																								name: fontColor
+																								optional: true
+																								value: white
+																							}
+																							background: {
+																								type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+																								name: background
+																								optional: true
+																								value: null
+																							}
+																						}
+																						deletable: true
+																						parent: null
+																					}
+																					text: "If reputation takes a hit, the buff is lost for the rest of the stage"
+																					textAlignment: 8
+																					ellipsis: false
+																					ellipsisString: ...
+																					wrap: true
+																					color: {
+																						color: {
+																							r: 0.87058824
+																							g: 0.14117648
+																							b: 0.14117648
+																							a: 1
+																						}
+																						name: Text_RED
+																					}
+																					touchable: enabled
+																					visible: true
+																				}
+																				row: 1
+																				column: 0
+																				padLeft: 0
+																				padRight: 0
+																				padTop: 0
+																				padBottom: 0
+																				spaceLeft: 0
+																				spaceRight: 0
+																				spaceTop: 0
+																				spaceBottom: 0
+																				expandX: true
+																				expandY: false
+																				fillX: true
+																				fillY: false
+																				growX: true
+																				growY: false
+																				alignment: 1
+																				minWidth: -1
+																				minHeight: -1
+																				maxWidth: -1
+																				maxHeight: -1
+																				preferredWidth: -1
+																				preferredHeight: -1
+																				uniformX: false
+																				uniformY: false
+																				colSpan: 1
+																			}
+																		]
+																		name: null
+																		background: null
+																		color: null
+																		padLeft: 0
+																		padRight: 0
+																		padTop: 0
+																		padBottom: 0
+																		paddingEnabled: false
+																		alignment: 1
+																		fillParent: false
+																		touchable: childrenOnly
+																		visible: true
+																	}
+																	row: 2
+																	column: 0
+																	padLeft: 0
+																	padRight: 0
+																	padTop: 0
+																	padBottom: 0
+																	spaceLeft: 0
+																	spaceRight: 0
+																	spaceTop: 0
+																	spaceBottom: 0
+																	expandX: true
+																	expandY: false
+																	fillX: true
+																	fillY: false
+																	growX: true
+																	growY: false
+																	alignment: 1
+																	minWidth: -1
+																	minHeight: -1
+																	maxWidth: -1
+																	maxHeight: -1
+																	preferredWidth: -1
+																	preferredHeight: -1
+																	uniformX: false
+																	uniformY: false
+																	colSpan: 1
+																}
+															]
+															name: Texts
+															background: null
+															color: null
+															padLeft: 0
+															padRight: 0
+															padTop: 0
+															padBottom: 0
+															paddingEnabled: false
+															alignment: 1
+															fillParent: false
+															touchable: childrenOnly
 															visible: true
 														}
 														row: 1
 														column: 0
 														padLeft: 0
 														padRight: 0
-														padTop: 0
+														padTop: 20
 														padBottom: 0
 														spaceLeft: 0
 														spaceRight: 0
-														spaceTop: 10
-														spaceBottom: 20
+														spaceTop: 0
+														spaceBottom: 0
 														expandX: false
 														expandY: false
 														fillX: false
@@ -4327,81 +5069,7 @@ sceneComposer: {
 														growY: false
 														alignment: 1
 														minWidth: 170
-														minHeight: 80
-														maxWidth: -1
-														maxHeight: -1
-														preferredWidth: -1
-														preferredHeight: -1
-														uniformX: false
-														uniformY: false
-														colSpan: 1
-													}
-													{
-														child: {
-															class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimLabel
-															name: null
-															style: {
-																name: receipt
-																clazz: com.badlogic.gdx.scenes.scene2d.ui.Label
-																properties: {
-																	font: {
-																		type: com.badlogic.gdx.graphics.g2d.BitmapFont
-																		name: font
-																		optional: false
-																		value: pixellari-receipt
-																	}
-																	fontColor: {
-																		type: com.badlogic.gdx.graphics.Color
-																		name: fontColor
-																		optional: true
-																		value: null
-																	}
-																	background: {
-																		type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
-																		name: background
-																		optional: true
-																		value: null
-																	}
-																}
-																deletable: true
-																parent: null
-															}
-															text: Increase movement speed by 10%
-															textAlignment: 1
-															ellipsis: false
-															ellipsisString: ...
-															wrap: true
-															color: {
-																color: {
-																	r: 0
-																	g: 0
-																	b: 0
-																	a: 1
-																}
-																name: black
-															}
-															touchable: enabled
-															visible: true
-														}
-														row: 2
-														column: 0
-														padLeft: 0
-														padRight: 0
-														padTop: 0
-														padBottom: 0
-														spaceLeft: 0
-														spaceRight: 0
-														spaceTop: 20
-														spaceBottom: 0
-														expandX: false
-														expandY: false
-														fillX: true
-														fillY: false
-														growX: false
-														growY: false
-														alignment: 1
-														minWidth: 150
-														minHeight: 40
+														minHeight: 190
 														maxWidth: -1
 														maxHeight: -1
 														preferredWidth: -1
@@ -4411,7 +5079,7 @@ sceneComposer: {
 														colSpan: 1
 													}
 												]
-												name: Power Up
+												name: CardTable
 												background: {
 													file: C:/Users/Wyshcen/Documents/Java/newSushiBelt/assets_raw/ui/rct-border.9.png
 													bgColor: {
@@ -4438,32 +5106,32 @@ sceneComposer: {
 												padTop: 0
 												padBottom: 0
 												paddingEnabled: false
-												alignment: 2
+												alignment: 1
 												fillParent: false
 												touchable: childrenOnly
 												visible: true
 											}
 											row: 0
 											column: 0
-											padLeft: 0
-											padRight: 0
+											padLeft: 20
+											padRight: 20
 											padTop: 0
 											padBottom: 0
 											spaceLeft: 0
-											spaceRight: 100
+											spaceRight: 0
 											spaceTop: 0
 											spaceBottom: 0
 											expandX: false
 											expandY: false
-											fillX: true
-											fillY: true
+											fillX: false
+											fillY: false
 											growX: false
 											growY: false
-											alignment: 2
-											minWidth: 200
+											alignment: 1
+											minWidth: 250
 											minHeight: 400
-											maxWidth: 200
-											maxHeight: 400
+											maxWidth: -1
+											maxHeight: -1
 											preferredWidth: -1
 											preferredHeight: -1
 											uniformX: false
@@ -4479,7 +5147,33 @@ sceneComposer: {
 															class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimTable
 															cells: [
 																{
-																	child: null
+																	child: {
+																		class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimImage
+																		name: powerUpIcon
+																		drawable: {
+																			file: C:/Users/Wyshcen/Documents/Java/newSushiBelt/assets_raw/ui/servicePowerUpIcon.png
+																			bgColor: {
+																				r: 1
+																				g: 1
+																				b: 1
+																				a: 1
+																			}
+																			tint: null
+																			tintName: null
+																			name: servicePowerUpIcon
+																			tiled: false
+																			minWidth: -1
+																			minHeight: -1
+																			customized: false
+																			tenPatchData: null
+																			tvgData: null
+																			type: TEXTURE
+																			hidden: false
+																		}
+																		scaling: fit
+																		touchable: enabled
+																		visible: true
+																	}
 																	row: 0
 																	column: 0
 																	padLeft: 0
@@ -4497,10 +5191,10 @@ sceneComposer: {
 																	growX: false
 																	growY: false
 																	alignment: 1
-																	minWidth: 30
-																	minHeight: 30
-																	maxWidth: 30
-																	maxHeight: 30
+																	minWidth: 50
+																	minHeight: 50
+																	maxWidth: -1
+																	maxHeight: -1
 																	preferredWidth: -1
 																	preferredHeight: -1
 																	uniformX: false
@@ -4510,7 +5204,7 @@ sceneComposer: {
 															]
 															name: null
 															background: {
-																file: C:/Users/Wyshcen/Documents/Java/newSushiBelt/assets_raw/ui/fd-border.png
+																file: C:/Users/Wyshcen/Documents/Java/newSushiBelt/assets_raw/ui/powerUpIconBG.png
 																bgColor: {
 																	r: 1
 																	g: 1
@@ -4519,7 +5213,7 @@ sceneComposer: {
 																}
 																tint: null
 																tintName: null
-																name: fd-border
+																name: powerUpIconBG
 																tiled: false
 																minWidth: -1
 																minHeight: -1
@@ -4544,12 +5238,12 @@ sceneComposer: {
 														column: 0
 														padLeft: 0
 														padRight: 0
-														padTop: 30
+														padTop: 0
 														padBottom: 0
 														spaceLeft: 0
 														spaceRight: 0
 														spaceTop: 0
-														spaceBottom: 30
+														spaceBottom: 0
 														expandX: false
 														expandY: false
 														fillX: false
@@ -4569,61 +5263,373 @@ sceneComposer: {
 													}
 													{
 														child: {
-															class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimLabel
-															name: null
-															style: {
-																name: powerup
-																clazz: com.badlogic.gdx.scenes.scene2d.ui.Label
-																properties: {
-																	font: {
-																		type: com.badlogic.gdx.graphics.g2d.BitmapFont
-																		name: font
-																		optional: false
-																		value: pixellari-powerup
+															class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimTable
+															cells: [
+																{
+																	child: {
+																		class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimLabel
+																		name: powerupType
+																		style: {
+																			name: powerup
+																			clazz: com.badlogic.gdx.scenes.scene2d.ui.Label
+																			properties: {
+																				font: {
+																					type: com.badlogic.gdx.graphics.g2d.BitmapFont
+																					name: font
+																					optional: false
+																					value: pixellari-powerup
+																				}
+																				fontColor: {
+																					type: com.badlogic.gdx.graphics.Color
+																					name: fontColor
+																					optional: true
+																					value: null
+																				}
+																				background: {
+																					type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+																					name: background
+																					optional: true
+																					value: null
+																				}
+																			}
+																			deletable: true
+																			parent: null
+																		}
+																		text: "[Service]"
+																		textAlignment: 8
+																		ellipsis: false
+																		ellipsisString: ...
+																		wrap: false
+																		color: {
+																			color: {
+																				r: 0
+																				g: 0
+																				b: 0
+																				a: 1
+																			}
+																			name: black
+																		}
+																		touchable: enabled
+																		visible: true
 																	}
-																	fontColor: {
-																		type: com.badlogic.gdx.graphics.Color
-																		name: fontColor
-																		optional: true
-																		value: null
-																	}
-																	background: {
-																		type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
-																		name: background
-																		optional: true
-																		value: null
-																	}
+																	row: 0
+																	column: 0
+																	padLeft: 0
+																	padRight: 0
+																	padTop: 0
+																	padBottom: 10
+																	spaceLeft: 0
+																	spaceRight: 0
+																	spaceTop: 0
+																	spaceBottom: 0
+																	expandX: false
+																	expandY: false
+																	fillX: false
+																	fillY: false
+																	growX: false
+																	growY: false
+																	alignment: 1
+																	minWidth: -1
+																	minHeight: -1
+																	maxWidth: -1
+																	maxHeight: -1
+																	preferredWidth: -1
+																	preferredHeight: -1
+																	uniformX: false
+																	uniformY: false
+																	colSpan: 1
 																}
-																deletable: true
-																parent: null
-															}
-															text: COOKING SPEED
-															textAlignment: 1
-															ellipsis: false
-															ellipsisString: ...
-															wrap: true
-															color: {
-																color: {
-																	r: 0
-																	g: 0
-																	b: 0
-																	a: 1
+																{
+																	child: {
+																		class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimLabel
+																		name: null
+																		style: {
+																			name: receipt
+																			clazz: com.badlogic.gdx.scenes.scene2d.ui.Label
+																			properties: {
+																				font: {
+																					type: com.badlogic.gdx.graphics.g2d.BitmapFont
+																					name: font
+																					optional: false
+																					value: pixellari-receipt
+																				}
+																				fontColor: {
+																					type: com.badlogic.gdx.graphics.Color
+																					name: fontColor
+																					optional: true
+																					value: null
+																				}
+																				background: {
+																					type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+																					name: background
+																					optional: true
+																					value: null
+																				}
+																			}
+																			deletable: true
+																			parent: null
+																		}
+																		text: Pristine Kitchen
+																		textAlignment: 8
+																		ellipsis: false
+																		ellipsisString: ...
+																		wrap: false
+																		color: {
+																			color: {
+																				r: 0
+																				g: 0
+																				b: 0
+																				a: 1
+																			}
+																			name: black
+																		}
+																		touchable: enabled
+																		visible: true
+																	}
+																	row: 1
+																	column: 0
+																	padLeft: 0
+																	padRight: 0
+																	padTop: 0
+																	padBottom: 20
+																	spaceLeft: 0
+																	spaceRight: 0
+																	spaceTop: 0
+																	spaceBottom: 0
+																	expandX: false
+																	expandY: false
+																	fillX: false
+																	fillY: false
+																	growX: false
+																	growY: false
+																	alignment: 1
+																	minWidth: -1
+																	minHeight: -1
+																	maxWidth: -1
+																	maxHeight: -1
+																	preferredWidth: -1
+																	preferredHeight: -1
+																	uniformX: false
+																	uniformY: false
+																	colSpan: 1
 																}
-																name: black
-															}
-															touchable: enabled
+																{
+																	child: {
+																		class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimTable
+																		cells: [
+																			{
+																				child: {
+																					class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimLabel
+																					name: null
+																					style: {
+																						name: small
+																						clazz: com.badlogic.gdx.scenes.scene2d.ui.Label
+																						properties: {
+																							font: {
+																								type: com.badlogic.gdx.graphics.g2d.BitmapFont
+																								name: font
+																								optional: false
+																								value: pixellari-small
+																							}
+																							fontColor: {
+																								type: com.badlogic.gdx.graphics.Color
+																								name: fontColor
+																								optional: true
+																								value: white
+																							}
+																							background: {
+																								type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+																								name: background
+																								optional: true
+																								value: null
+																							}
+																						}
+																						deletable: true
+																						parent: null
+																					}
+																					text: "While reputation is at full amount, all money gained is doubled"
+																					textAlignment: 8
+																					ellipsis: false
+																					ellipsisString: ...
+																					wrap: true
+																					color: {
+																						color: {
+																							r: 0
+																							g: 0
+																							b: 0
+																							a: 1
+																						}
+																						name: black
+																					}
+																					touchable: enabled
+																					visible: true
+																				}
+																				row: 0
+																				column: 0
+																				padLeft: 0
+																				padRight: 0
+																				padTop: 0
+																				padBottom: 0
+																				spaceLeft: 0
+																				spaceRight: 0
+																				spaceTop: 0
+																				spaceBottom: 0
+																				expandX: true
+																				expandY: false
+																				fillX: true
+																				fillY: false
+																				growX: true
+																				growY: false
+																				alignment: 1
+																				minWidth: -1
+																				minHeight: -1
+																				maxWidth: -1
+																				maxHeight: -1
+																				preferredWidth: -1
+																				preferredHeight: -1
+																				uniformX: false
+																				uniformY: false
+																				colSpan: 1
+																			}
+																			{
+																				child: {
+																					class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimLabel
+																					name: null
+																					style: {
+																						name: small
+																						clazz: com.badlogic.gdx.scenes.scene2d.ui.Label
+																						properties: {
+																							font: {
+																								type: com.badlogic.gdx.graphics.g2d.BitmapFont
+																								name: font
+																								optional: false
+																								value: pixellari-small
+																							}
+																							fontColor: {
+																								type: com.badlogic.gdx.graphics.Color
+																								name: fontColor
+																								optional: true
+																								value: white
+																							}
+																							background: {
+																								type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+																								name: background
+																								optional: true
+																								value: null
+																							}
+																						}
+																						deletable: true
+																						parent: null
+																					}
+																					text: "If reputation takes a hit, the buff is lost for the rest of the stage"
+																					textAlignment: 8
+																					ellipsis: false
+																					ellipsisString: ...
+																					wrap: true
+																					color: {
+																						color: {
+																							r: 0.87058824
+																							g: 0.14117648
+																							b: 0.14117648
+																							a: 1
+																						}
+																						name: Text_RED
+																					}
+																					touchable: enabled
+																					visible: true
+																				}
+																				row: 1
+																				column: 0
+																				padLeft: 0
+																				padRight: 0
+																				padTop: 0
+																				padBottom: 0
+																				spaceLeft: 0
+																				spaceRight: 0
+																				spaceTop: 0
+																				spaceBottom: 0
+																				expandX: true
+																				expandY: false
+																				fillX: true
+																				fillY: false
+																				growX: true
+																				growY: false
+																				alignment: 1
+																				minWidth: -1
+																				minHeight: -1
+																				maxWidth: -1
+																				maxHeight: -1
+																				preferredWidth: -1
+																				preferredHeight: -1
+																				uniformX: false
+																				uniformY: false
+																				colSpan: 1
+																			}
+																		]
+																		name: null
+																		background: null
+																		color: null
+																		padLeft: 0
+																		padRight: 0
+																		padTop: 0
+																		padBottom: 0
+																		paddingEnabled: false
+																		alignment: 1
+																		fillParent: false
+																		touchable: childrenOnly
+																		visible: true
+																	}
+																	row: 2
+																	column: 0
+																	padLeft: 0
+																	padRight: 0
+																	padTop: 0
+																	padBottom: 0
+																	spaceLeft: 0
+																	spaceRight: 0
+																	spaceTop: 0
+																	spaceBottom: 0
+																	expandX: true
+																	expandY: false
+																	fillX: true
+																	fillY: false
+																	growX: true
+																	growY: false
+																	alignment: 1
+																	minWidth: -1
+																	minHeight: -1
+																	maxWidth: -1
+																	maxHeight: -1
+																	preferredWidth: -1
+																	preferredHeight: -1
+																	uniformX: false
+																	uniformY: false
+																	colSpan: 1
+																}
+															]
+															name: Texts
+															background: null
+															color: null
+															padLeft: 0
+															padRight: 0
+															padTop: 0
+															padBottom: 0
+															paddingEnabled: false
+															alignment: 1
+															fillParent: false
+															touchable: childrenOnly
 															visible: true
 														}
 														row: 1
 														column: 0
 														padLeft: 0
 														padRight: 0
-														padTop: 0
+														padTop: 20
 														padBottom: 0
 														spaceLeft: 0
 														spaceRight: 0
-														spaceTop: 10
-														spaceBottom: 20
+														spaceTop: 0
+														spaceBottom: 0
 														expandX: false
 														expandY: false
 														fillX: false
@@ -4632,81 +5638,7 @@ sceneComposer: {
 														growY: false
 														alignment: 1
 														minWidth: 170
-														minHeight: 80
-														maxWidth: -1
-														maxHeight: -1
-														preferredWidth: -1
-														preferredHeight: -1
-														uniformX: false
-														uniformY: false
-														colSpan: 1
-													}
-													{
-														child: {
-															class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimLabel
-															name: null
-															style: {
-																name: receipt
-																clazz: com.badlogic.gdx.scenes.scene2d.ui.Label
-																properties: {
-																	font: {
-																		type: com.badlogic.gdx.graphics.g2d.BitmapFont
-																		name: font
-																		optional: false
-																		value: pixellari-receipt
-																	}
-																	fontColor: {
-																		type: com.badlogic.gdx.graphics.Color
-																		name: fontColor
-																		optional: true
-																		value: null
-																	}
-																	background: {
-																		type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
-																		name: background
-																		optional: true
-																		value: null
-																	}
-																}
-																deletable: true
-																parent: null
-															}
-															text: Increase cooking time by 20%
-															textAlignment: 1
-															ellipsis: false
-															ellipsisString: ...
-															wrap: true
-															color: {
-																color: {
-																	r: 0
-																	g: 0
-																	b: 0
-																	a: 1
-																}
-																name: black
-															}
-															touchable: enabled
-															visible: true
-														}
-														row: 2
-														column: 0
-														padLeft: 0
-														padRight: 0
-														padTop: 0
-														padBottom: 0
-														spaceLeft: 0
-														spaceRight: 0
-														spaceTop: 20
-														spaceBottom: 0
-														expandX: false
-														expandY: false
-														fillX: true
-														fillY: false
-														growX: false
-														growY: false
-														alignment: 1
-														minWidth: 150
-														minHeight: 40
+														minHeight: 190
 														maxWidth: -1
 														maxHeight: -1
 														preferredWidth: -1
@@ -4716,7 +5648,7 @@ sceneComposer: {
 														colSpan: 1
 													}
 												]
-												name: Power Up
+												name: CardTable
 												background: {
 													file: C:/Users/Wyshcen/Documents/Java/newSushiBelt/assets_raw/ui/rct-border.9.png
 													bgColor: {
@@ -4743,32 +5675,32 @@ sceneComposer: {
 												padTop: 0
 												padBottom: 0
 												paddingEnabled: false
-												alignment: 2
+												alignment: 1
 												fillParent: false
 												touchable: childrenOnly
 												visible: true
 											}
 											row: 0
 											column: 1
-											padLeft: 0
-											padRight: 0
+											padLeft: 20
+											padRight: 20
 											padTop: 0
 											padBottom: 0
 											spaceLeft: 0
-											spaceRight: 100
+											spaceRight: 0
 											spaceTop: 0
 											spaceBottom: 0
 											expandX: false
 											expandY: false
-											fillX: true
-											fillY: true
+											fillX: false
+											fillY: false
 											growX: false
 											growY: false
-											alignment: 2
-											minWidth: 200
+											alignment: 1
+											minWidth: 250
 											minHeight: 400
-											maxWidth: 200
-											maxHeight: 400
+											maxWidth: -1
+											maxHeight: -1
 											preferredWidth: -1
 											preferredHeight: -1
 											uniformX: false
@@ -4784,7 +5716,33 @@ sceneComposer: {
 															class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimTable
 															cells: [
 																{
-																	child: null
+																	child: {
+																		class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimImage
+																		name: powerUpIcon
+																		drawable: {
+																			file: C:/Users/Wyshcen/Documents/Java/newSushiBelt/assets_raw/ui/servicePowerUpIcon.png
+																			bgColor: {
+																				r: 1
+																				g: 1
+																				b: 1
+																				a: 1
+																			}
+																			tint: null
+																			tintName: null
+																			name: servicePowerUpIcon
+																			tiled: false
+																			minWidth: -1
+																			minHeight: -1
+																			customized: false
+																			tenPatchData: null
+																			tvgData: null
+																			type: TEXTURE
+																			hidden: false
+																		}
+																		scaling: fit
+																		touchable: enabled
+																		visible: true
+																	}
 																	row: 0
 																	column: 0
 																	padLeft: 0
@@ -4802,10 +5760,10 @@ sceneComposer: {
 																	growX: false
 																	growY: false
 																	alignment: 1
-																	minWidth: 30
-																	minHeight: 30
-																	maxWidth: 30
-																	maxHeight: 30
+																	minWidth: 50
+																	minHeight: 50
+																	maxWidth: -1
+																	maxHeight: -1
 																	preferredWidth: -1
 																	preferredHeight: -1
 																	uniformX: false
@@ -4815,7 +5773,7 @@ sceneComposer: {
 															]
 															name: null
 															background: {
-																file: C:/Users/Wyshcen/Documents/Java/newSushiBelt/assets_raw/ui/fd-border.png
+																file: C:/Users/Wyshcen/Documents/Java/newSushiBelt/assets_raw/ui/powerUpIconBG.png
 																bgColor: {
 																	r: 1
 																	g: 1
@@ -4824,7 +5782,7 @@ sceneComposer: {
 																}
 																tint: null
 																tintName: null
-																name: fd-border
+																name: powerUpIconBG
 																tiled: false
 																minWidth: -1
 																minHeight: -1
@@ -4849,12 +5807,12 @@ sceneComposer: {
 														column: 0
 														padLeft: 0
 														padRight: 0
-														padTop: 30
+														padTop: 0
 														padBottom: 0
 														spaceLeft: 0
 														spaceRight: 0
 														spaceTop: 0
-														spaceBottom: 30
+														spaceBottom: 0
 														expandX: false
 														expandY: false
 														fillX: false
@@ -4874,61 +5832,373 @@ sceneComposer: {
 													}
 													{
 														child: {
-															class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimLabel
-															name: null
-															style: {
-																name: powerup
-																clazz: com.badlogic.gdx.scenes.scene2d.ui.Label
-																properties: {
-																	font: {
-																		type: com.badlogic.gdx.graphics.g2d.BitmapFont
-																		name: font
-																		optional: false
-																		value: pixellari-powerup
+															class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimTable
+															cells: [
+																{
+																	child: {
+																		class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimLabel
+																		name: powerupType
+																		style: {
+																			name: powerup
+																			clazz: com.badlogic.gdx.scenes.scene2d.ui.Label
+																			properties: {
+																				font: {
+																					type: com.badlogic.gdx.graphics.g2d.BitmapFont
+																					name: font
+																					optional: false
+																					value: pixellari-powerup
+																				}
+																				fontColor: {
+																					type: com.badlogic.gdx.graphics.Color
+																					name: fontColor
+																					optional: true
+																					value: null
+																				}
+																				background: {
+																					type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+																					name: background
+																					optional: true
+																					value: null
+																				}
+																			}
+																			deletable: true
+																			parent: null
+																		}
+																		text: "[Service]"
+																		textAlignment: 8
+																		ellipsis: false
+																		ellipsisString: ...
+																		wrap: false
+																		color: {
+																			color: {
+																				r: 0
+																				g: 0
+																				b: 0
+																				a: 1
+																			}
+																			name: black
+																		}
+																		touchable: enabled
+																		visible: true
 																	}
-																	fontColor: {
-																		type: com.badlogic.gdx.graphics.Color
-																		name: fontColor
-																		optional: true
-																		value: null
-																	}
-																	background: {
-																		type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
-																		name: background
-																		optional: true
-																		value: null
-																	}
+																	row: 0
+																	column: 0
+																	padLeft: 0
+																	padRight: 0
+																	padTop: 0
+																	padBottom: 10
+																	spaceLeft: 0
+																	spaceRight: 0
+																	spaceTop: 0
+																	spaceBottom: 0
+																	expandX: false
+																	expandY: false
+																	fillX: false
+																	fillY: false
+																	growX: false
+																	growY: false
+																	alignment: 1
+																	minWidth: -1
+																	minHeight: -1
+																	maxWidth: -1
+																	maxHeight: -1
+																	preferredWidth: -1
+																	preferredHeight: -1
+																	uniformX: false
+																	uniformY: false
+																	colSpan: 1
 																}
-																deletable: true
-																parent: null
-															}
-															text: Rush Hour
-															textAlignment: 1
-															ellipsis: false
-															ellipsisString: ...
-															wrap: true
-															color: {
-																color: {
-																	r: 0
-																	g: 0
-																	b: 0
-																	a: 1
+																{
+																	child: {
+																		class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimLabel
+																		name: null
+																		style: {
+																			name: receipt
+																			clazz: com.badlogic.gdx.scenes.scene2d.ui.Label
+																			properties: {
+																				font: {
+																					type: com.badlogic.gdx.graphics.g2d.BitmapFont
+																					name: font
+																					optional: false
+																					value: pixellari-receipt
+																				}
+																				fontColor: {
+																					type: com.badlogic.gdx.graphics.Color
+																					name: fontColor
+																					optional: true
+																					value: null
+																				}
+																				background: {
+																					type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+																					name: background
+																					optional: true
+																					value: null
+																				}
+																			}
+																			deletable: true
+																			parent: null
+																		}
+																		text: Pristine Kitchen
+																		textAlignment: 8
+																		ellipsis: false
+																		ellipsisString: ...
+																		wrap: false
+																		color: {
+																			color: {
+																				r: 0
+																				g: 0
+																				b: 0
+																				a: 1
+																			}
+																			name: black
+																		}
+																		touchable: enabled
+																		visible: true
+																	}
+																	row: 1
+																	column: 0
+																	padLeft: 0
+																	padRight: 0
+																	padTop: 0
+																	padBottom: 20
+																	spaceLeft: 0
+																	spaceRight: 0
+																	spaceTop: 0
+																	spaceBottom: 0
+																	expandX: false
+																	expandY: false
+																	fillX: false
+																	fillY: false
+																	growX: false
+																	growY: false
+																	alignment: 1
+																	minWidth: -1
+																	minHeight: -1
+																	maxWidth: -1
+																	maxHeight: -1
+																	preferredWidth: -1
+																	preferredHeight: -1
+																	uniformX: false
+																	uniformY: false
+																	colSpan: 1
 																}
-																name: black
-															}
-															touchable: enabled
+																{
+																	child: {
+																		class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimTable
+																		cells: [
+																			{
+																				child: {
+																					class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimLabel
+																					name: null
+																					style: {
+																						name: small
+																						clazz: com.badlogic.gdx.scenes.scene2d.ui.Label
+																						properties: {
+																							font: {
+																								type: com.badlogic.gdx.graphics.g2d.BitmapFont
+																								name: font
+																								optional: false
+																								value: pixellari-small
+																							}
+																							fontColor: {
+																								type: com.badlogic.gdx.graphics.Color
+																								name: fontColor
+																								optional: true
+																								value: white
+																							}
+																							background: {
+																								type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+																								name: background
+																								optional: true
+																								value: null
+																							}
+																						}
+																						deletable: true
+																						parent: null
+																					}
+																					text: "While reputation is at full amount, all money gained is doubled"
+																					textAlignment: 8
+																					ellipsis: false
+																					ellipsisString: ...
+																					wrap: true
+																					color: {
+																						color: {
+																							r: 0
+																							g: 0
+																							b: 0
+																							a: 1
+																						}
+																						name: black
+																					}
+																					touchable: enabled
+																					visible: true
+																				}
+																				row: 0
+																				column: 0
+																				padLeft: 0
+																				padRight: 0
+																				padTop: 0
+																				padBottom: 0
+																				spaceLeft: 0
+																				spaceRight: 0
+																				spaceTop: 0
+																				spaceBottom: 0
+																				expandX: true
+																				expandY: false
+																				fillX: true
+																				fillY: false
+																				growX: true
+																				growY: false
+																				alignment: 1
+																				minWidth: -1
+																				minHeight: -1
+																				maxWidth: -1
+																				maxHeight: -1
+																				preferredWidth: -1
+																				preferredHeight: -1
+																				uniformX: false
+																				uniformY: false
+																				colSpan: 1
+																			}
+																			{
+																				child: {
+																					class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimLabel
+																					name: null
+																					style: {
+																						name: small
+																						clazz: com.badlogic.gdx.scenes.scene2d.ui.Label
+																						properties: {
+																							font: {
+																								type: com.badlogic.gdx.graphics.g2d.BitmapFont
+																								name: font
+																								optional: false
+																								value: pixellari-small
+																							}
+																							fontColor: {
+																								type: com.badlogic.gdx.graphics.Color
+																								name: fontColor
+																								optional: true
+																								value: white
+																							}
+																							background: {
+																								type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+																								name: background
+																								optional: true
+																								value: null
+																							}
+																						}
+																						deletable: true
+																						parent: null
+																					}
+																					text: "If reputation takes a hit, the buff is lost for the rest of the stage"
+																					textAlignment: 8
+																					ellipsis: false
+																					ellipsisString: ...
+																					wrap: true
+																					color: {
+																						color: {
+																							r: 0.87058824
+																							g: 0.14117648
+																							b: 0.14117648
+																							a: 1
+																						}
+																						name: Text_RED
+																					}
+																					touchable: enabled
+																					visible: true
+																				}
+																				row: 1
+																				column: 0
+																				padLeft: 0
+																				padRight: 0
+																				padTop: 0
+																				padBottom: 0
+																				spaceLeft: 0
+																				spaceRight: 0
+																				spaceTop: 0
+																				spaceBottom: 0
+																				expandX: true
+																				expandY: false
+																				fillX: true
+																				fillY: false
+																				growX: true
+																				growY: false
+																				alignment: 1
+																				minWidth: -1
+																				minHeight: -1
+																				maxWidth: -1
+																				maxHeight: -1
+																				preferredWidth: -1
+																				preferredHeight: -1
+																				uniformX: false
+																				uniformY: false
+																				colSpan: 1
+																			}
+																		]
+																		name: null
+																		background: null
+																		color: null
+																		padLeft: 0
+																		padRight: 0
+																		padTop: 0
+																		padBottom: 0
+																		paddingEnabled: false
+																		alignment: 1
+																		fillParent: false
+																		touchable: childrenOnly
+																		visible: true
+																	}
+																	row: 2
+																	column: 0
+																	padLeft: 0
+																	padRight: 0
+																	padTop: 0
+																	padBottom: 0
+																	spaceLeft: 0
+																	spaceRight: 0
+																	spaceTop: 0
+																	spaceBottom: 0
+																	expandX: true
+																	expandY: false
+																	fillX: true
+																	fillY: false
+																	growX: true
+																	growY: false
+																	alignment: 1
+																	minWidth: -1
+																	minHeight: -1
+																	maxWidth: -1
+																	maxHeight: -1
+																	preferredWidth: -1
+																	preferredHeight: -1
+																	uniformX: false
+																	uniformY: false
+																	colSpan: 1
+																}
+															]
+															name: Texts
+															background: null
+															color: null
+															padLeft: 0
+															padRight: 0
+															padTop: 0
+															padBottom: 0
+															paddingEnabled: false
+															alignment: 1
+															fillParent: false
+															touchable: childrenOnly
 															visible: true
 														}
 														row: 1
 														column: 0
 														padLeft: 0
 														padRight: 0
-														padTop: 0
+														padTop: 20
 														padBottom: 0
 														spaceLeft: 0
 														spaceRight: 0
-														spaceTop: 10
-														spaceBottom: 20
+														spaceTop: 0
+														spaceBottom: 0
 														expandX: false
 														expandY: false
 														fillX: false
@@ -4937,81 +6207,7 @@ sceneComposer: {
 														growY: false
 														alignment: 1
 														minWidth: 170
-														minHeight: 80
-														maxWidth: -1
-														maxHeight: -1
-														preferredWidth: -1
-														preferredHeight: -1
-														uniformX: false
-														uniformY: false
-														colSpan: 1
-													}
-													{
-														child: {
-															class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimLabel
-															name: null
-															style: {
-																name: receipt
-																clazz: com.badlogic.gdx.scenes.scene2d.ui.Label
-																properties: {
-																	font: {
-																		type: com.badlogic.gdx.graphics.g2d.BitmapFont
-																		name: font
-																		optional: false
-																		value: pixellari-receipt
-																	}
-																	fontColor: {
-																		type: com.badlogic.gdx.graphics.Color
-																		name: fontColor
-																		optional: true
-																		value: null
-																	}
-																	background: {
-																		type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
-																		name: background
-																		optional: true
-																		value: null
-																	}
-																}
-																deletable: true
-																parent: null
-															}
-															text: Next three serves will give 30% bonus points
-															textAlignment: 1
-															ellipsis: false
-															ellipsisString: ...
-															wrap: true
-															color: {
-																color: {
-																	r: 0
-																	g: 0
-																	b: 0
-																	a: 1
-																}
-																name: black
-															}
-															touchable: enabled
-															visible: true
-														}
-														row: 2
-														column: 0
-														padLeft: 0
-														padRight: 0
-														padTop: 0
-														padBottom: 0
-														spaceLeft: 0
-														spaceRight: 0
-														spaceTop: 20
-														spaceBottom: 0
-														expandX: false
-														expandY: false
-														fillX: true
-														fillY: false
-														growX: false
-														growY: false
-														alignment: 1
-														minWidth: 150
-														minHeight: 40
+														minHeight: 190
 														maxWidth: -1
 														maxHeight: -1
 														preferredWidth: -1
@@ -5021,7 +6217,7 @@ sceneComposer: {
 														colSpan: 1
 													}
 												]
-												name: Power Up
+												name: CardTable
 												background: {
 													file: C:/Users/Wyshcen/Documents/Java/newSushiBelt/assets_raw/ui/rct-border.9.png
 													bgColor: {
@@ -5048,32 +6244,32 @@ sceneComposer: {
 												padTop: 0
 												padBottom: 0
 												paddingEnabled: false
-												alignment: 2
+												alignment: 1
 												fillParent: false
 												touchable: childrenOnly
 												visible: true
 											}
 											row: 0
 											column: 2
-											padLeft: 0
-											padRight: 0
+											padLeft: 20
+											padRight: 20
 											padTop: 0
 											padBottom: 0
 											spaceLeft: 0
-											spaceRight: 100
+											spaceRight: 0
 											spaceTop: 0
 											spaceBottom: 0
 											expandX: false
 											expandY: false
-											fillX: true
-											fillY: true
+											fillX: false
+											fillY: false
 											growX: false
 											growY: false
-											alignment: 2
-											minWidth: 200
+											alignment: 1
+											minWidth: 250
 											minHeight: 400
-											maxWidth: 200
-											maxHeight: 400
+											maxWidth: -1
+											maxHeight: -1
 											preferredWidth: -1
 											preferredHeight: -1
 											uniformX: false
@@ -5107,9 +6303,9 @@ sceneComposer: {
 								expandX: true
 								expandY: true
 								fillX: true
-								fillY: false
+								fillY: true
 								growX: true
-								growY: false
+								growY: true
 								alignment: 1
 								minWidth: -1
 								minHeight: -1
@@ -5134,11 +6330,11 @@ sceneComposer: {
 								spaceTop: 0
 								spaceBottom: 0
 								expandX: true
-								expandY: true
+								expandY: false
 								fillX: true
-								fillY: true
+								fillY: false
 								growX: true
-								growY: true
+								growY: false
 								alignment: 1
 								minWidth: -1
 								minHeight: -1
@@ -5175,11 +6371,11 @@ sceneComposer: {
 					spaceTop: 0
 					spaceBottom: 0
 					expandX: true
-					expandY: false
+					expandY: true
 					fillX: true
-					fillY: false
+					fillY: true
 					growX: true
-					growY: false
+					growY: true
 					alignment: 1
 					minWidth: -1
 					minHeight: -1
@@ -5196,25 +6392,526 @@ sceneComposer: {
 						class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimTable
 						cells: [
 							{
-								child: null
+								child: {
+									class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimTable
+									cells: [
+										{
+											child: {
+												class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimImage
+												name: playericonimg
+												drawable: {
+													file: C:/Users/Wyshcen/Documents/Java/newSushiBelt/assets_raw/ui/player-icon.png
+													bgColor: {
+														r: 1
+														g: 1
+														b: 1
+														a: 1
+													}
+													tint: null
+													tintName: null
+													name: player-icon
+													tiled: false
+													minWidth: -1
+													minHeight: -1
+													customized: false
+													tenPatchData: null
+													tvgData: null
+													type: TEXTURE
+													hidden: false
+												}
+												scaling: fit
+												touchable: enabled
+												visible: true
+											}
+											row: 0
+											column: 0
+											padLeft: 50
+											padRight: 0
+											padTop: 0
+											padBottom: 0
+											spaceLeft: 0
+											spaceRight: 0
+											spaceTop: 0
+											spaceBottom: 0
+											expandX: false
+											expandY: false
+											fillX: false
+											fillY: false
+											growX: false
+											growY: false
+											alignment: 2
+											minWidth: 32
+											minHeight: 32
+											maxWidth: 100
+											maxHeight: 100
+											preferredWidth: -1
+											preferredHeight: -1
+											uniformX: false
+											uniformY: false
+											colSpan: 1
+										}
+										{
+											child: {
+												class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimTable
+												cells: [
+													{
+														child: {
+															class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimTable
+															cells: [
+																{
+																	child: {
+																		class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimProgressBar
+																		name: null
+																		style: {
+																			name: reputationBar
+																			clazz: com.badlogic.gdx.scenes.scene2d.ui.ProgressBar
+																			properties: {
+																				background: {
+																					type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+																					name: background
+																					optional: false
+																					value: reputationBarBG
+																				}
+																				disabledBackground: {
+																					type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+																					name: disabledBackground
+																					optional: true
+																					value: null
+																				}
+																				knob: {
+																					type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+																					name: knob
+																					optional: true
+																					value: null
+																				}
+																				disabledKnob: {
+																					type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+																					name: disabledKnob
+																					optional: true
+																					value: null
+																				}
+																				knobBefore: {
+																					type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+																					name: knobBefore
+																					optional: true
+																					value: reputationBar
+																				}
+																				disabledKnobBefore: {
+																					type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+																					name: disabledKnobBefore
+																					optional: true
+																					value: null
+																				}
+																				knobAfter: {
+																					type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+																					name: knobAfter
+																					optional: true
+																					value: null
+																				}
+																				disabledKnobAfter: {
+																					type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+																					name: disabledKnobAfter
+																					optional: true
+																					value: null
+																				}
+																			}
+																			deletable: true
+																			parent: null
+																		}
+																		disabled: false
+																		value: 0
+																		minimum: 0
+																		maximum: 100
+																		increment: 1
+																		vertical: false
+																		animationDuration: 0
+																		animateInterpolation: LINEAR
+																		round: true
+																		visualInterpolation: LINEAR
+																		touchable: enabled
+																		visible: true
+																	}
+																	row: 0
+																	column: 0
+																	padLeft: 0
+																	padRight: 0
+																	padTop: 0
+																	padBottom: 0
+																	spaceLeft: 0
+																	spaceRight: 0
+																	spaceTop: 0
+																	spaceBottom: 0
+																	expandX: true
+																	expandY: true
+																	fillX: true
+																	fillY: true
+																	growX: true
+																	growY: true
+																	alignment: 1
+																	minWidth: -1
+																	minHeight: -1
+																	maxWidth: -1
+																	maxHeight: -1
+																	preferredWidth: -1
+																	preferredHeight: -1
+																	uniformX: false
+																	uniformY: false
+																	colSpan: 1
+																}
+															]
+															name: null
+															background: null
+															color: null
+															padLeft: 0
+															padRight: 0
+															padTop: 0
+															padBottom: 0
+															paddingEnabled: false
+															alignment: 1
+															fillParent: false
+															touchable: childrenOnly
+															visible: true
+														}
+														row: 0
+														column: 0
+														padLeft: 0
+														padRight: 0
+														padTop: 0
+														padBottom: 0
+														spaceLeft: 0
+														spaceRight: 0
+														spaceTop: 0
+														spaceBottom: 0
+														expandX: false
+														expandY: false
+														fillX: false
+														fillY: false
+														growX: false
+														growY: false
+														alignment: 10
+														minWidth: 450
+														minHeight: -1
+														maxWidth: -1
+														maxHeight: -1
+														preferredWidth: -1
+														preferredHeight: -1
+														uniformX: false
+														uniformY: false
+														colSpan: 1
+													}
+													{
+														child: {
+															class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimTable
+															cells: [
+																{
+																	child: {
+																		class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimLabel
+																		name: null
+																		style: {
+																			name: default
+																			clazz: com.badlogic.gdx.scenes.scene2d.ui.Label
+																			properties: {
+																				font: {
+																					type: com.badlogic.gdx.graphics.g2d.BitmapFont
+																					name: font
+																					optional: false
+																					value: Pixellari-regular
+																				}
+																				fontColor: {
+																					type: com.badlogic.gdx.graphics.Color
+																					name: fontColor
+																					optional: true
+																					value: white
+																				}
+																				background: {
+																					type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+																					name: background
+																					optional: true
+																					value: null
+																				}
+																			}
+																			deletable: false
+																			parent: null
+																		}
+																		text: REP: 100/100
+																		textAlignment: 8
+																		ellipsis: false
+																		ellipsisString: ...
+																		wrap: false
+																		color: null
+																		touchable: enabled
+																		visible: true
+																	}
+																	row: 0
+																	column: 0
+																	padLeft: 30
+																	padRight: 30
+																	padTop: 0
+																	padBottom: 0
+																	spaceLeft: 0
+																	spaceRight: 0
+																	spaceTop: 0
+																	spaceBottom: 0
+																	expandX: false
+																	expandY: false
+																	fillX: false
+																	fillY: false
+																	growX: false
+																	growY: false
+																	alignment: 1
+																	minWidth: -1
+																	minHeight: -1
+																	maxWidth: -1
+																	maxHeight: -1
+																	preferredWidth: -1
+																	preferredHeight: -1
+																	uniformX: false
+																	uniformY: false
+																	colSpan: 1
+																}
+																{
+																	child: {
+																		class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimProgressBar
+																		name: null
+																		style: {
+																			name: xpBar
+																			clazz: com.badlogic.gdx.scenes.scene2d.ui.ProgressBar
+																			properties: {
+																				background: {
+																					type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+																					name: background
+																					optional: false
+																					value: xpBarBG
+																				}
+																				disabledBackground: {
+																					type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+																					name: disabledBackground
+																					optional: true
+																					value: null
+																				}
+																				knob: {
+																					type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+																					name: knob
+																					optional: true
+																					value: null
+																				}
+																				disabledKnob: {
+																					type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+																					name: disabledKnob
+																					optional: true
+																					value: null
+																				}
+																				knobBefore: {
+																					type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+																					name: knobBefore
+																					optional: true
+																					value: xpBar
+																				}
+																				disabledKnobBefore: {
+																					type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+																					name: disabledKnobBefore
+																					optional: true
+																					value: null
+																				}
+																				knobAfter: {
+																					type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+																					name: knobAfter
+																					optional: true
+																					value: null
+																				}
+																				disabledKnobAfter: {
+																					type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+																					name: disabledKnobAfter
+																					optional: true
+																					value: null
+																				}
+																			}
+																			deletable: true
+																			parent: null
+																		}
+																		disabled: false
+																		value: 0
+																		minimum: 0
+																		maximum: 100
+																		increment: 1
+																		vertical: false
+																		animationDuration: 0
+																		animateInterpolation: LINEAR
+																		round: true
+																		visualInterpolation: LINEAR
+																		touchable: enabled
+																		visible: true
+																	}
+																	row: 0
+																	column: 1
+																	padLeft: 0
+																	padRight: 0
+																	padTop: 0
+																	padBottom: 0
+																	spaceLeft: 0
+																	spaceRight: 0
+																	spaceTop: 0
+																	spaceBottom: 0
+																	expandX: true
+																	expandY: false
+																	fillX: true
+																	fillY: false
+																	growX: true
+																	growY: false
+																	alignment: 1
+																	minWidth: 0
+																	minHeight: -1
+																	maxWidth: -1
+																	maxHeight: -1
+																	preferredWidth: -1
+																	preferredHeight: -1
+																	uniformX: false
+																	uniformY: false
+																	colSpan: 1
+																}
+															]
+															name: null
+															background: null
+															color: null
+															padLeft: 0
+															padRight: 0
+															padTop: 0
+															padBottom: 0
+															paddingEnabled: false
+															alignment: 1
+															fillParent: false
+															touchable: childrenOnly
+															visible: true
+														}
+														row: 1
+														column: 0
+														padLeft: 0
+														padRight: 0
+														padTop: 0
+														padBottom: 0
+														spaceLeft: 0
+														spaceRight: 0
+														spaceTop: 0
+														spaceBottom: 0
+														expandX: false
+														expandY: false
+														fillX: true
+														fillY: false
+														growX: false
+														growY: false
+														alignment: 8
+														minWidth: 200
+														minHeight: -1
+														maxWidth: -1
+														maxHeight: -1
+														preferredWidth: -1
+														preferredHeight: -1
+														uniformX: false
+														uniformY: false
+														colSpan: 1
+													}
+													{
+														child: null
+														row: 2
+														column: 0
+														padLeft: 0
+														padRight: 0
+														padTop: 0
+														padBottom: 0
+														spaceLeft: 0
+														spaceRight: 0
+														spaceTop: 0
+														spaceBottom: 0
+														expandX: false
+														expandY: false
+														fillX: false
+														fillY: false
+														growX: false
+														growY: false
+														alignment: 1
+														minWidth: -1
+														minHeight: -1
+														maxWidth: -1
+														maxHeight: -1
+														preferredWidth: -1
+														preferredHeight: -1
+														uniformX: false
+														uniformY: false
+														colSpan: 1
+													}
+												]
+												name: null
+												background: null
+												color: null
+												padLeft: 0
+												padRight: 0
+												padTop: 0
+												padBottom: 0
+												paddingEnabled: false
+												alignment: 8
+												fillParent: false
+												touchable: childrenOnly
+												visible: true
+											}
+											row: 0
+											column: 1
+											padLeft: 0
+											padRight: 0
+											padTop: 0
+											padBottom: 0
+											spaceLeft: 0
+											spaceRight: 0
+											spaceTop: 0
+											spaceBottom: 0
+											expandX: false
+											expandY: false
+											fillX: false
+											fillY: false
+											growX: false
+											growY: false
+											alignment: 2
+											minWidth: -1
+											minHeight: -1
+											maxWidth: -1
+											maxHeight: -1
+											preferredWidth: -1
+											preferredHeight: -1
+											uniformX: false
+											uniformY: false
+											colSpan: 1
+										}
+									]
+									name: null
+									background: null
+									color: null
+									padLeft: 0
+									padRight: 0
+									padTop: 0
+									padBottom: 0
+									paddingEnabled: false
+									alignment: 8
+									fillParent: false
+									touchable: childrenOnly
+									visible: true
+								}
 								row: 0
 								column: 0
 								padLeft: 0
 								padRight: 0
 								padTop: 0
-								padBottom: 0
+								padBottom: 40
 								spaceLeft: 0
 								spaceRight: 0
 								spaceTop: 0
 								spaceBottom: 0
-								expandX: true
+								expandX: false
 								expandY: false
-								fillX: true
+								fillX: false
 								fillY: false
-								growX: true
+								growX: false
 								growY: false
-								alignment: 4
-								minWidth: -1
+								alignment: 1
+								minWidth: 700
 								minHeight: -1
 								maxWidth: -1
 								maxHeight: -1
@@ -5492,7 +7189,7 @@ sceneComposer: {
 								padLeft: 0
 								padRight: 0
 								padTop: 0
-								padBottom: 0
+								padBottom: 40
 								spaceLeft: 0
 								spaceRight: 0
 								spaceTop: 0
@@ -5526,14 +7223,14 @@ sceneComposer: {
 								spaceRight: 0
 								spaceTop: 0
 								spaceBottom: 0
-								expandX: true
+								expandX: false
 								expandY: false
-								fillX: true
+								fillX: false
 								fillY: false
-								growX: true
+								growX: false
 								growY: false
 								alignment: 1
-								minWidth: -1
+								minWidth: 700
 								minHeight: -1
 								maxWidth: -1
 								maxHeight: -1
@@ -5562,7 +7259,7 @@ sceneComposer: {
 					padLeft: 0
 					padRight: 0
 					padTop: 0
-					padBottom: 40
+					padBottom: 4
 					spaceLeft: 0
 					spaceRight: 0
 					spaceTop: 0
@@ -5575,7 +7272,7 @@ sceneComposer: {
 					growY: false
 					alignment: 4
 					minWidth: -1
-					minHeight: 350
+					minHeight: -1
 					maxWidth: -1
 					maxHeight: -1
 					preferredWidth: -1
@@ -5596,121 +7293,17 @@ sceneComposer: {
 			alignment: 1
 			fillParent: true
 			touchable: childrenOnly
-			visible: false
-		}
-		{
-			class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimTable
-			cells: [
-				{
-					child: null
-					row: 0
-					column: 0
-					padLeft: 0
-					padRight: 0
-					padTop: 0
-					padBottom: 0
-					spaceLeft: 0
-					spaceRight: 0
-					spaceTop: 0
-					spaceBottom: 0
-					expandX: false
-					expandY: false
-					fillX: false
-					fillY: false
-					growX: false
-					growY: false
-					alignment: 1
-					minWidth: -1
-					minHeight: -1
-					maxWidth: -1
-					maxHeight: -1
-					preferredWidth: -1
-					preferredHeight: -1
-					uniformX: false
-					uniformY: false
-					colSpan: 1
-				}
-				{
-					child: null
-					row: 1
-					column: 0
-					padLeft: 0
-					padRight: 0
-					padTop: 0
-					padBottom: 0
-					spaceLeft: 0
-					spaceRight: 0
-					spaceTop: 0
-					spaceBottom: 0
-					expandX: false
-					expandY: false
-					fillX: false
-					fillY: false
-					growX: false
-					growY: false
-					alignment: 1
-					minWidth: -1
-					minHeight: -1
-					maxWidth: -1
-					maxHeight: -1
-					preferredWidth: -1
-					preferredHeight: -1
-					uniformX: false
-					uniformY: false
-					colSpan: 1
-				}
-				{
-					child: null
-					row: 2
-					column: 0
-					padLeft: 0
-					padRight: 0
-					padTop: 0
-					padBottom: 0
-					spaceLeft: 0
-					spaceRight: 0
-					spaceTop: 0
-					spaceBottom: 0
-					expandX: false
-					expandY: false
-					fillX: false
-					fillY: false
-					growX: false
-					growY: false
-					alignment: 1
-					minWidth: -1
-					minHeight: -1
-					maxWidth: -1
-					maxHeight: -1
-					preferredWidth: -1
-					preferredHeight: -1
-					uniformX: false
-					uniformY: false
-					colSpan: 1
-				}
-			]
-			name: null
-			background: null
-			color: null
-			padLeft: 0
-			padRight: 0
-			padTop: 0
-			padBottom: 0
-			paddingEnabled: false
-			alignment: 1
-			fillParent: true
-			touchable: childrenOnly
 			visible: true
 		}
 	]
 	backgroundColor: {
 		color: {
-			r: 0
-			g: 0
-			b: 0
+			r: 0.35686275
+			g: 0.35686275
+			b: 0.35686275
 			a: 1
 		}
-		name: black
+		name: GREY
 	}
 	skinPath: skin.json
 	packageString: com.mygdx.game

@@ -59,8 +59,10 @@ public class WinScreen extends ScreenAdapter {
     private void buildUI() {
         Table table = new Table();
         table.setFillParent(true);
+        table.center();
 
         Label label = new Label("Level Complete!", skin, "title");
+//        label.setColor(Color.GOLD);
         table.add(label).padBottom(20f).row();
 
         Label scoreLabel = new Label("Score: " + score, skin, "default");
@@ -69,7 +71,8 @@ public class WinScreen extends ScreenAdapter {
         Label moneyLabel = new Label("Money Earned: $" + money, skin, "default");
         table.add(moneyLabel).padBottom(40f).row();
 
-        TextButton modeBtn = createButton("Mode Select", () -> game.setScreen(new MenuScreen(game)));
+        // FIX: Passes 'true' so the Menu jumps straight to the Mode Selection screen!
+        TextButton modeBtn = createButton("Mode Select", () -> game.setScreen(new MenuScreen(game, true)));
         table.add(modeBtn).padBottom(15f).minWidth(200f).row();
 
         TextButton retryBtn = createButton("Retry", () -> game.setScreen(new GameScreen(game, currentStage, isEndless)));
@@ -95,9 +98,7 @@ public class WinScreen extends ScreenAdapter {
         customStyle.down = null;
 
         TextButton button = new TextButton(text, customStyle);
-
         button.setTransform(true);
-        button.setOrigin(Align.center);
         button.setColor(Color.LIGHT_GRAY);
 
         Runnable unifiedAction = () -> {
@@ -163,7 +164,7 @@ public class WinScreen extends ScreenAdapter {
         this.selectedItem = group;
 
         if (this.selectedItem != null) {
-            this.selectedItem.setOrigin(Align.center);
+            this.selectedItem.setOrigin(this.selectedItem.getWidth() / 2f, this.selectedItem.getHeight() / 2f);
             this.selectedItem.clearActions();
             this.selectedItem.setScale(1.15f);
             this.selectedItem.setColor(Color.WHITE);
@@ -181,13 +182,13 @@ public class WinScreen extends ScreenAdapter {
         Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
         Gdx.gl.glClear(com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT);
 
-        stage.act(delta);
-
         if (!isInitialSelectionDone && !menuItems.isEmpty()) {
+            stage.act(0f);
             selectMenuItem(menuItems.get(0));
             isInitialSelectionDone = true;
         }
 
+        stage.act(delta);
         stage.draw();
     }
 

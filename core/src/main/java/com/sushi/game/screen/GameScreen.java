@@ -14,7 +14,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Disposable;
-import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.ExtendViewport; // FIX: Import updated!
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sushi.game.SushiGame;
 import com.sushi.game.asset.MapAsset;
@@ -87,7 +87,9 @@ public class GameScreen extends ScreenAdapter {
         this.chefSpawner     = new ChefSpawner(chefFactory);
 
         this.skin         = game.getAssetService().get(SkinAsset.DEFAULT);
-        this.uiViewport   = new FitViewport(1920f, 1080f);
+
+        // FIX: ExtendViewport allows the dark pause background to perfectly cover the entire monitor!
+        this.uiViewport   = new ExtendViewport(1920f, 1080f);
         this.stage        = new Stage(uiViewport, game.getBatch());
 
         Skin gameUISkin = game.getAssetService().get(SkinAsset.GAME);
@@ -95,7 +97,6 @@ public class GameScreen extends ScreenAdapter {
 
         this.powerUpSystem = new PowerUpSystem(engine);
 
-        // FIX: Passed currentStage and isEndlessMode to the end screens so Retry works!
         this.levelSystem = new LevelSystem(gameScreenUI, powerUpSystem, isEndlessMode,
             () -> game.setScreen(new WinScreen(game, levelSystem.getScore(), levelSystem.getMoney(), this.currentStage, isEndlessMode)),
             () -> game.setScreen(new GameOverScreen(game, levelSystem.getScore(), this.currentStage, isEndlessMode)));
@@ -195,16 +196,12 @@ public class GameScreen extends ScreenAdapter {
     @Override
     public void render(float delta) {
 
-        // --- DEBUG HOTKEYS ---
-        // Press F1 to instantly trigger the WIN SCREEN
         if (Gdx.input.isKeyJustPressed(Input.Keys.F1)) {
             game.setScreen(new WinScreen(game, levelSystem.getScore(), levelSystem.getMoney(), currentStage, isEndlessMode));
         }
-        // Press F2 to instantly trigger the GAME OVER SCREEN
         if (Gdx.input.isKeyJustPressed(Input.Keys.F2)) {
             game.setScreen(new GameOverScreen(game, levelSystem.getScore(), currentStage, isEndlessMode));
         }
-        // ---------------------
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) && !isPaused) {
             pauseGame();

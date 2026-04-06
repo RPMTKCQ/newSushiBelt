@@ -311,7 +311,6 @@ public class MenuView extends View<MenuViewModel> {
         return table;
     }
 
-    // FIX: Perfect center-scaling origin logic applied!
     private void selectMenuItem(Group group) {
         if (this.selectedItem == group) return;
 
@@ -328,7 +327,6 @@ public class MenuView extends View<MenuViewModel> {
         this.selectedItem = group;
 
         if (this.selectedItem != null) {
-            // Recalculates exact true center dynamically!
             this.selectedItem.setOrigin(this.selectedItem.getWidth() / 2f, this.selectedItem.getHeight() / 2f);
             this.selectedItem.clearActions();
             this.selectedItem.setScale(1.15f);
@@ -414,6 +412,11 @@ public class MenuView extends View<MenuViewModel> {
         if (selectedItem != null && selectedItem.getUserObject() instanceof Runnable action) {
             action.run();
         }
+    }
+
+    // NEW: Lets external screens force the menu to skip to the Mode Select tab!
+    public void jumpToModeSelect() {
+        showModeSelectMenu();
     }
 
     @Override
