@@ -2,6 +2,7 @@ package com.sushi.game.system;
 
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.MathUtils;
 import com.sushi.game.ui.GameScreenUI;
 
 public class LevelSystem extends EntitySystem {
@@ -28,12 +29,12 @@ public class LevelSystem extends EntitySystem {
     private int xp            = 0;
     private int xpToNextLevel = BASE_XP_TO_NEXT;
     private int score         = 0;
-    private int money         = 100;
+    private int money         = 0;
 
     private int lastScoreBracket = 0;
 
     // Timer & Game Modes
-    private float timeLeft = 180f; // 3 minutes
+    private float timeLeft = 180f;
     private static final int FINANCIAL_QUOTA = 200;
 
     // Reputation Tracking
@@ -41,6 +42,9 @@ public class LevelSystem extends EntitySystem {
     private static final int MAX_HP = 100;
     private static final int HP_PENALTY = 5;
     private static final int HP_HEAL = 1;
+
+    // Power Up Cooldowns
+    private float pristineCooldown = 0f;
 
     private int totalProcessed = 0;
 
@@ -51,10 +55,7 @@ public class LevelSystem extends EntitySystem {
         this.onWin = onWin;
         this.onGameOver = onGameOver;
 
-        gameScreenUI.setScore(score);
-        gameScreenUI.setMoney(money);
-        gameScreenUI.setXp(xp, xpToNextLevel, level);
-        gameScreenUI.setReputation(reputationHp, MAX_HP);
+        updateStatsUI();
 
         if (isEndlessMode) {
             gameScreenUI.updateTimer("ENDLESS");
@@ -67,6 +68,15 @@ public class LevelSystem extends EntitySystem {
 
     @Override
     public void update(float deltaTime) {
+
+        // Cooldown tick for Pristine Kitchen
+        if (pristineCooldown > 0) {
+            pristineCooldown -= deltaTime;
+            if (pristineCooldown <= 0) {
+                gameScreenUI.addLogEvent("Pristine Kitchen is active again!", com.badlogic.gdx.graphics.Color.GREEN);
+            }
+        }
+
         if (!isEndlessMode) {
             timeLeft -= deltaTime;
             if (timeLeft < 0) timeLeft = 0;
@@ -91,27 +101,43 @@ public class LevelSystem extends EntitySystem {
         }
     }
 
-    public void onServeCompleted(boolean sortedCorrectly, boolean lateDelivery) {
+    // FIX: Added 'patienceRatio' to the signature so we can calculate Green Tea and Greedy Algorithm!
+    // YOU MUST PASS THIS FROM YOUR CUSTOMER SYSTEM NOW! (e.g. 1.0 = full patience, 0.1 = almost angry)
+    public void onServeCompleted(boolean sortedCorrectly, boolean lateDelivery, float patienceRatio) {
         totalProcessed++;
 
         if (!lateDelivery) {
             reputationHp = Math.min(MAX_HP, reputationHp + HP_HEAL);
         }
 
-        float scoreMultiplier = powerUpSystem.getRushHourMultiplier();
+        // Green Tea Logic
+        if (powerUpSystem.hasGreenTea && patienceRatio > 0.20f) {
+            if (MathUtils.randomBoolean(0.5f)) { // 50% chance
+                reputationHp = Math.min(MAX_HP, reputationHp + 5);
+                gameScreenUI.addLogEvent("Green Tea healed 5 HP!", com.badlogic.gdx.graphics.Color.GREEN);
+            }
+        }
+
         float moneyMultiplier = powerUpSystem.getDoubleTipsMultiplier();
+
+        // Pristine Kitchen Logic
+        if (powerUpSystem.hasPristineKitchen && reputationHp == 100 && pristineCooldown <= 0) {
+            moneyMultiplier *= 2f;
+        }
+
+        // Greedy Algorithm Logic (Up to 3x tips based on how low patience is)
+        if (powerUpSystem.hasGreedyAlgorithm) {
+            float greedMultiplier = 1f + (2f * (1f - patienceRatio));
+            moneyMultiplier *= greedMultiplier;
+        }
 
         powerUpSystem.consumeServePowerUps();
 
-        if (powerUpSystem.getRushHourMultiplier() == 1f) {
-            gameScreenUI.hideRushHourIfDepleted();
-        }
-
         int baseScore = lateDelivery ? SCORE_LATE : SCORE_ON_TIME + (sortedCorrectly ? SORT_SCORE_BONUS : 0);
-        int gainedScore = (int) (baseScore * scoreMultiplier);
-        score += gainedScore;
+        score += baseScore; // Score doesn't get multiplied
 
-        int baseMoney = lateDelivery ? MONEY_LATE : MONEY_ON_TIME + (sortedCorrectly ? SORT_MONEY_BONUS : 0);
+        // If Green Tea is active, base money is 0!
+        int baseMoney = powerUpSystem.hasGreenTea ? 0 : (lateDelivery ? MONEY_LATE : MONEY_ON_TIME + (sortedCorrectly ? SORT_MONEY_BONUS : 0));
         int gainedMoney = (int) (baseMoney * moneyMultiplier);
         money += gainedMoney;
 
@@ -131,10 +157,7 @@ public class LevelSystem extends EntitySystem {
             levelUp();
         }
 
-        gameScreenUI.setReputation(reputationHp, MAX_HP);
-        gameScreenUI.setScore(score);
-        gameScreenUI.setMoney(money);
-        gameScreenUI.setXp(xp, xpToNextLevel, level);
+        updateStatsUI();
     }
 
     public void onCustomerLeftAngry() {
@@ -142,7 +165,14 @@ public class LevelSystem extends EntitySystem {
         reputationHp -= HP_PENALTY;
 
         gameScreenUI.addLogEvent("A customer left in anger! (-" + HP_PENALTY + " HP)", com.badlogic.gdx.graphics.Color.RED);
-        gameScreenUI.setReputation(reputationHp, MAX_HP);
+
+        // Pristine Kitchen Cooldown Trigger
+        if (powerUpSystem.hasPristineKitchen) {
+            pristineCooldown = 30f;
+            gameScreenUI.addLogEvent("Pristine Kitchen disabled for 30s!", com.badlogic.gdx.graphics.Color.ORANGE);
+        }
+
+        updateStatsUI();
 
         if (reputationHp <= 0) {
             gameScreenUI.addLogEvent("REPUTATION DEPLETED! RESTAURANT CLOSED!", com.badlogic.gdx.graphics.Color.RED);
@@ -154,18 +184,29 @@ public class LevelSystem extends EntitySystem {
         level++;
         xp -= xpToNextLevel;
         xpToNextLevel = BASE_XP_TO_NEXT + ((level - 1) * XP_INCREMENT);
-        gameScreenUI.setXp(xp, xpToNextLevel, level);
 
         gameScreenUI.addLogEvent("Level Up! Choose a perk.", com.badlogic.gdx.graphics.Color.CYAN);
         gameScreenUI.showPowerUpOverlay(powerUpSystem);
+        updateStatsUI();
     }
 
-    // FIX: The F3 Debug Tool! Safely handles the math even if you jump multiple levels at once.
     public void addDebugXp(int amount) {
         xp += amount;
         while (xp >= xpToNextLevel && level < MAX_LEVEL) {
             levelUp();
         }
+        updateStatsUI();
+    }
+
+    private void updateStatsUI() {
+        gameScreenUI.setReputation(reputationHp, MAX_HP);
+        gameScreenUI.setScore(String.valueOf(score));
         gameScreenUI.setXp(xp, xpToNextLevel, level);
+
+        if (isEndlessMode) {
+            gameScreenUI.setMoney(money + "$");
+        } else {
+            gameScreenUI.setMoney(money + "$ / " + FINANCIAL_QUOTA + "$");
+        }
     }
 }

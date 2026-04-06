@@ -157,8 +157,8 @@ public class GameScreenUI {
     public void updateReceipts(float delta) { topBarUI.updateReceipts(delta); }
     public String getFirstDishName() { return topBarUI.getFirstDishName(); }
     public String getFirstCustomerId() { return topBarUI.getFirstCustomerId(); }
-    public void setMoney(int money) { topBarUI.setMoney(money); }
-    public void setScore(int score) { topBarUI.setScore(score); }
+    public void setMoney(String text) { topBarUI.setMoney(text); }
+    public void setScore(String text) { topBarUI.setScore(text); }
     public boolean isQueueSortedByUrgency() { return topBarUI.isQueueSortedByUrgency(); }
     public void setLastSubmitSorted(boolean sorted) { topBarUI.setLastSubmitSorted(sorted); }
     public boolean wasLastSubmitSorted() { return topBarUI.wasLastSubmitSorted(); }
@@ -494,5 +494,8 @@ public class GameScreenUI {
             this.pauseSelectedItem.setScale(1.15f);
             this.pauseSelectedItem.setColor(Color.WHITE);
         }
+    }
+    public boolean isPowerUpOverlayVisible() {
+        return powerUpOverlay != null && powerUpOverlay.isVisible();
     }
 }

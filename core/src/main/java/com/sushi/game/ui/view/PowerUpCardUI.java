@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -30,7 +31,9 @@ public class PowerUpCardUI extends Table {
 
         Table iconBorder = new Table();
         iconBorder.setBackground(skin.getDrawable("powerUpIconBG"));
-        Image icon = new Image(skin, "servicePowerUpIcon");
+
+        // FIX: Dynamically loads the specific icon for the category!
+        Image icon = new Image(skin, type.iconName());
         icon.setScaling(Scaling.fit);
         icon.setTouchable(Touchable.disabled);
         iconBorder.add(icon).minSize(50f);
@@ -40,13 +43,13 @@ public class PowerUpCardUI extends Table {
         Table texts = new Table();
         texts.setTouchable(Touchable.disabled);
 
-        Label categoryLabel = new Label("[Power-Up]", skin, "powerup");
+        Label categoryLabel = new Label(type.category(), skin, "powerup");
         categoryLabel.setColor(skin.getColor("black"));
         texts.add(categoryLabel).padBottom(10f).row();
 
         Label title = new Label(type.displayName(), skin, "receipt");
         title.setColor(skin.getColor("black"));
-        texts.add(title).padBottom(20f).row();
+        texts.add(title).padBottom(15f).row();
 
         Table descTable = new Table();
         descTable.setTouchable(Touchable.disabled);
@@ -56,20 +59,28 @@ public class PowerUpCardUI extends Table {
         desc.setColor(skin.getColor("black"));
         descTable.add(desc).growX().row();
 
-        Label corruption = new Label("Corruption debuff description here", skin, "small");
+        Label corruption = new Label(type.corruption(), skin, "small");
         corruption.setWrap(true);
         Color redColor = skin.has("Text_RED", Color.class) ? skin.getColor("Text_RED") : Color.RED;
         corruption.setColor(redColor);
-        descTable.add(corruption).growX();
+        if (type.corruption().isEmpty()) {
+            corruption.setText("");
+        } else {
+            descTable.add(corruption).growX().padTop(5f);
+        }
 
-        texts.add(descTable).growX();
-        add(texts).padTop(20f).minWidth(170f).minHeight(190f);
+        ScrollPane scrollPane = new ScrollPane(descTable, skin);
+        scrollPane.setScrollingDisabled(true, false);
+        scrollPane.setFadeScrollBars(false);
+        scrollPane.setTouchable(Touchable.disabled);
 
-        // Add Input Listeners
+        texts.add(scrollPane).grow().padTop(5f);
+        add(texts).padTop(10f).grow().padBottom(20f).minWidth(170f).minHeight(190f);
+
         addListener(new InputListener() {
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                onHover.run(); // Tell the main UI we are hovering
+                onHover.run();
             }
             @Override
             public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
@@ -82,7 +93,7 @@ public class PowerUpCardUI extends Table {
             public void clicked(InputEvent event, float x, float y) {
                 if (audioService != null) audioService.playSound(SoundAsset.MENU_SELECT);
                 powerUpSystem.applyPowerUp(type);
-                onSelected.run(); // Tell the main UI to close the menu
+                onSelected.run();
             }
         });
     }

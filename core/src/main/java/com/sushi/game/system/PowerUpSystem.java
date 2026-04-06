@@ -10,11 +10,14 @@ import com.sushi.game.ui.model.PowerUpType;
 
 public class PowerUpSystem extends IteratingSystem {
 
-    private int rushHourServesLeft = 0;
-    private float rushHourScoreMultiplier = 1f;
-
     private int doubleTipsServesLeft = 0;
-    private float doubleTipsMultiplier = 1f;
+
+    // Buff Flags for other systems to read
+    public boolean hasSugarRush = false;
+    public boolean hasHeavyLifter = false;
+    public boolean hasGreenTea = false;
+    public boolean hasPristineKitchen = false;
+    public boolean hasGreedyAlgorithm = false;
 
     private final Engine engine;
 
@@ -23,40 +26,28 @@ public class PowerUpSystem extends IteratingSystem {
         this.engine = engine;
     }
 
-
     public void applyPowerUp(PowerUpType type) {
-        for (Entity existing : getEntities()) {
-            PowerUp old = PowerUp.MAPPER.get(existing);
-            if (old.type == type) {
-                revertPowerUp(old);
-                engine.removeEntity(existing);
-                break;
-            }
-        }
-
         Entity entity = new Entity();
         PowerUp powerUp = new PowerUp();
         powerUp.type = type;
         powerUp.active = true;
 
-        // switch case for the different types of power up, can add more here
         switch (type) {
-            case MOVEMENT_SPEED -> {
-                powerUp.appliedMultiplier = type.multiplier();
-                applyMovementSpeed(powerUp.appliedMultiplier);
+            case BASIC_MOVE_SPEED -> applyMovementSpeed(1.15f);
+            case BASIC_COOK_SPEED -> applyCookingSpeed(1.15f);
+            case SUGAR_RUSH -> {
+                hasSugarRush = true;
+                applyMovementSpeed(1.40f);
             }
-            case COOKING_SPEED -> {
-                powerUp.appliedMultiplier = type.multiplier();
-                applyCookingSpeed(powerUp.appliedMultiplier);
+            case HEAVY_LIFTER -> {
+                hasHeavyLifter = true;
+                applyMovementSpeed(0.85f);
+                // Note: You must update your Inventory system to allow 5 items if hasHeavyLifter is true!
             }
-            case RUSH_HOUR -> {
-                rushHourServesLeft = 3;
-                rushHourScoreMultiplier = type.multiplier();
-            }
-            case DOUBLE_TIPS -> {
-                doubleTipsServesLeft = 3;
-                doubleTipsMultiplier = type.multiplier();
-            }
+            case DOUBLE_TIPS -> doubleTipsServesLeft += 3;
+            case GREEN_TEA -> hasGreenTea = true;
+            case PRISTINE_KITCHEN -> hasPristineKitchen = true;
+            case GREEDY_ALGORITHM -> hasGreedyAlgorithm = true;
         }
 
         entity.add(powerUp);
@@ -64,15 +55,13 @@ public class PowerUpSystem extends IteratingSystem {
         Gdx.app.log("POWERUP", "Applied: " + type.displayName());
     }
 
-    //methods specific power ups
-    // movemement speed, take player entity then set the max speed to the set multiplier (which is 8%)
     private void applyMovementSpeed(float multiplier) {
         for (Entity e : engine.getEntitiesFor(Family.all(Move.class).get())) {
             Move move = Move.MAPPER.get(e);
             move.setMaxSpeed(move.getMaxSpeed() * multiplier);
         }
     }
-    // cooking speed
+
     private void applyCookingSpeed(float multiplier) {
         for (Entity e : engine.getEntitiesFor(Family.all(Chef.class).get())) {
             Chef chef = Chef.MAPPER.get(e);
@@ -80,51 +69,23 @@ public class PowerUpSystem extends IteratingSystem {
         }
     }
 
-    // in cases where power up will be reverted
-    private void revertPowerUp(PowerUp old) {
-        switch (old.type) {
-            case MOVEMENT_SPEED -> {
-                for (Entity e : engine.getEntitiesFor(Family.all(Move.class).get())) {
-                    Move move = Move.MAPPER.get(e);
-                    move.setMaxSpeed(move.getMaxSpeed() / old.appliedMultiplier);
-                }
-            }
-            case COOKING_SPEED -> {
-                for (Entity e : engine.getEntitiesFor(Family.all(Chef.class).get())) {
-                    Chef chef = Chef.MAPPER.get(e);
-                    chef.cookDuration *= old.appliedMultiplier;
-                }
-            }
-            case RUSH_HOUR -> {
-                rushHourServesLeft = 0;
-                rushHourScoreMultiplier = 1f;
-            }
-            case DOUBLE_TIPS -> {
-                doubleTipsServesLeft = 0;
-                doubleTipsMultiplier = 1f;
+    public float getDoubleTipsMultiplier() { return doubleTipsServesLeft > 0 ? 2.0f : 1.0f; }
+
+    public void consumeServePowerUps() {
+        if (doubleTipsServesLeft > 0) {
+            doubleTipsServesLeft--;
+            if (doubleTipsServesLeft == 0) {
+                Gdx.app.log("POWERUP", "Double Tips ended.");
             }
         }
     }
 
-    //getter methods
-    public float getRushHourMultiplier() { return rushHourScoreMultiplier; }
-    public float getDoubleTipsMultiplier() { return doubleTipsMultiplier; }
-
-    public void consumeServePowerUps() {
-        if (rushHourServesLeft > 0) {
-            rushHourServesLeft--;
-            if (rushHourServesLeft == 0) {
-                rushHourScoreMultiplier = 1f;
-                Gdx.app.log("POWERUP", "Rush Hour ended.");
-            }
-        }
-        if (doubleTipsServesLeft > 0) {
-            doubleTipsServesLeft--;
-            if (doubleTipsServesLeft == 0) {
-                doubleTipsMultiplier = 1f;
-                Gdx.app.log("POWERUP", "Double Tips ended.");
-            }
-        }
+    // Helper for customer patience drain
+    public float getPatienceDrainMultiplier() {
+        float drain = 1.0f;
+        if (hasSugarRush) drain += 0.20f;
+        if (hasGreedyAlgorithm) drain += 0.15f;
+        return drain;
     }
 
     @Override

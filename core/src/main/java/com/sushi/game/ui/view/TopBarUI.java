@@ -101,6 +101,16 @@ public class TopBarUI extends Table {
         return scoreMoneyTable;
     }
 
+    // FIX: Now accepts the formatted String from LevelSystem
+    public void setMoney(String text) {
+        moneyLabel.setText(text);
+    }
+
+    // FIX: Now accepts the formatted String from LevelSystem
+    public void setScore(String text) {
+        scoreLabel.setText(text);
+    }
+
     public void setMoney(int money) {
         moneyLabel.setText(String.valueOf(money));
     }
