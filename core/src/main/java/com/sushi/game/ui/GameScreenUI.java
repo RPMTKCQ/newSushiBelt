@@ -60,6 +60,7 @@ public class GameScreenUI {
     private static final float REPEAT_RATE = 0.15f;
 
     private enum PauseState {MAIN, CONFIRM_QUIT}
+
     private PauseState currentPauseState = PauseState.MAIN;
     private com.badlogic.gdx.graphics.Texture darkOverlayTexture;
 
@@ -122,13 +123,23 @@ public class GameScreenUI {
                     if (keycode == Input.Keys.LEFT || keycode == Input.Keys.A) {
                         powerUpSelectedIndex = (powerUpSelectedIndex - 1 + 3) % 3;
                         updatePowerUpColors();
-                        if(audioService != null) audioService.playSound(SoundAsset.MENU_HOVER);
+                        if (audioService != null) audioService.playSound(SoundAsset.MENU_HOVER);
                         return true;
                     }
                     if (keycode == Input.Keys.RIGHT || keycode == Input.Keys.D) {
                         powerUpSelectedIndex = (powerUpSelectedIndex + 1) % 3;
                         updatePowerUpColors();
-                        if(audioService != null) audioService.playSound(SoundAsset.MENU_HOVER);
+                        if (audioService != null) audioService.playSound(SoundAsset.MENU_HOVER);
+                        return true;
+                    }
+                    // FIX: Scroll Up with W or UP arrow!
+                    if (keycode == Input.Keys.UP || keycode == Input.Keys.W) {
+                        scrollSelectedPowerUp(-30f);
+                        return true;
+                    }
+                    // FIX: Scroll Down with S or DOWN arrow!
+                    if (keycode == Input.Keys.DOWN || keycode == Input.Keys.S) {
+                        scrollSelectedPowerUp(30f);
                         return true;
                     }
                     if (keycode == Input.Keys.SPACE || keycode == Input.Keys.ENTER) {
@@ -152,31 +163,103 @@ public class GameScreenUI {
         });
     }
 
-    public void addOrder(String dishId, String customerId, float maxTime) { topBarUI.addOrder(dishId, customerId, maxTime); }
-    public void removeOrder(String customerId) { topBarUI.removeOrder(customerId); }
-    public void updateReceipts(float delta) { topBarUI.updateReceipts(delta); }
-    public String getFirstDishName() { return topBarUI.getFirstDishName(); }
-    public String getFirstCustomerId() { return topBarUI.getFirstCustomerId(); }
-    public void setMoney(String text) { topBarUI.setMoney(text); }
-    public void setScore(String text) { topBarUI.setScore(text); }
-    public boolean isQueueSortedByUrgency() { return topBarUI.isQueueSortedByUrgency(); }
-    public void setLastSubmitSorted(boolean sorted) { topBarUI.setLastSubmitSorted(sorted); }
-    public boolean wasLastSubmitSorted() { return topBarUI.wasLastSubmitSorted(); }
-    public void startCookingFor(String customerId) { topBarUI.startCookingFor(customerId); }
-    public void updateCookingProgress(float ratio) { topBarUI.updateCookingProgress(ratio); }
-    public void resetCookingBar() { topBarUI.resetCookingBar(); }
+    private void scrollSelectedPowerUp(float amount) {
+        if (powerUpOverlay != null && powerUpOverlay.getChildren().size > powerUpSelectedIndex) {
+            Actor actor = powerUpOverlay.getChildren().get(powerUpSelectedIndex);
+            if (actor instanceof PowerUpCardUI) {
+                ((PowerUpCardUI) actor).scroll(amount);
+            }
+        }
+    }
 
-    public void setReputation(int current, int max) { bottomBarUI.setReputation(current, max); }
-    public void setXp(int xp, int xpToNext, int level) { bottomBarUI.setXp(xp, xpToNext, level); }
-    public void updateTimer(String timeText) { bottomBarUI.updateTimer(timeText); }
-    public void updateInventory(List<String> dishes) { bottomBarUI.updateInventory(dishes); }
+    public void addOrder(String dishId, String customerId, float maxTime) {
+        topBarUI.addOrder(dishId, customerId, maxTime);
+    }
 
-    public boolean isChefReady() { return chefReady; }
-    public void setChefCooking(boolean cooking) { this.chefCooking = cooking; }
-    public boolean isChefCooking() { return chefCooking; }
-    public void setChefReady(boolean ready) { this.chefReady = ready; if (!ready) topBarUI.resetCookingBar(); }
+    public void removeOrder(String customerId) {
+        topBarUI.removeOrder(customerId);
+    }
 
-    public void playCookingDoneSound() { if (audioService != null) audioService.playSound(SoundAsset.COOKING_DONE); }
+    public void updateReceipts(float delta) {
+        topBarUI.updateReceipts(delta);
+    }
+
+    public String getFirstDishName() {
+        return topBarUI.getFirstDishName();
+    }
+
+    public String getFirstCustomerId() {
+        return topBarUI.getFirstCustomerId();
+    }
+
+    public void setMoney(String text) {
+        topBarUI.setMoney(text);
+    }
+
+    public void setScore(String text) {
+        topBarUI.setScore(text);
+    }
+
+    public boolean isQueueSortedByUrgency() {
+        return topBarUI.isQueueSortedByUrgency();
+    }
+
+    public void setLastSubmitSorted(boolean sorted) {
+        topBarUI.setLastSubmitSorted(sorted);
+    }
+
+    public boolean wasLastSubmitSorted() {
+        return topBarUI.wasLastSubmitSorted();
+    }
+
+    public void startCookingFor(String customerId) {
+        topBarUI.startCookingFor(customerId);
+    }
+
+    public void updateCookingProgress(float ratio) {
+        topBarUI.updateCookingProgress(ratio);
+    }
+
+    public void resetCookingBar() {
+        topBarUI.resetCookingBar();
+    }
+
+    public void setReputation(int current, int max) {
+        bottomBarUI.setReputation(current, max);
+    }
+
+    public void setXp(int xp, int xpToNext, int level) {
+        bottomBarUI.setXp(xp, xpToNext, level);
+    }
+
+    public void updateTimer(String timeText) {
+        bottomBarUI.updateTimer(timeText);
+    }
+
+    public void updateInventory(List<String> dishes) {
+        bottomBarUI.updateInventory(dishes);
+    }
+
+    public boolean isChefReady() {
+        return chefReady;
+    }
+
+    public void setChefCooking(boolean cooking) {
+        this.chefCooking = cooking;
+    }
+
+    public boolean isChefCooking() {
+        return chefCooking;
+    }
+
+    public void setChefReady(boolean ready) {
+        this.chefReady = ready;
+        if (!ready) topBarUI.resetCookingBar();
+    }
+
+    public void playCookingDoneSound() {
+        if (audioService != null) audioService.playSound(SoundAsset.COOKING_DONE);
+    }
 
     public void addLogEvent(String message, com.badlogic.gdx.graphics.Color color) {
         Label logLabel = new Label(message, skin, "receipt");
@@ -227,7 +310,11 @@ public class GameScreenUI {
             Runnable onSelected = () -> {
                 addLogEvent("Power-Up Activated: " + type.displayName(), Color.CYAN);
 
-                // If there are more level ups in the queue, immediately show the next 3 cards!
+                // NEW: Tell LevelSystem to apply any immediate corruptions!
+                if (activePowerUpSystem != null && activePowerUpSystem.getEngine() != null) {
+                    activePowerUpSystem.getEngine().getSystem(com.sushi.game.system.LevelSystem.class).applyImmediateCorruption(type);
+                }
+
                 if (queuedLevelUps > 0) {
                     displayNextPowerUp();
                 } else {
@@ -239,7 +326,7 @@ public class GameScreenUI {
             Runnable onHover = () -> {
                 powerUpSelectedIndex = index;
                 updatePowerUpColors();
-                if(audioService != null) audioService.playSound(SoundAsset.MENU_HOVER);
+                if (audioService != null) audioService.playSound(SoundAsset.MENU_HOVER);
             };
 
             PowerUpCardUI card = new PowerUpCardUI(skin, type, activePowerUpSystem, audioService, onSelected, onHover);
@@ -254,7 +341,9 @@ public class GameScreenUI {
         powerUpOverlay.toFront();
     }
 
-    public void hideRushHourIfDepleted() { Gdx.app.log("UI", "Rush Hour ended."); }
+    public void hideRushHourIfDepleted() {
+        Gdx.app.log("UI", "Rush Hour ended.");
+    }
 
     private void hideOverlay() {
         powerUpOverlay.setVisible(false);
@@ -306,13 +395,24 @@ public class GameScreenUI {
                     int newIndex = currentIndex;
 
                     if (currentPauseState == PauseState.CONFIRM_QUIT) {
-                        if (keycode == Input.Keys.A || keycode == Input.Keys.LEFT) newIndex = (currentIndex - 1 + pauseMenuItems.size()) % pauseMenuItems.size();
-                        else if (keycode == Input.Keys.D || keycode == Input.Keys.RIGHT) newIndex = (currentIndex + 1) % pauseMenuItems.size();
+                        if (keycode == Input.Keys.A || keycode == Input.Keys.LEFT)
+                            newIndex = (currentIndex - 1 + pauseMenuItems.size()) % pauseMenuItems.size();
+                        else if (keycode == Input.Keys.D || keycode == Input.Keys.RIGHT)
+                            newIndex = (currentIndex + 1) % pauseMenuItems.size();
                     } else {
-                        if (keycode == Input.Keys.W || keycode == Input.Keys.UP) newIndex = (currentIndex - 1 + pauseMenuItems.size()) % pauseMenuItems.size();
-                        else if (keycode == Input.Keys.S || keycode == Input.Keys.DOWN) newIndex = (currentIndex + 1) % pauseMenuItems.size();
-                        else if (keycode == Input.Keys.A || keycode == Input.Keys.LEFT) { leftPressed = true; holdTimer = 0f; adjustPauseSlider(-0.1f); }
-                        else if (keycode == Input.Keys.D || keycode == Input.Keys.RIGHT) { rightPressed = true; holdTimer = 0f; adjustPauseSlider(0.1f); }
+                        if (keycode == Input.Keys.W || keycode == Input.Keys.UP)
+                            newIndex = (currentIndex - 1 + pauseMenuItems.size()) % pauseMenuItems.size();
+                        else if (keycode == Input.Keys.S || keycode == Input.Keys.DOWN)
+                            newIndex = (currentIndex + 1) % pauseMenuItems.size();
+                        else if (keycode == Input.Keys.A || keycode == Input.Keys.LEFT) {
+                            leftPressed = true;
+                            holdTimer = 0f;
+                            adjustPauseSlider(-0.1f);
+                        } else if (keycode == Input.Keys.D || keycode == Input.Keys.RIGHT) {
+                            rightPressed = true;
+                            holdTimer = 0f;
+                            adjustPauseSlider(0.1f);
+                        }
                     }
 
                     if (newIndex != currentIndex && newIndex >= 0 && newIndex < pauseMenuItems.size()) {
@@ -362,13 +462,21 @@ public class GameScreenUI {
     private void executeSafeAction(Runnable action) {
         inputLocked = true;
         Gdx.app.postRunnable(() -> {
-            try { action.run(); } catch (Exception e) { Gdx.app.error("GameScreenUI", "Error executing pause action", e); } finally { inputLocked = false; }
+            try {
+                action.run();
+            } catch (Exception e) {
+                Gdx.app.error("GameScreenUI", "Error executing pause action", e);
+            } finally {
+                inputLocked = false;
+            }
         });
     }
 
     private TextButton createPauseButton(String text, Runnable onClick) {
         TextButton.TextButtonStyle customStyle = new TextButton.TextButtonStyle(skin.get("menu", TextButton.TextButtonStyle.class));
-        customStyle.over = null; customStyle.checkedOver = null; customStyle.down = null;
+        customStyle.over = null;
+        customStyle.checkedOver = null;
+        customStyle.down = null;
 
         TextButton button = new TextButton(text, customStyle);
         button.setTransform(true);
@@ -382,8 +490,15 @@ public class GameScreenUI {
         button.setUserObject(unifiedAction);
 
         button.addListener(new ClickListener() {
-            @Override public void clicked(InputEvent event, float x, float y) { unifiedAction.run(); }
-            @Override public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) { selectPauseItem(button); }
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                unifiedAction.run();
+            }
+
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                selectPauseItem(button);
+            }
         });
 
         pauseMenuItems.add(button);
@@ -404,7 +519,9 @@ public class GameScreenUI {
         pauseOverlay.add(resumeBtn).minSize(300f, 80f).padBottom(20f).row();
 
         Table musicTable = new Table();
-        musicTable.setTransform(true); musicTable.setOrigin(Align.center); musicTable.setColor(Color.LIGHT_GRAY);
+        musicTable.setTransform(true);
+        musicTable.setOrigin(Align.center);
+        musicTable.setColor(Color.LIGHT_GRAY);
 
         Label musicLabel = new Label("Music Volume", skin, "receipt");
         musicLabel.setColor(skin.getColor("white"));
@@ -413,16 +530,27 @@ public class GameScreenUI {
         Slider musicSlider = new Slider(0f, 1f, 0.1f, false, skin);
         musicSlider.setValue(audioService.getMusicVolume());
         musicSlider.addListener(new com.badlogic.gdx.scenes.scene2d.utils.ChangeListener() {
-            @Override public void changed(ChangeEvent event, Actor actor) { audioService.setMusicVolume(musicSlider.getValue()); audioService.playSound(SoundAsset.MENU_HOVER); }
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                audioService.setMusicVolume(musicSlider.getValue());
+                audioService.playSound(SoundAsset.MENU_HOVER);
+            }
         });
         musicTable.add(musicSlider).width(290f);
-        musicTable.addListener(new InputListener() { @Override public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) { selectPauseItem(musicTable); }});
+        musicTable.addListener(new InputListener() {
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                selectPauseItem(musicTable);
+            }
+        });
         musicTable.setUserObject(musicSlider);
         pauseMenuItems.add(musicTable);
         pauseOverlay.add(musicTable).padBottom(20f).row();
 
         Table soundTable = new Table();
-        soundTable.setTransform(true); soundTable.setOrigin(Align.center); soundTable.setColor(Color.LIGHT_GRAY);
+        soundTable.setTransform(true);
+        soundTable.setOrigin(Align.center);
+        soundTable.setColor(Color.LIGHT_GRAY);
 
         Label soundLabel = new Label("Sound Volume", skin, "receipt");
         soundLabel.setColor(skin.getColor("white"));
@@ -431,10 +559,19 @@ public class GameScreenUI {
         Slider soundSlider = new Slider(0f, 1f, 0.1f, false, skin);
         soundSlider.setValue(audioService.getSoundVolume());
         soundSlider.addListener(new com.badlogic.gdx.scenes.scene2d.utils.ChangeListener() {
-            @Override public void changed(ChangeEvent event, Actor actor) { audioService.setSoundVolume(soundSlider.getValue()); audioService.playSound(SoundAsset.MENU_HOVER); }
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                audioService.setSoundVolume(soundSlider.getValue());
+                audioService.playSound(SoundAsset.MENU_HOVER);
+            }
         });
         soundTable.add(soundSlider).width(290f);
-        soundTable.addListener(new InputListener() { @Override public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) { selectPauseItem(soundTable); }});
+        soundTable.addListener(new InputListener() {
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                selectPauseItem(soundTable);
+            }
+        });
         soundTable.setUserObject(soundSlider);
         pauseMenuItems.add(soundTable);
         pauseOverlay.add(soundTable).padBottom(40f).row();
@@ -443,7 +580,10 @@ public class GameScreenUI {
         pauseOverlay.add(quitBtn).minSize(300f, 80f);
 
         pauseOverlay.pack();
-        if (!pauseMenuItems.isEmpty()) { stage.act(0f); selectPauseItem(pauseMenuItems.get(0)); }
+        if (!pauseMenuItems.isEmpty()) {
+            stage.act(0f);
+            selectPauseItem(pauseMenuItems.get(0));
+        }
     }
 
     private void buildConfirmQuitScreen(Runnable onResume, Runnable onQuit) {
@@ -472,11 +612,15 @@ public class GameScreenUI {
         pauseOverlay.add(buttonsTable);
         pauseOverlay.pack();
 
-        if (!pauseMenuItems.isEmpty()) { stage.act(0f); selectPauseItem(pauseMenuItems.get(1)); }
+        if (!pauseMenuItems.isEmpty()) {
+            stage.act(0f);
+            selectPauseItem(pauseMenuItems.get(1));
+        }
     }
 
     private void adjustPauseSlider(float amount) {
-        if (pauseSelectedItem != null && pauseSelectedItem.getUserObject() instanceof Slider slider) slider.setValue(slider.getValue() + amount);
+        if (pauseSelectedItem != null && pauseSelectedItem.getUserObject() instanceof Slider slider)
+            slider.setValue(slider.getValue() + amount);
     }
 
     private void selectPauseItem(Group group) {
@@ -495,7 +639,9 @@ public class GameScreenUI {
             this.pauseSelectedItem.setColor(Color.WHITE);
         }
     }
+
     public boolean isPowerUpOverlayVisible() {
         return powerUpOverlay != null && powerUpOverlay.isVisible();
     }
+
 }

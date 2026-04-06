@@ -21,6 +21,8 @@ import com.sushi.game.ui.model.PowerUpType;
 
 public class PowerUpCardUI extends Table {
 
+    private final ScrollPane scrollPane; // FIX: Make scrollPane a class variable so we can access it!
+
     public PowerUpCardUI(Skin skin, PowerUpType type, PowerUpSystem powerUpSystem, AudioService audioService, Runnable onSelected, Runnable onHover) {
         super(skin);
 
@@ -31,8 +33,6 @@ public class PowerUpCardUI extends Table {
 
         Table iconBorder = new Table();
         iconBorder.setBackground(skin.getDrawable("powerUpIconBG"));
-
-        // FIX: Dynamically loads the specific icon for the category!
         Image icon = new Image(skin, type.iconName());
         icon.setScaling(Scaling.fit);
         icon.setTouchable(Touchable.disabled);
@@ -69,13 +69,13 @@ public class PowerUpCardUI extends Table {
             descTable.add(corruption).growX().padTop(5f);
         }
 
-        ScrollPane scrollPane = new ScrollPane(descTable, skin);
+        scrollPane = new ScrollPane(descTable, new ScrollPane.ScrollPaneStyle());
         scrollPane.setScrollingDisabled(true, false);
         scrollPane.setFadeScrollBars(false);
         scrollPane.setTouchable(Touchable.disabled);
 
         texts.add(scrollPane).grow().padTop(5f);
-        add(texts).padTop(10f).grow().padBottom(20f).minWidth(170f).minHeight(190f);
+        add(texts).padTop(10f).padLeft(20f).padRight(20f).grow().padBottom(20f).minWidth(170f).minHeight(190f);
 
         addListener(new InputListener() {
             @Override
@@ -96,5 +96,12 @@ public class PowerUpCardUI extends Table {
                 onSelected.run();
             }
         });
+    }
+
+    // FIX: A helper method so GameScreenUI can push the scroll wheel up and down!
+    public void scroll(float amount) {
+        if (scrollPane != null) {
+            scrollPane.setScrollY(scrollPane.getScrollY() + amount);
+        }
     }
 }

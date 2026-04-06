@@ -27,10 +27,10 @@ public class ChefSystem extends IteratingSystem {
     public ChefSystem(GameScreenUI gameScreenUI, Engine engine, World world,
                       AssetService assetService, ConveyorSystem conveyorSystem) {
         super(Family.all(Chef.class, Transform.class).get());
-        this.gameScreenUI   = gameScreenUI;
-        this.engine         = engine;
-        this.world          = world;
-        this.assetService   = assetService;
+        this.gameScreenUI = gameScreenUI;
+        this.engine = engine;
+        this.world = world;
+        this.assetService = assetService;
         this.conveyorSystem = conveyorSystem;
     }
 
@@ -46,9 +46,14 @@ public class ChefSystem extends IteratingSystem {
 
                     if (dishToCook != null && customerId != null) {
                         chef.currentRecipeId = dishToCook;
-                        chef.cookTimer       = 0f;
-                        chef.cookDuration    = 3f;
-                        chef.state           = Chef.ChefState.COOKING;
+                        chef.cookTimer = 0f;
+
+                        // FIX: Varying the cooking times for balancing!
+                        if (dishToCook.equals("maguro_nigiri")) chef.cookDuration = 5f;
+                        else if (dishToCook.equals("salmon_nigiri")) chef.cookDuration = 3.5f;
+                        else chef.cookDuration = 2f; // tuna_roll
+
+                        chef.state = Chef.ChefState.COOKING;
 
                         gameScreenUI.setChefReady(false);
                         gameScreenUI.setChefCooking(true);
@@ -103,8 +108,8 @@ public class ChefSystem extends IteratingSystem {
         dish.add(new Graphic(Color.WHITE.cpy(), region));
 
         DishOnBelt dishOnBelt = new DishOnBelt();
-        dishOnBelt.dishId        = dishId;
-        dishOnBelt.pickedUp      = false;
+        dishOnBelt.dishId = dishId;
+        dishOnBelt.pickedUp = false;
         dishOnBelt.waypointIndex = 0;
         dish.add(dishOnBelt);
 
@@ -118,7 +123,7 @@ public class ChefSystem extends IteratingSystem {
         CircleShape shape = new CircleShape();
         shape.setRadius(size.x * 0.4f);
         FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.shape    = shape;
+        fixtureDef.shape = shape;
         fixtureDef.isSensor = true;
         body.createFixture(fixtureDef);
         shape.dispose();

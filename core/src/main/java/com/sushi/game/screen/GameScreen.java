@@ -81,16 +81,16 @@ public class GameScreen extends ScreenAdapter {
 
         this.keyboardController = new KeyboardController(GameControllerState.class, engine);
 
-        this.tableManager    = new TableManager();
+        this.tableManager = new TableManager();
         this.customerFactory = new CustomerFactory(engine, physicWorld, game.getAssetService());
-        this.chefFactory     = new ChefFactory(engine, game.getAssetService());
-        this.chefSpawner     = new ChefSpawner(chefFactory);
+        this.chefFactory = new ChefFactory(engine, game.getAssetService());
+        this.chefSpawner = new ChefSpawner(chefFactory);
 
-        this.skin         = game.getAssetService().get(SkinAsset.DEFAULT);
+        this.skin = game.getAssetService().get(SkinAsset.DEFAULT);
 
         // FIX: ExtendViewport allows the dark pause background to perfectly cover the entire monitor!
-        this.uiViewport   = new ExtendViewport(1920f, 1080f);
-        this.stage        = new Stage(uiViewport, game.getBatch());
+        this.uiViewport = new ExtendViewport(1920f, 1080f);
+        this.stage = new Stage(uiViewport, game.getBatch());
 
         Skin gameUISkin = game.getAssetService().get(SkinAsset.GAME);
         this.gameScreenUI = new GameScreenUI(stage, gameUISkin, game.getAssetService(), this.audioService);
@@ -104,7 +104,7 @@ public class GameScreen extends ScreenAdapter {
         this.customerSpawner = new CustomerSpawner(customerFactory, tableManager, engine, levelSystem);
 
         this.conveyorSystem = new ConveyorSystem();
-        this.chefSystem     = new ChefSystem(gameScreenUI, engine, physicWorld, game.getAssetService(), conveyorSystem);
+        this.chefSystem = new ChefSystem(gameScreenUI, engine, physicWorld, game.getAssetService(), conveyorSystem);
         this.customerRenderSystem = new CustomerRenderSystem(game.getCamera(), gameUISkin, game.getAssetService(), game.getBatch(), engine);
 
         engine.addSystem(new CustomerSystem(physicWorld, tableManager, engine, gameScreenUI, levelSystem));
@@ -136,7 +136,7 @@ public class GameScreen extends ScreenAdapter {
         keyboardController.setActiveState(GameControllerState.class);
 
         Consumer<TiledMap> renderConsumer = engine.getSystem(RenderSystem.class)::setMap;
-        Consumer<TiledMap> audioConsumer  = audioService::setMap;
+        Consumer<TiledMap> audioConsumer = audioService::setMap;
 
         // FIX: Removed the Camera from this automatic chain!
         tiledService.setMapChangeConsumer(renderConsumer.andThen(audioConsumer));
@@ -146,7 +146,7 @@ public class GameScreen extends ScreenAdapter {
         TiledMap tiledMap = tiledService.loadMap(this.currentStage);
         tiledService.setMap(tiledMap); // This spawns the player!
 
-        MapLayer objectLayer      = tiledMap.getLayers().get("objects");
+        MapLayer objectLayer = tiledMap.getLayers().get("objects");
         MapLayer smallObjectLayer = tiledMap.getLayers().get("small-objects");
 
         if (objectLayer != null) {
@@ -154,7 +154,7 @@ public class GameScreen extends ScreenAdapter {
             customerSpawner.loadSpawnPoints(objectLayer.getObjects());
             chefSpawner.loadSpawnPoints(objectLayer.getObjects());
         }
-        if (objectLayer != null)      conveyorSystem.loadBelt(objectLayer.getObjects());
+        if (objectLayer != null) conveyorSystem.loadBelt(objectLayer.getObjects());
         if (smallObjectLayer != null) conveyorSystem.loadBelt(smallObjectLayer.getObjects());
         chefSpawner.spawnAll();
 
@@ -198,14 +198,12 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void render(float delta) {
-
         if (Gdx.input.isKeyJustPressed(Input.Keys.F1)) {
             game.setScreen(new WinScreen(game, levelSystem.getScore(), levelSystem.getMoney(), currentStage, isEndlessMode));
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.F2)) {
             game.setScreen(new GameOverScreen(game, levelSystem.getScore(), currentStage, isEndlessMode));
         }
-        // Press F3 to instantly add 10 XP
         if (Gdx.input.isKeyJustPressed(Input.Keys.F3)) {
             if (levelSystem != null) levelSystem.addDebugXp(10);
         }
@@ -216,18 +214,20 @@ public class GameScreen extends ScreenAdapter {
 
         delta = Math.min(delta, 1 / 30f);
 
-        if (!isPaused) {
+        boolean isPowerUpScreenOpen = gameScreenUI.isPowerUpOverlayVisible();
+
+        // FIX: If paused, pass 0f to the engine. It stops logic, but STILL draws the map!
+        if (isPaused || isPowerUpScreenOpen) {
+            engine.update(0f);
+            customerRenderSystem.update(0f);
+            if (isPaused) {
+                gameScreenUI.updatePauseMenu(delta);
+            }
+        } else {
             customerSpawner.update(delta);
-        }
-
-        engine.update(delta);
-
-        if (!isPaused) {
+            engine.update(delta);
             customerRenderSystem.update(delta);
             gameScreenUI.updateReceipts(delta);
-        } else {
-            customerRenderSystem.update(0f);
-            gameScreenUI.updatePauseMenu(delta);
         }
 
         uiViewport.apply();
@@ -238,7 +238,9 @@ public class GameScreen extends ScreenAdapter {
     }
 
     @Override
-    public void resize(int width, int height) { uiViewport.update(width, height, true); }
+    public void resize(int width, int height) {
+        uiViewport.update(width, height, true);
+    }
 
     @Override
     public void hide() {

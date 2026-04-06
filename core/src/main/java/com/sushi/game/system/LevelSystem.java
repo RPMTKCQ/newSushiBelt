@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.sushi.game.ui.GameScreenUI;
+import com.sushi.game.ui.model.PowerUpType;
 
 public class LevelSystem extends EntitySystem {
 
@@ -29,23 +30,21 @@ public class LevelSystem extends EntitySystem {
     private int xp            = 0;
     private int xpToNextLevel = BASE_XP_TO_NEXT;
     private int score         = 0;
-    private int money         = 0;
+    private int money         = 0; // FIX: Starts at $0!
 
     private int lastScoreBracket = 0;
 
     // Timer & Game Modes
-    private float timeLeft = 180f;
-    private static final int FINANCIAL_QUOTA = 200;
+    private float timeLeft = 180f; // 3 minutes
+    private static final int FINANCIAL_QUOTA = 100; // FIX: Lowered to 100 for Easy Mode balancing
 
     // Reputation Tracking
     private int reputationHp = 100;
     private static final int MAX_HP = 100;
-    private static final int HP_PENALTY = 5;
+    private int hpPenalty = 5;
     private static final int HP_HEAL = 1;
 
-    // Power Up Cooldowns
     private float pristineCooldown = 0f;
-
     private int totalProcessed = 0;
 
     public LevelSystem(GameScreenUI gameScreenUI, PowerUpSystem powerUpSystem, boolean isEndlessMode, Runnable onWin, Runnable onGameOver) {
@@ -68,8 +67,6 @@ public class LevelSystem extends EntitySystem {
 
     @Override
     public void update(float deltaTime) {
-
-        // Cooldown tick for Pristine Kitchen
         if (pristineCooldown > 0) {
             pristineCooldown -= deltaTime;
             if (pristineCooldown <= 0) {
@@ -101,42 +98,43 @@ public class LevelSystem extends EntitySystem {
         }
     }
 
-    // FIX: Added 'patienceRatio' to the signature so we can calculate Green Tea and Greedy Algorithm!
-    // YOU MUST PASS THIS FROM YOUR CUSTOMER SYSTEM NOW! (e.g. 1.0 = full patience, 0.1 = almost angry)
-    public void onServeCompleted(boolean sortedCorrectly, boolean lateDelivery, float patienceRatio) {
+    public void applyImmediateCorruption(PowerUpType type) {
+        if (type == PowerUpType.SUGAR_RUSH) {
+            reputationHp -= 5;
+            gameScreenUI.addLogEvent("Sugar Rush penalty: -5 HP", com.badlogic.gdx.graphics.Color.RED);
+        }
+        if (type == PowerUpType.GREEDY_ALGORITHM) {
+            hpPenalty = 10; // 2x damage from angry customers!
+        }
+        updateStatsUI();
+    }
+
+    public void onServeCompleted(boolean sortedCorrectly, boolean lateDelivery) {
         totalProcessed++;
 
         if (!lateDelivery) {
             reputationHp = Math.min(MAX_HP, reputationHp + HP_HEAL);
-        }
 
-        // Green Tea Logic
-        if (powerUpSystem.hasGreenTea && patienceRatio > 0.20f) {
-            if (MathUtils.randomBoolean(0.5f)) { // 50% chance
-                reputationHp = Math.min(MAX_HP, reputationHp + 5);
-                gameScreenUI.addLogEvent("Green Tea healed 5 HP!", com.badlogic.gdx.graphics.Color.GREEN);
+            // Green Tea Logic
+            if (powerUpSystem.hasGreenTea && MathUtils.randomBoolean(0.25f)) {
+                reputationHp = Math.min(MAX_HP, reputationHp + 2);
+                gameScreenUI.addLogEvent("Green Tea healed 2 HP!", com.badlogic.gdx.graphics.Color.GREEN);
             }
         }
 
         float moneyMultiplier = powerUpSystem.getDoubleTipsMultiplier();
-
-        // Pristine Kitchen Logic
         if (powerUpSystem.hasPristineKitchen && reputationHp == 100 && pristineCooldown <= 0) {
             moneyMultiplier *= 2f;
         }
-
-        // Greedy Algorithm Logic (Up to 3x tips based on how low patience is)
         if (powerUpSystem.hasGreedyAlgorithm) {
-            float greedMultiplier = 1f + (2f * (1f - patienceRatio));
-            moneyMultiplier *= greedMultiplier;
+            moneyMultiplier *= 1.5f;
         }
 
         powerUpSystem.consumeServePowerUps();
 
         int baseScore = lateDelivery ? SCORE_LATE : SCORE_ON_TIME + (sortedCorrectly ? SORT_SCORE_BONUS : 0);
-        score += baseScore; // Score doesn't get multiplied
+        score += baseScore;
 
-        // If Green Tea is active, base money is 0!
         int baseMoney = powerUpSystem.hasGreenTea ? 0 : (lateDelivery ? MONEY_LATE : MONEY_ON_TIME + (sortedCorrectly ? SORT_MONEY_BONUS : 0));
         int gainedMoney = (int) (baseMoney * moneyMultiplier);
         money += gainedMoney;
@@ -162,11 +160,10 @@ public class LevelSystem extends EntitySystem {
 
     public void onCustomerLeftAngry() {
         totalProcessed++;
-        reputationHp -= HP_PENALTY;
+        reputationHp -= hpPenalty; // Applies Greedy Algorithm 2x damage if active
 
-        gameScreenUI.addLogEvent("A customer left in anger! (-" + HP_PENALTY + " HP)", com.badlogic.gdx.graphics.Color.RED);
+        gameScreenUI.addLogEvent("A customer left in anger! (-" + hpPenalty + " HP)", com.badlogic.gdx.graphics.Color.RED);
 
-        // Pristine Kitchen Cooldown Trigger
         if (powerUpSystem.hasPristineKitchen) {
             pristineCooldown = 30f;
             gameScreenUI.addLogEvent("Pristine Kitchen disabled for 30s!", com.badlogic.gdx.graphics.Color.ORANGE);
@@ -184,7 +181,6 @@ public class LevelSystem extends EntitySystem {
         level++;
         xp -= xpToNextLevel;
         xpToNextLevel = BASE_XP_TO_NEXT + ((level - 1) * XP_INCREMENT);
-
         gameScreenUI.addLogEvent("Level Up! Choose a perk.", com.badlogic.gdx.graphics.Color.CYAN);
         gameScreenUI.showPowerUpOverlay(powerUpSystem);
         updateStatsUI();
@@ -203,6 +199,7 @@ public class LevelSystem extends EntitySystem {
         gameScreenUI.setScore(String.valueOf(score));
         gameScreenUI.setXp(xp, xpToNextLevel, level);
 
+        // FIX: Shows the beautiful formatted Quota!
         if (isEndlessMode) {
             gameScreenUI.setMoney(money + "$");
         } else {
