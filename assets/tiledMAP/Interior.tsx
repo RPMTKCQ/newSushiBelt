@@ -401,7 +401,8 @@
    <property name="atlasAsset" value="OBJECTS"/>
   </properties>
  </tile>
- <tile id="169">
+ <tile id="168" type="Prop"/>
+ <tile id="169" type="Prop">
   <properties>
    <property name="restitution" type="float" value="1"/>
    <property name="sensor" type="bool" value="true"/>
@@ -410,7 +411,7 @@
    <object id="1" x="0" y="16" width="32" height="16"/>
   </objectgroup>
  </tile>
- <tile id="170">
+ <tile id="170" type="Prop">
   <properties>
    <property name="restitution" type="float" value="1"/>
    <property name="sensor" type="bool" value="true"/>
@@ -419,7 +420,8 @@
    <object id="1" x="0" y="16" width="32" height="16"/>
   </objectgroup>
  </tile>
- <tile id="184">
+ <tile id="171" type="Prop"/>
+ <tile id="184" type="Prop">
   <properties>
    <property name="restitution" type="float" value="1"/>
    <property name="seatIndex" type="int" value="0"/>
@@ -430,7 +432,7 @@
    <object id="1" x="0" y="14.125" width="32" height="9.875"/>
   </objectgroup>
  </tile>
- <tile id="185">
+ <tile id="185" type="Prop">
   <properties>
    <property name="restitution" type="float" value="1"/>
    <property name="sensor" type="bool" value="true"/>
@@ -439,7 +441,9 @@
    <object id="1" x="0" y="0" width="17" height="32"/>
   </objectgroup>
  </tile>
- <tile id="200">
+ <tile id="186" type="Prop"/>
+ <tile id="187" type="Prop"/>
+ <tile id="200" type="Prop">
   <properties>
    <property name="atlasAsset" value="OBJECTS"/>
    <property name="restitution" type="float" value="1"/>
@@ -451,7 +455,7 @@
    <object id="1" x="1.125" y="11.5" width="30" height="17.25"/>
   </objectgroup>
  </tile>
- <tile id="201">
+ <tile id="201" type="Prop">
   <properties>
    <property name="restitution" type="float" value="1"/>
    <property name="sensor" type="bool" value="true"/>
@@ -461,7 +465,7 @@
    <object id="6" x="0" y="0" width="16" height="16"/>
   </objectgroup>
  </tile>
- <tile id="202">
+ <tile id="202" type="Prop">
   <properties>
    <property name="restitution" type="float" value="1"/>
    <property name="sensor" type="bool" value="true"/>
@@ -470,7 +474,7 @@
    <object id="1" x="0" y="16" width="32" height="16"/>
   </objectgroup>
  </tile>
- <tile id="203">
+ <tile id="203" type="Prop">
   <properties>
    <property name="restitution" type="float" value="1"/>
    <property name="sensor" type="bool" value="true"/>
