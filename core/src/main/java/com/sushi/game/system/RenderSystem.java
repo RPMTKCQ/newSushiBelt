@@ -30,9 +30,24 @@ public class RenderSystem extends SortedIteratingSystem implements Disposable {
     private final List<MapLayer> bgdLayers;
 
     public RenderSystem(Batch batch, Viewport viewport, OrthographicCamera camera) {
+        // FIX: Keep your existing Z-sorting, but add Y-sorting as a tie-breaker!
         super(
             Family.all(Transform.class, Graphic.class).get(),
-            Comparator.comparing(Transform.MAPPER::get)
+            new Comparator<Entity>() {
+                @Override
+                public int compare(Entity e1, Entity e2) {
+                    Transform t1 = Transform.MAPPER.get(e1);
+                    Transform t2 = Transform.MAPPER.get(e2);
+
+                    // 1. Sort by your existing Z-layer logic first
+                    int zCompare = t1.compareTo(t2);
+                    if (zCompare != 0) {
+                        return zCompare;
+                    }
+                    // 2. Y-SORTING: If Z is identical, higher Y (further back) draws FIRST
+                    return Float.compare(t2.getPosition().y, t1.getPosition().y);
+                }
+            }
         );
         this.batch = batch;
         this.viewport = viewport;
@@ -87,10 +102,8 @@ public class RenderSystem extends SortedIteratingSystem implements Disposable {
         this.bgdLayers.clear();
 
         for (MapLayer layer : tiledMap.getLayers()) {
-            // skip pure object layers, they have no tiles to render
             if (layer.getClass().equals(MapLayer.class)) continue;
 
-            // use foreground property set in Tiled to decide layer order
             boolean isForeground = layer.getProperties().get("foreground", false, Boolean.class);
             if (isForeground) {
                 fgdLayers.add(layer);

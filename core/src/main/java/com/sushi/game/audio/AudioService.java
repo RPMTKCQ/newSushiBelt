@@ -23,7 +23,6 @@ public class AudioService {
         this.currentMusic = null;
         this.currentMusicAsset = null;
 
-        // Load saved volumes. If they don't exist, default to 0.5f and 0.33f
         this.prefs = Gdx.app.getPreferences("SushiBeltSettings");
         this.musicVolume = prefs.getFloat("musicVolume", 0.5f);
         this.soundVolume = prefs.getFloat("soundVolume", 0.33f);
@@ -34,7 +33,6 @@ public class AudioService {
         if (this.currentMusic != null) {
             this.currentMusic.setVolume(this.musicVolume);
         }
-        // Save the setting
         prefs.putFloat("musicVolume", this.musicVolume);
         prefs.flush();
     }
@@ -45,8 +43,6 @@ public class AudioService {
 
     public void setSoundVolume(float soundVolume) {
         this.soundVolume = MathUtils.clamp(soundVolume, 0f, 1f);
-
-        // Save the setting
         prefs.putFloat("soundVolume", this.soundVolume);
         prefs.flush();
     }
@@ -55,7 +51,13 @@ public class AudioService {
         return soundVolume;
     }
 
+    // Default music playback (Loops forever)
     public void playMusic(MusicAsset musicAsset) {
+        playMusic(musicAsset, true);
+    }
+
+    // NEW: Play music with looping control (Perfect for Win/Loss jingles!)
+    public void playMusic(MusicAsset musicAsset, boolean looping) {
         if (this.currentMusicAsset == musicAsset) return;
 
         if (this.currentMusic != null) {
@@ -64,10 +66,19 @@ public class AudioService {
         }
 
         this.currentMusic = this.assetService.load(musicAsset);
-        this.currentMusic.setVolume(musicVolume); // Ensure loaded music respects current volume
-        this.currentMusic.setLooping(true);
+        this.currentMusic.setVolume(musicVolume);
+        this.currentMusic.setLooping(looping);
         this.currentMusic.play();
         this.currentMusicAsset = musicAsset;
+    }
+
+    public void stopMusic() {
+        if (this.currentMusic != null) {
+            this.currentMusic.stop();
+            this.assetService.unload(this.currentMusicAsset);
+            this.currentMusic = null;
+            this.currentMusicAsset = null;
+        }
     }
 
     public void playSound(SoundAsset soundAsset) {

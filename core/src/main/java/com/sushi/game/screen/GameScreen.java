@@ -91,14 +91,13 @@ public class GameScreen extends ScreenAdapter {
         this.stage        = new Stage(uiViewport, game.getBatch());
 
         Skin gameUISkin = game.getAssetService().get(SkinAsset.GAME);
-
-        // FIX: AudioService injected cleanly into the UI!
         this.gameScreenUI = new GameScreenUI(stage, gameUISkin, game.getAssetService(), this.audioService);
 
         this.powerUpSystem = new PowerUpSystem(engine);
 
+        // FIX: Passed currentStage and isEndlessMode to the end screens so Retry works!
         this.levelSystem = new LevelSystem(gameScreenUI, powerUpSystem, isEndlessMode,
-            () -> game.setScreen(new WinScreen(game, levelSystem.getScore(), levelSystem.getMoney())),
+            () -> game.setScreen(new WinScreen(game, levelSystem.getScore(), levelSystem.getMoney(), this.currentStage, isEndlessMode)),
             () -> game.setScreen(new GameOverScreen(game, levelSystem.getScore(), this.currentStage, isEndlessMode)));
 
         this.customerSpawner = new CustomerSpawner(customerFactory, tableManager, engine, levelSystem);
@@ -195,6 +194,18 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void render(float delta) {
+
+        // --- DEBUG HOTKEYS ---
+        // Press F1 to instantly trigger the WIN SCREEN
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F1)) {
+            game.setScreen(new WinScreen(game, levelSystem.getScore(), levelSystem.getMoney(), currentStage, isEndlessMode));
+        }
+        // Press F2 to instantly trigger the GAME OVER SCREEN
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F2)) {
+            game.setScreen(new GameOverScreen(game, levelSystem.getScore(), currentStage, isEndlessMode));
+        }
+        // ---------------------
+
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) && !isPaused) {
             pauseGame();
         }

@@ -17,11 +17,9 @@ public enum SoundAsset implements Asset<Sound> {
     RECEIPT_SUBMIT("receipt_submit2.mp3"),
     SERVE_FOOD("serve_food.mp3"),
     TAKE_MONEY("take_money.mp3"),
-    LEVEL_UP("level_up.mp3"),
+    LEVEL_UP("level_up.mp3");
 
-    // Screen Sounds
-    WIN_SCREEN("win_screen.mp3"),
-    GAME_OVER("game_over.mp3");
+
 
     private final AssetDescriptor<Sound> descriptor;
 

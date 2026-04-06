@@ -2,9 +2,7 @@ package com.sushi.game.ui.view;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.*;
-import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Align;
 import com.sushi.game.asset.MapAsset;
@@ -16,11 +14,9 @@ import java.util.List;
 
 public class MenuView extends View<MenuViewModel> {
 
-    private Image selectionImg;
     private Group selectedItem;
     private boolean isInitialSelectionDone = false;
 
-    // Discrete Slider Variables
     private boolean leftPressed = false;
     private boolean rightPressed = false;
     private float holdTimer = 0f;
@@ -31,7 +27,6 @@ public class MenuView extends View<MenuViewModel> {
     private List<Group> levelMenuItems;
     private List<Group> currentMenuItems;
 
-    // FIX: Store these at the class level so we don't have to overwrite the button's UserObject!
     private Table modeStageTable;
     private Table modeEndlessTable;
 
@@ -49,9 +44,6 @@ public class MenuView extends View<MenuViewModel> {
         mainMenuItems = new ArrayList<>();
         modeMenuItems = new ArrayList<>();
         levelMenuItems = new ArrayList<>();
-
-        this.selectionImg = new Image(skin, "selection-2");
-        this.selectionImg.setTouchable(Touchable.disabled);
 
         setFillParent(true);
 
@@ -114,7 +106,6 @@ public class MenuView extends View<MenuViewModel> {
     }
 
     private void buildModeSelectMenu() {
-        // FIX: Initialize the class-level tables
         modeStageTable = new Table();
         TextButton stageBtn = createButton("Stage", () -> showLevelSelectMenu(false));
         modeStageTable.add(stageBtn).padBottom(10.0f).minWidth(150.0f).maxWidth(150.0f).row();
@@ -187,8 +178,6 @@ public class MenuView extends View<MenuViewModel> {
         add(title).padBottom(30f).row();
 
         Table optionsTable = new Table();
-
-        // FIX: Retrieve tables directly from class fields, cleanly isolating the Action Runnables!
         optionsTable.add(modeStageTable).padRight(30.0f).minSize(100.0f);
         optionsTable.add(modeEndlessTable).padLeft(30.0f).minSize(100.0f);
 
@@ -227,8 +216,14 @@ public class MenuView extends View<MenuViewModel> {
     }
 
     private TextButton createButton(String text, Runnable onClick) {
-        TextButton button = new TextButton(text, skin);
-        button.setColor(skin.getColor("white"));
+        TextButton.TextButtonStyle customStyle = new TextButton.TextButtonStyle(skin.get(TextButton.TextButtonStyle.class));
+        customStyle.over = null;
+        customStyle.checkedOver = null;
+        customStyle.down = null;
+
+        TextButton button = new TextButton(text, customStyle);
+        button.setTransform(true);
+        button.setColor(Color.LIGHT_GRAY);
 
         Runnable unifiedAction = () -> {
             viewModel.playSound(SoundAsset.MENU_SELECT);
@@ -253,7 +248,8 @@ public class MenuView extends View<MenuViewModel> {
 
     private Table createSlider(String labelText, float initialValue, java.util.function.Consumer<Float> onUpdate) {
         Table table = new Table();
-        table.setColor(skin.getColor("black"));
+        table.setTransform(true);
+        table.setColor(Color.LIGHT_GRAY);
 
         Label label = new Label(labelText, skin);
         label.setColor(skin.getColor("black"));
@@ -284,6 +280,8 @@ public class MenuView extends View<MenuViewModel> {
 
     private Table createLevelButton(String text, String imageKey, Runnable onClick) {
         Table table = new Table();
+        table.setTransform(true);
+        table.setColor(Color.LIGHT_GRAY);
 
         Image image = new Image(skin, imageKey);
         image.setName("level-image");
@@ -313,15 +311,14 @@ public class MenuView extends View<MenuViewModel> {
         return table;
     }
 
+    // FIX: Perfect center-scaling origin logic applied!
     private void selectMenuItem(Group group) {
         if (this.selectedItem == group) return;
 
-        if (this.selectedItem instanceof Button oldButton) {
-            oldButton.setChecked(false);
-        }
-
-        if (selectionImg.getParent() != null) {
-            selectionImg.getParent().removeActor(selectionImg);
+        if (this.selectedItem != null) {
+            this.selectedItem.clearActions();
+            this.selectedItem.setScale(1f);
+            this.selectedItem.setColor(Color.LIGHT_GRAY);
         }
 
         if (this.selectedItem != null) {
@@ -330,40 +327,13 @@ public class MenuView extends View<MenuViewModel> {
 
         this.selectedItem = group;
 
-        if (this.selectedItem instanceof Button newButton) {
-            newButton.setChecked(true);
+        if (this.selectedItem != null) {
+            // Recalculates exact true center dynamically!
+            this.selectedItem.setOrigin(this.selectedItem.getWidth() / 2f, this.selectedItem.getHeight() / 2f);
+            this.selectedItem.clearActions();
+            this.selectedItem.setScale(1.15f);
+            this.selectedItem.setColor(Color.WHITE);
         }
-
-        if (currentState == MenuState.LEVEL) {
-            for (Group item : currentMenuItems) {
-                Actor img = item.findActor("level-image");
-                if (img != null) img.setColor(0.7f, 0.7f, 0.7f, 1f);
-            }
-            Actor img = group.findActor("level-image");
-            if (img != null) img.setColor(Color.WHITE);
-        }
-
-        group.addActor(selectionImg);
-        selectionImg.toBack();
-
-        float extraSize = 5f;
-        float halfExtra = extraSize * 0.5f;
-        float resizeTime = 0.365f;
-
-        selectionImg.setSize(group.getWidth() + extraSize, group.getHeight() + extraSize);
-        selectionImg.setPosition(-halfExtra, -halfExtra);
-
-        selectionImg.clearActions();
-        selectionImg.addAction(Actions.forever(Actions.sequence(
-            Actions.parallel(
-                Actions.sizeBy(extraSize, extraSize, resizeTime, Interpolation.linear),
-                Actions.moveBy(-halfExtra, -halfExtra, resizeTime, Interpolation.linear)
-            ),
-            Actions.parallel(
-                Actions.sizeBy(-extraSize, -extraSize, resizeTime, Interpolation.linear),
-                Actions.moveBy(halfExtra, halfExtra, resizeTime, Interpolation.linear)
-            )
-        )));
     }
 
     @Override

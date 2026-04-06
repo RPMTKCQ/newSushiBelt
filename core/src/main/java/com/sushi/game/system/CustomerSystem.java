@@ -39,12 +39,20 @@ public class CustomerSystem extends IteratingSystem {
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
         Customer customer = Customer.MAPPER.get(entity);
-        if (customer.state != Customer.CustomerState.WAITING) {
-            customer.stateTimer += deltaTime;
-        }
+
+        // Timer runs for all states
+        customer.stateTimer += deltaTime;
 
         switch (customer.state) {
             case WAITING:
+                // FIX: Exploit patched! If left waiting at the door for 20 seconds, they leave angry.
+                if (customer.stateTimer >= 20f) {
+                    customer.leftAngry = true;
+                    customer.state = Customer.CustomerState.LEAVING;
+                    customer.stateTimer = 0f;
+                    levelSystem.onCustomerLeftAngry(); // Burns reputation
+                    Gdx.app.log("CUSTOMER", "Got tired of standing at the door and left angry!");
+                }
                 break;
 
             case SEATING:
@@ -91,7 +99,7 @@ public class CustomerSystem extends IteratingSystem {
             if (table == null) {
                 customer.state      = Customer.CustomerState.WAITING;
                 customer.clickable  = true;
-                customer.stateTimer = 0f;
+                customer.stateTimer = 0f; // Reset wait timer so they don't instantly leave if a table frees up
                 Gdx.app.log("SEATING", "no free table!");
                 return;
             }

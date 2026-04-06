@@ -2,6 +2,7 @@ package com.sushi.game.ui;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
@@ -32,7 +33,7 @@ public class GameScreenUI {
     private final Stage stage;
     private final Skin skin;
     private final AssetService assetService;
-    private final AudioService audioService; // Global context for UI sounds
+    private final AudioService audioService;
 
     private Label timerLabel;
     private Label moneyLabel;
@@ -55,13 +56,10 @@ public class GameScreenUI {
 
     private ReceiptCardData currentlyDraggingCard = null;
 
-    // Pause Menu Variables
     private Group pauseSelectedItem;
     private final List<Group> pauseMenuItems = new ArrayList<>();
-    private Image pauseSelectionImg;
     private boolean inputLocked = false;
 
-    // Discrete Slider Variables
     private boolean leftPressed = false;
     private boolean rightPressed = false;
     private float holdTimer = 0f;
@@ -103,6 +101,11 @@ public class GameScreenUI {
         this.assetService = assetService;
         this.audioService = audioService;
         build();
+    }
+
+    // HELPER: Play the cooking sound from ChefSystem.java!
+    public void playCookingDoneSound() {
+        if (audioService != null) audioService.playSound(SoundAsset.COOKING_DONE);
     }
 
     public void addLogEvent(String message, com.badlogic.gdx.graphics.Color color) {
@@ -340,7 +343,7 @@ public class GameScreenUI {
     }
 
     public void showPowerUpOverlay(PowerUpSystem powerUpSystem) {
-        audioService.playSound(SoundAsset.LEVEL_UP); // PLAY LEVEL UP SOUND
+        audioService.playSound(SoundAsset.LEVEL_UP);
 
         powerUpOverlay.clearChildren();
 
@@ -388,9 +391,6 @@ public class GameScreenUI {
         if (pauseOverlay == null) {
             pauseOverlay = new Table();
             pauseOverlay.setFillParent(true);
-
-            pauseSelectionImg = new Image(skin, "selection-2");
-            pauseSelectionImg.setTouchable(Touchable.disabled);
 
             pauseOverlay.addListener(new InputListener() {
                 @Override
@@ -505,10 +505,43 @@ public class GameScreenUI {
         });
     }
 
+    private TextButton createPauseButton(String text, Runnable onClick) {
+        TextButton.TextButtonStyle customStyle = new TextButton.TextButtonStyle(skin.get(TextButton.TextButtonStyle.class));
+        customStyle.over = null;
+        customStyle.checkedOver = null;
+        customStyle.down = null;
+
+        TextButton button = new TextButton(text, customStyle);
+        button.setTransform(true);
+        button.setOrigin(Align.center);
+        button.setColor(Color.LIGHT_GRAY);
+
+        Runnable unifiedAction = () -> {
+            audioService.playSound(SoundAsset.MENU_SELECT);
+            executeSafeAction(onClick);
+        };
+        button.setUserObject(unifiedAction);
+
+        button.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                unifiedAction.run();
+            }
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                selectPauseItem(button);
+            }
+        });
+
+        pauseMenuItems.add(button);
+        return button;
+    }
+
     private void buildMainPauseScreen(Runnable onResume, Runnable onQuit) {
         currentPauseState = PauseState.MAIN;
         pauseOverlay.clearChildren();
         pauseMenuItems.clear();
+        this.pauseSelectedItem = null; // Clean reset
 
         com.badlogic.gdx.graphics.Pixmap pixmap = new com.badlogic.gdx.graphics.Pixmap(1, 1, com.badlogic.gdx.graphics.Pixmap.Format.RGBA8888);
         pixmap.setColor(new com.badlogic.gdx.graphics.Color(0f, 0f, 0f, 0.75f));
@@ -525,30 +558,14 @@ public class GameScreenUI {
         title.setAlignment(Align.center);
         pauseOverlay.add(title).padBottom(40f).row();
 
-        TextButton resumeBtn = new TextButton("Resume", skin);
-        resumeBtn.setColor(skin.getColor("white"));
-
-        // Unified Action: Sound + Logic combined safely
-        Runnable resumeAction = () -> {
-            audioService.playSound(SoundAsset.MENU_SELECT);
-            executeSafeAction(onResume);
-        };
-        resumeBtn.setUserObject(resumeAction);
-
-        resumeBtn.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                resumeAction.run();
-            }
-            @Override
-            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                selectPauseItem(resumeBtn);
-            }
-        });
-        pauseMenuItems.add(resumeBtn);
+        TextButton resumeBtn = createPauseButton("Resume", onResume);
         pauseOverlay.add(resumeBtn).minSize(300f, 80f).padBottom(20f).row();
 
         Table musicTable = new Table();
+        musicTable.setTransform(true);
+        musicTable.setOrigin(Align.center);
+        musicTable.setColor(Color.LIGHT_GRAY);
+
         Label musicLabel = new Label("Music Volume", skin, "default");
         musicLabel.setColor(skin.getColor("white"));
         musicTable.add(musicLabel).padBottom(5f).row();
@@ -574,6 +591,10 @@ public class GameScreenUI {
         pauseOverlay.add(musicTable).padBottom(20f).row();
 
         Table soundTable = new Table();
+        soundTable.setTransform(true);
+        soundTable.setOrigin(Align.center);
+        soundTable.setColor(Color.LIGHT_GRAY);
+
         Label soundLabel = new Label("Sound Volume", skin, "default");
         soundLabel.setColor(skin.getColor("white"));
         soundTable.add(soundLabel).padBottom(5f).row();
@@ -598,27 +619,7 @@ public class GameScreenUI {
         pauseMenuItems.add(soundTable);
         pauseOverlay.add(soundTable).padBottom(40f).row();
 
-        TextButton quitBtn = new TextButton("Quit", skin);
-        quitBtn.setColor(skin.getColor("white"));
-
-        // Unified Action: Sound + Logic combined safely
-        Runnable confirmQuitAction = () -> {
-            audioService.playSound(SoundAsset.MENU_SELECT);
-            executeSafeAction(() -> buildConfirmQuitScreen(onResume, onQuit));
-        };
-        quitBtn.setUserObject(confirmQuitAction);
-
-        quitBtn.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                confirmQuitAction.run();
-            }
-            @Override
-            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                selectPauseItem(quitBtn);
-            }
-        });
-        pauseMenuItems.add(quitBtn);
+        TextButton quitBtn = createPauseButton("Quit", () -> buildConfirmQuitScreen(onResume, onQuit));
         pauseOverlay.add(quitBtn).minSize(300f, 80f);
 
         pauseOverlay.pack();
@@ -629,6 +630,7 @@ public class GameScreenUI {
         currentPauseState = PauseState.CONFIRM_QUIT;
         pauseOverlay.clearChildren();
         pauseMenuItems.clear();
+        this.pauseSelectedItem = null;
 
         com.badlogic.gdx.graphics.Pixmap pixmap = new com.badlogic.gdx.graphics.Pixmap(1, 1, com.badlogic.gdx.graphics.Pixmap.Format.RGBA8888);
         pixmap.setColor(new com.badlogic.gdx.graphics.Color(0f, 0f, 0f, 0.75f));
@@ -652,50 +654,10 @@ public class GameScreenUI {
 
         Table buttonsTable = new Table();
 
-        TextButton yesBtn = new TextButton("Yes", skin);
-        yesBtn.setColor(skin.getColor("white"));
-
-        // Unified Action
-        Runnable yesAction = () -> {
-            audioService.playSound(SoundAsset.MENU_SELECT);
-            executeSafeAction(onQuit);
-        };
-        yesBtn.setUserObject(yesAction);
-
-        yesBtn.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                yesAction.run();
-            }
-            @Override
-            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                selectPauseItem(yesBtn);
-            }
-        });
-        pauseMenuItems.add(yesBtn);
+        TextButton yesBtn = createPauseButton("Yes", onQuit);
         buttonsTable.add(yesBtn).minSize(150f, 60f).padRight(30f);
 
-        TextButton noBtn = new TextButton("No", skin);
-        noBtn.setColor(skin.getColor("white"));
-
-        // Unified Action
-        Runnable noAction = () -> {
-            audioService.playSound(SoundAsset.MENU_BACK);
-            executeSafeAction(() -> buildMainPauseScreen(onResume, onQuit));
-        };
-        noBtn.setUserObject(noAction);
-
-        noBtn.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                noAction.run();
-            }
-            @Override
-            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                selectPauseItem(noBtn);
-            }
-        });
-        pauseMenuItems.add(noBtn);
+        TextButton noBtn = createPauseButton("No", () -> buildMainPauseScreen(onResume, onQuit));
         buttonsTable.add(noBtn).minSize(150f, 60f);
 
         pauseOverlay.add(buttonsTable);
@@ -713,12 +675,10 @@ public class GameScreenUI {
     private void selectPauseItem(Group group) {
         if (this.pauseSelectedItem == group) return;
 
-        if (this.pauseSelectedItem instanceof Button oldButton) {
-            oldButton.setChecked(false);
-        }
-
-        if (pauseSelectionImg.getParent() != null) {
-            pauseSelectionImg.getParent().removeActor(pauseSelectionImg);
+        if (this.pauseSelectedItem != null) {
+            this.pauseSelectedItem.clearActions();
+            this.pauseSelectedItem.setScale(1f);
+            this.pauseSelectedItem.setColor(Color.LIGHT_GRAY);
         }
 
         if (this.pauseSelectedItem != null) {
@@ -727,31 +687,12 @@ public class GameScreenUI {
 
         this.pauseSelectedItem = group;
 
-        if (this.pauseSelectedItem instanceof Button newButton) {
-            newButton.setChecked(true);
+        if (this.pauseSelectedItem != null) {
+            this.pauseSelectedItem.setOrigin(Align.center);
+            this.pauseSelectedItem.clearActions();
+            this.pauseSelectedItem.setScale(1.15f);
+            this.pauseSelectedItem.setColor(Color.WHITE);
         }
-
-        group.addActor(pauseSelectionImg);
-        pauseSelectionImg.toBack();
-
-        float extraSize = 5f;
-        float halfExtra = extraSize * 0.5f;
-        float resizeTime = 0.365f;
-
-        pauseSelectionImg.setSize(group.getWidth() + extraSize, group.getHeight() + extraSize);
-        pauseSelectionImg.setPosition(-halfExtra, -halfExtra);
-
-        pauseSelectionImg.clearActions();
-        pauseSelectionImg.addAction(Actions.forever(Actions.sequence(
-            Actions.parallel(
-                Actions.sizeBy(extraSize, extraSize, resizeTime, Interpolation.linear),
-                Actions.moveBy(-halfExtra, -halfExtra, resizeTime, Interpolation.linear)
-            ),
-            Actions.parallel(
-                Actions.sizeBy(-extraSize, -extraSize, resizeTime, Interpolation.linear),
-                Actions.moveBy(halfExtra, halfExtra, resizeTime, Interpolation.linear)
-            )
-        )));
     }
 
     private void build() {
@@ -910,12 +851,10 @@ public class GameScreenUI {
         card.setBackground(skin.getDrawable("rct-border"));
         card.align(Align.top);
         card.setUserObject(type);
-        card.setTouchable(Touchable.enabled);
 
         Table iconBorder = new Table();
         iconBorder.setBackground(skin.getDrawable("fd-border"));
         iconBorder.add().minSize(30f).maxSize(30f);
-        iconBorder.setTouchable(Touchable.disabled);
         card.add(iconBorder).padTop(30f).spaceBottom(30f).minSize(80f);
         card.row();
 
@@ -923,7 +862,6 @@ public class GameScreenUI {
         title.setAlignment(Align.center);
         title.setWrap(true);
         title.setColor(skin.getColor("black"));
-        title.setTouchable(Touchable.disabled);
         card.add(title).spaceTop(10f).spaceBottom(20f).minSize(170f, 80f);
         card.row();
 
@@ -931,7 +869,6 @@ public class GameScreenUI {
         desc.setAlignment(Align.center);
         desc.setWrap(true);
         desc.setColor(skin.getColor("black"));
-        desc.setTouchable(Touchable.disabled);
         card.add(desc).spaceTop(20f).fillX().minSize(150f, 40f);
 
         return card;
