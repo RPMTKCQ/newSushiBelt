@@ -37,7 +37,11 @@ public class LevelSystem extends EntitySystem {
     private static final int FINANCIAL_QUOTA = 200;
 
     // Reputation Tracking
-    private int successfulServes = 0;
+    private int reputationHp = 100;
+    private static final int MAX_HP = 100;
+    private static final int HP_PENALTY = 5;
+    private static final int HP_HEAL = 1;
+
     private int totalProcessed = 0;
 
     public LevelSystem(GameScreenUI gameScreenUI, PowerUpSystem powerUpSystem, boolean isEndlessMode, Runnable onWin, Runnable onGameOver) {
@@ -50,6 +54,7 @@ public class LevelSystem extends EntitySystem {
         gameScreenUI.setScore(score);
         gameScreenUI.setMoney(money);
         gameScreenUI.setXp(xp, xpToNextLevel, level);
+        gameScreenUI.setReputation(reputationHp, MAX_HP);
 
         if (isEndlessMode) {
             gameScreenUI.updateTimer("ENDLESS");
@@ -78,13 +83,19 @@ public class LevelSystem extends EntitySystem {
                     onGameOver.run();
                 }
             }
+        } else {
+            timeLeft += deltaTime;
+            int minutes = (int) (timeLeft / 60);
+            int seconds = (int) (timeLeft % 60);
+            gameScreenUI.updateTimer(String.format("%d:%02d", minutes, seconds));
         }
     }
 
     public void onServeCompleted(boolean sortedCorrectly, boolean lateDelivery) {
         totalProcessed++;
+
         if (!lateDelivery) {
-            successfulServes++;
+            reputationHp = Math.min(MAX_HP, reputationHp + HP_HEAL);
         }
 
         float scoreMultiplier = powerUpSystem.getRushHourMultiplier();
@@ -120,7 +131,7 @@ public class LevelSystem extends EntitySystem {
             levelUp();
         }
 
-        checkReputation();
+        gameScreenUI.setReputation(reputationHp, MAX_HP);
         gameScreenUI.setScore(score);
         gameScreenUI.setMoney(money);
         gameScreenUI.setXp(xp, xpToNextLevel, level);
@@ -128,20 +139,14 @@ public class LevelSystem extends EntitySystem {
 
     public void onCustomerLeftAngry() {
         totalProcessed++;
-        gameScreenUI.addLogEvent("A customer left in anger!", com.badlogic.gdx.graphics.Color.RED);
-        checkReputation();
-    }
+        reputationHp -= HP_PENALTY;
 
-    private void checkReputation() {
-        // Grace period of 5 customers before failing you
-        if (totalProcessed >= 5) {
-            float reputation = (float) successfulServes / totalProcessed;
-            gameScreenUI.setSatisfaction(reputation);
+        gameScreenUI.addLogEvent("A customer left in anger! (-" + HP_PENALTY + " HP)", com.badlogic.gdx.graphics.Color.RED);
+        gameScreenUI.setReputation(reputationHp, MAX_HP);
 
-            if (reputation < 0.5f) {
-                gameScreenUI.addLogEvent("REPUTATION TOO LOW! RESTAURANT CLOSED!", com.badlogic.gdx.graphics.Color.RED);
-                onGameOver.run();
-            }
+        if (reputationHp <= 0) {
+            gameScreenUI.addLogEvent("REPUTATION DEPLETED! RESTAURANT CLOSED!", com.badlogic.gdx.graphics.Color.RED);
+            onGameOver.run();
         }
     }
 
@@ -153,5 +158,14 @@ public class LevelSystem extends EntitySystem {
 
         gameScreenUI.addLogEvent("Level Up! Choose a perk.", com.badlogic.gdx.graphics.Color.CYAN);
         gameScreenUI.showPowerUpOverlay(powerUpSystem);
+    }
+
+    // FIX: The F3 Debug Tool! Safely handles the math even if you jump multiple levels at once.
+    public void addDebugXp(int amount) {
+        xp += amount;
+        while (xp >= xpToNextLevel && level < MAX_LEVEL) {
+            levelUp();
+        }
+        gameScreenUI.setXp(xp, xpToNextLevel, level);
     }
 }

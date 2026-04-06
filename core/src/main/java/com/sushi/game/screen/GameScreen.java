@@ -136,15 +136,15 @@ public class GameScreen extends ScreenAdapter {
         keyboardController.setActiveState(GameControllerState.class);
 
         Consumer<TiledMap> renderConsumer = engine.getSystem(RenderSystem.class)::setMap;
-        Consumer<TiledMap> cameraConsumer = engine.getSystem(CameraSystem.class)::setMap;
         Consumer<TiledMap> audioConsumer  = audioService::setMap;
 
-        tiledService.setMapChangeConsumer(renderConsumer.andThen(cameraConsumer).andThen(audioConsumer));
+        // FIX: Removed the Camera from this automatic chain!
+        tiledService.setMapChangeConsumer(renderConsumer.andThen(audioConsumer));
         tiledService.setLoadObjectConsumer(tiledAshleyConfigurator::onLoadObject);
         tiledService.setLoadTileConsumer(tiledAshleyConfigurator::onLoadTile);
 
         TiledMap tiledMap = tiledService.loadMap(this.currentStage);
-        tiledService.setMap(tiledMap);
+        tiledService.setMap(tiledMap); // This spawns the player!
 
         MapLayer objectLayer      = tiledMap.getLayers().get("objects");
         MapLayer smallObjectLayer = tiledMap.getLayers().get("small-objects");
@@ -157,6 +157,9 @@ public class GameScreen extends ScreenAdapter {
         if (objectLayer != null)      conveyorSystem.loadBelt(objectLayer.getObjects());
         if (smallObjectLayer != null) conveyorSystem.loadBelt(smallObjectLayer.getObjects());
         chefSpawner.spawnAll();
+
+        // FIX: Now that all objects and the Player are 100% spawned, it is safe to lock the camera!
+        engine.getSystem(CameraSystem.class).setMap(tiledMap);
     }
 
     public void resumeGame() {
@@ -201,6 +204,10 @@ public class GameScreen extends ScreenAdapter {
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.F2)) {
             game.setScreen(new GameOverScreen(game, levelSystem.getScore(), currentStage, isEndlessMode));
+        }
+        // Press F3 to instantly add 10 XP
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F3)) {
+            if (levelSystem != null) levelSystem.addDebugXp(10);
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) && !isPaused) {

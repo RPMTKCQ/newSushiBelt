@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "Interior.tsx",
+    "activeFile": "restaurant-3.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -68,7 +68,7 @@
             "scaleInEditor": 1
         },
         "Interior.tsx": {
-            "scaleInDock": 0.75,
+            "scaleInDock": 3,
             "scaleInEditor": 1.5
         },
         "Main_Spritesheet.tsx": {
@@ -82,26 +82,26 @@
         },
         "restaurant-1.tmx": {
             "expandedObjectLayers": [
-                2,
-                6
+                6,
+                2
             ],
-            "scale": 4,
+            "scale": 2,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 248.125,
-                "y": 160.125
+                "x": 245.75,
+                "y": 120.25
             }
         },
         "restaurant-2.tmx": {
             "expandedObjectLayers": [
-                14,
-                13
+                13,
+                14
             ],
-            "scale": 3,
-            "selectedLayer": 0,
+            "scale": 1.5,
+            "selectedLayer": -1,
             "viewCenter": {
-                "x": 240.16666666666666,
-                "y": 160.16666666666666
+                "x": 226.99999999999997,
+                "y": 184.99999999999997
             }
         },
         "restaurant-3.tmx": {
@@ -134,10 +134,7 @@
     "map.lastUsedFormat": "tmx",
     "map.width": 15,
     "openFiles": [
-        "Player.tsx",
         "restaurant-1.tmx",
-        "Interior.tsx",
-        "Chef.tsx",
         "restaurant-2.tmx",
         "restaurant-3.tmx"
     ],
@@ -145,11 +142,11 @@
     "property.type": "int",
     "recentFiles": [
         "restaurant-1.tmx",
+        "restaurant-2.tmx",
+        "restaurant-3.tmx",
         "Player.tsx",
         "Chef.tsx",
         "Interior.tsx",
-        "restaurant-3.tmx",
-        "restaurant-2.tmx",
         "Main_Spritesheet.tsx",
         "C:/Users/Wyshcen/Documents/Java/SushiBeltBackup/assets/tiledMAP/mao.tmx",
         "C:/Users/Wyshcen/Documents/Java/SushiBeltBackup/assets/tiledMAP/New Object.tsx",

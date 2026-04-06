@@ -740,6 +740,26 @@ atlasData: {
 			type: TEXTURE
 			hidden: false
 		}
+		{
+			file: C:/Users/Wyshcen/Documents/Java/newSushiBelt/assets_raw/ui/timer.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: timer
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			tvgData: null
+			type: TEXTURE
+			hidden: false
+		}
 	]
 	fontDrawables: []
 }
@@ -5108,7 +5128,7 @@ sceneComposer: {
 												paddingEnabled: false
 												alignment: 1
 												fillParent: false
-												touchable: childrenOnly
+												touchable: enabled
 												visible: true
 											}
 											row: 0
@@ -5677,7 +5697,7 @@ sceneComposer: {
 												paddingEnabled: false
 												alignment: 1
 												fillParent: false
-												touchable: childrenOnly
+												touchable: enabled
 												visible: true
 											}
 											row: 0
@@ -6811,7 +6831,218 @@ sceneComposer: {
 														colSpan: 1
 													}
 													{
-														child: null
+														child: {
+															class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimTable
+															cells: [
+																{
+																	child: null
+																	row: 0
+																	column: 0
+																	padLeft: 0
+																	padRight: 0
+																	padTop: 0
+																	padBottom: 0
+																	spaceLeft: 0
+																	spaceRight: 0
+																	spaceTop: 0
+																	spaceBottom: 0
+																	expandX: true
+																	expandY: false
+																	fillX: true
+																	fillY: false
+																	growX: true
+																	growY: false
+																	alignment: 1
+																	minWidth: -1
+																	minHeight: -1
+																	maxWidth: -1
+																	maxHeight: -1
+																	preferredWidth: -1
+																	preferredHeight: -1
+																	uniformX: false
+																	uniformY: false
+																	colSpan: 1
+																}
+																{
+																	child: {
+																		class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimTable
+																		cells: [
+																			{
+																				child: {
+																					class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimImage
+																					name: timerIMg
+																					drawable: {
+																						file: C:/Users/Wyshcen/Documents/Java/newSushiBelt/assets_raw/ui/timer.png
+																						bgColor: {
+																							r: 1
+																							g: 1
+																							b: 1
+																							a: 1
+																						}
+																						tint: null
+																						tintName: null
+																						name: timer
+																						tiled: false
+																						minWidth: -1
+																						minHeight: -1
+																						customized: false
+																						tenPatchData: null
+																						tvgData: null
+																						type: TEXTURE
+																						hidden: false
+																					}
+																					scaling: fit
+																					touchable: enabled
+																					visible: true
+																				}
+																				row: 0
+																				column: 0
+																				padLeft: 0
+																				padRight: 0
+																				padTop: 0
+																				padBottom: 0
+																				spaceLeft: 0
+																				spaceRight: 0
+																				spaceTop: 0
+																				spaceBottom: 0
+																				expandX: false
+																				expandY: false
+																				fillX: false
+																				fillY: false
+																				growX: false
+																				growY: false
+																				alignment: 1
+																				minWidth: 32
+																				minHeight: 32
+																				maxWidth: -1
+																				maxHeight: -1
+																				preferredWidth: -1
+																				preferredHeight: -1
+																				uniformX: false
+																				uniformY: false
+																				colSpan: 1
+																			}
+																			{
+																				child: {
+																					class: com.ray3k.skincomposer.dialog.scenecomposer.DialogSceneComposerModel$SimLabel
+																					name: timerCount
+																					style: {
+																						name: default
+																						clazz: com.badlogic.gdx.scenes.scene2d.ui.Label
+																						properties: {
+																							font: {
+																								type: com.badlogic.gdx.graphics.g2d.BitmapFont
+																								name: font
+																								optional: false
+																								value: Pixellari-regular
+																							}
+																							fontColor: {
+																								type: com.badlogic.gdx.graphics.Color
+																								name: fontColor
+																								optional: true
+																								value: white
+																							}
+																							background: {
+																								type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+																								name: background
+																								optional: true
+																								value: null
+																							}
+																						}
+																						deletable: false
+																						parent: null
+																					}
+																					text: 00:00
+																					textAlignment: 8
+																					ellipsis: false
+																					ellipsisString: ...
+																					wrap: false
+																					color: null
+																					touchable: enabled
+																					visible: true
+																				}
+																				row: 0
+																				column: 1
+																				padLeft: 0
+																				padRight: 0
+																				padTop: 0
+																				padBottom: 0
+																				spaceLeft: 0
+																				spaceRight: 0
+																				spaceTop: 0
+																				spaceBottom: 0
+																				expandX: false
+																				expandY: false
+																				fillX: false
+																				fillY: false
+																				growX: false
+																				growY: false
+																				alignment: 1
+																				minWidth: -1
+																				minHeight: -1
+																				maxWidth: -1
+																				maxHeight: -1
+																				preferredWidth: -1
+																				preferredHeight: -1
+																				uniformX: false
+																				uniformY: false
+																				colSpan: 1
+																			}
+																		]
+																		name: Timer
+																		background: null
+																		color: null
+																		padLeft: 0
+																		padRight: 0
+																		padTop: 0
+																		padBottom: 0
+																		paddingEnabled: false
+																		alignment: 16
+																		fillParent: false
+																		touchable: childrenOnly
+																		visible: true
+																	}
+																	row: 0
+																	column: 1
+																	padLeft: 0
+																	padRight: 0
+																	padTop: 0
+																	padBottom: 0
+																	spaceLeft: 0
+																	spaceRight: 0
+																	spaceTop: 0
+																	spaceBottom: 0
+																	expandX: true
+																	expandY: false
+																	fillX: true
+																	fillY: false
+																	growX: true
+																	growY: false
+																	alignment: 1
+																	minWidth: -1
+																	minHeight: -1
+																	maxWidth: -1
+																	maxHeight: -1
+																	preferredWidth: -1
+																	preferredHeight: -1
+																	uniformX: false
+																	uniformY: false
+																	colSpan: 1
+																}
+															]
+															name: null
+															background: null
+															color: null
+															padLeft: 0
+															padRight: 0
+															padTop: 0
+															padBottom: 0
+															paddingEnabled: false
+															alignment: 1
+															fillParent: false
+															touchable: childrenOnly
+															visible: true
+														}
 														row: 2
 														column: 0
 														padLeft: 0
@@ -6828,7 +7059,7 @@ sceneComposer: {
 														fillY: false
 														growX: false
 														growY: false
-														alignment: 1
+														alignment: 16
 														minWidth: -1
 														minHeight: -1
 														maxWidth: -1

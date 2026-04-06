@@ -44,35 +44,35 @@ frame
   index: -1
 life_00
   rotate: false
-  xy: 200, 181
+  xy: 661, 832
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 life_01
   rotate: false
-  xy: 661, 832
+  xy: 695, 857
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 life_02
   rotate: false
-  xy: 695, 857
+  xy: 729, 891
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 life_03
   rotate: false
-  xy: 729, 891
+  xy: 635, 320
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 life_04
   rotate: false
-  xy: 635, 320
+  xy: 132, 99
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
@@ -149,7 +149,7 @@ menu-bg
   index: -1
 money
   rotate: false
-  xy: 132, 118
+  xy: 200, 170
   size: 23, 27
   orig: 23, 27
   offset: 0, 0
@@ -214,6 +214,13 @@ servicePowerUpIcon
   orig: 8, 11
   offset: 0, 0
   index: -1
+timer
+  rotate: false
+  xy: 132, 117
+  size: 24, 28
+  orig: 24, 28
+  offset: 0, 0
+  index: -1
 track
   rotate: false
   xy: 661, 875
@@ -224,7 +231,7 @@ track
   index: -1
 tuna-roll
   rotate: false
-  xy: 132, 103
+  xy: 225, 184
   size: 14, 13
   orig: 14, 13
   offset: 0, 0
