@@ -910,10 +910,12 @@ public class GameScreenUI {
         card.setBackground(skin.getDrawable("rct-border"));
         card.align(Align.top);
         card.setUserObject(type);
+        card.setTouchable(Touchable.enabled);
 
         Table iconBorder = new Table();
         iconBorder.setBackground(skin.getDrawable("fd-border"));
         iconBorder.add().minSize(30f).maxSize(30f);
+        iconBorder.setTouchable(Touchable.disabled);
         card.add(iconBorder).padTop(30f).spaceBottom(30f).minSize(80f);
         card.row();
 
@@ -921,6 +923,7 @@ public class GameScreenUI {
         title.setAlignment(Align.center);
         title.setWrap(true);
         title.setColor(skin.getColor("black"));
+        title.setTouchable(Touchable.disabled);
         card.add(title).spaceTop(10f).spaceBottom(20f).minSize(170f, 80f);
         card.row();
 
@@ -928,6 +931,7 @@ public class GameScreenUI {
         desc.setAlignment(Align.center);
         desc.setWrap(true);
         desc.setColor(skin.getColor("black"));
+        desc.setTouchable(Touchable.disabled);
         card.add(desc).spaceTop(20f).fillX().minSize(150f, 40f);
 
         return card;

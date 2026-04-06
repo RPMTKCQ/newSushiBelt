@@ -66,7 +66,7 @@ public class ControllerSystem extends IteratingSystem {
         if (inventory == null) return;
 
         Vector2 playerPos = physic.getBody().getPosition();
-        float range = 1.2f;
+        float range = 1f; //
 
         final boolean[] interacted = {false};
         world.QueryAABB(fixture -> {
@@ -86,12 +86,16 @@ public class ControllerSystem extends IteratingSystem {
                     return false;
                 }
 
-                Customer     customer     = Customer.MAPPER.get(nearby);
+                Customer customer = Customer.MAPPER.get(nearby);
                 Interactable interactable = Interactable.MAPPER.get(nearby);
                 if (customer == null || interactable == null) return true;
 
+                boolean success = false;
                 switch (customer.state) {
-                    case WAITING -> seatCustomer(nearby, customer);
+                    case WAITING -> {
+                        seatCustomer(nearby, customer);
+                        success = true;
+                    }
                     case ORDERING -> {
                         customer.maxPatience = MathUtils.random(20f, 60f);
                         customer.stateTimer = 0f;
@@ -104,13 +108,23 @@ public class ControllerSystem extends IteratingSystem {
 
                         audioService.playSound(SoundAsset.CUSTOMER_ORDER);
                         customer.state = Customer.CustomerState.WAITING_FOR_FOOD;
+                        success = true;
                     }
-                    case WAITING_FOR_FOOD -> deliverFood(nearby, customer, playerEntity, inventory);
-                    case PAYING -> collectPayment(nearby, customer);
-                    default -> { return true; }
+                    case WAITING_FOR_FOOD -> {
+                        success = deliverFood(nearby, customer, playerEntity, inventory);
+                    }
+                    case PAYING -> {
+                        collectPayment(nearby, customer);
+                        success = true;
+                    }
                 }
-                interacted[0] = true;
-                return false;
+
+                if (success) {
+                    interacted[0] = true;
+                    return false;
+                }
+
+                return true; //
             },
             playerPos.x - range, playerPos.y - range,
             playerPos.x + range, playerPos.y + range);
@@ -166,16 +180,18 @@ public class ControllerSystem extends IteratingSystem {
         customer.clickable  = false;
     }
 
-    private void deliverFood(Entity customerEntity, Customer customer,
-                             Entity playerEntity, Inventory inventory) {
+    // FIX: Changed to boolean to report success or failure back to the interaction loop
+    private boolean deliverFood(Entity customerEntity, Customer customer,
+                                Entity playerEntity, Inventory inventory) {
         if (inventory.isEmpty()) {
             Gdx.app.log("DELIVER", "player has no food!");
-            return;
+            return false;
         }
         if (!inventory.hasDish(customer.orderItemId)) {
             Gdx.app.log("DELIVER", "wrong dish! wants: " + customer.orderItemId);
-            return;
+            return false;
         }
+
         inventory.removeDish(customer.orderItemId);
         gameScreenUI.updateInventory(inventory.dishes);
 
@@ -189,6 +205,7 @@ public class ControllerSystem extends IteratingSystem {
         customer.state      = Customer.CustomerState.EATING;
         customer.stateTimer = 0f;
         Gdx.app.log("DELIVER", "delivered: " + customer.orderItemId);
+        return true;
     }
 
     private void collectPayment(Entity customerEntity, Customer customer) {
@@ -204,8 +221,6 @@ public class ControllerSystem extends IteratingSystem {
     private void moveEntity(Entity entity, float directionX, float directionY) {
         Move move = Move.MAPPER.get(entity);
         if (move == null) return;
-
-        // Removed the WALKING sound effect play method here!
 
         move.getDirection().x = MathUtils.clamp(move.getDirection().x + directionX, -1f, 1f);
         move.getDirection().y = MathUtils.clamp(move.getDirection().y + directionY, -1f, 1f);

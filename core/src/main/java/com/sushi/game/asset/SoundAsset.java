@@ -10,14 +10,14 @@ public enum SoundAsset implements Asset<Sound> {
     MENU_BACK("menu_back.mp3"),
 
     // Gameplay Sounds
-    COOKING_DONE("cooking_done.mp3"),
+    COOKING_DONE("cooking_done2.mp3"),
     CUSTOMER_ANGRY("customer_angry.mp3"),
     CUSTOMER_ORDER("customer_order.mp3"),
     CUSTOMER_SIT("customer_sit2.mp3"),
-    RECEIPT_SUBMIT("receipt_submit.mp3"),
+    RECEIPT_SUBMIT("receipt_submit2.mp3"),
     SERVE_FOOD("serve_food.mp3"),
     TAKE_MONEY("take_money.mp3"),
-    LEVEL_UP("level_up.mp3"), // NEW: Level up sound!
+    LEVEL_UP("level_up.mp3"),
 
     // Screen Sounds
     WIN_SCREEN("win_screen.mp3"),

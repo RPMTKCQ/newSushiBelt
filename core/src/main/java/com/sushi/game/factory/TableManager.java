@@ -3,6 +3,7 @@ package com.sushi.game.factory;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapObjects;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.sushi.game.SushiGame;
 import com.sushi.game.model.SeatData;
@@ -16,9 +17,11 @@ public class TableManager {
 
     public void loadTables(MapObjects objects) {
         tables.clear();
+
+        // PASS 1: Load all the Tables first!
+        // This prevents the copy-paste bug where Tiled loads a seat before its table exists.
         for (MapObject obj : objects) {
             if ("table".equals(obj.getName())) {
-
                 int tableId = obj.getProperties().get("tableId", 0, Integer.class);
                 int seats = obj.getProperties().get("seats", 2, Integer.class);
 
@@ -31,8 +34,11 @@ public class TableManager {
                 TableData tableData = new TableData(tableId, position, seats);
                 tables.add(tableData);
             }
-            else if ("seat".equals(obj.getName())) {
+        }
 
+        // PASS 2: Load all the Seats and attach them to the tables
+        for (MapObject obj : objects) {
+            if ("seat".equals(obj.getName())) {
                 int tableId = obj.getProperties().get("tableId", 0, Integer.class);
                 int seatIndex = obj.getProperties().get("seatIndex", 0, Integer.class);
                 float x = obj.getProperties().get("x", 0f, Float.class);
@@ -44,7 +50,6 @@ public class TableManager {
                 SeatData seatData = new SeatData(tableId, seatIndex, position);
 
                 for (TableData table : tables) {
-                    Gdx.app.log("SEAT", "checking table.tableId=" + table.tableId);
                     if (table.tableId == tableId) {
                         table.seats.add(seatData);
                         Gdx.app.log("SEAT", "added seat to table " + tableId);
@@ -56,13 +61,23 @@ public class TableManager {
     }
 
     public TableData claimFreeTable() {
+        // Gather all free tables into a list
+        List<TableData> freeTables = new ArrayList<>();
         for (TableData table : tables) {
             if (table.hasFreeSeats() && !table.seats.isEmpty()) {
-                table.occupy();
-                return table;
+                freeTables.add(table);
             }
         }
-        return null;
+
+        // If no tables are available, return null
+        if (freeTables.isEmpty()) {
+            return null;
+        }
+
+        // Pick a random table from the available options!
+        TableData randomTable = freeTables.get(MathUtils.random(freeTables.size() - 1));
+        randomTable.occupy();
+        return randomTable;
     }
 
     public void vacateTable(int tableId) {
@@ -85,7 +100,6 @@ public class TableManager {
         return tables.size();
     }
 
-    // ADDED: Calculates absolute maximum capacity based on map layout
     public int getTotalCapacity() {
         int capacity = 0;
         for (TableData table : tables) {

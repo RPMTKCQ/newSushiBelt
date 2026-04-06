@@ -94,24 +94,24 @@
   <object id="488" type="Prop" gid="70" x="391.969" y="96.174" width="32" height="32"/>
   <object id="591" name="seat" gid="185" x="96.3636" y="286.667" width="32" height="32">
    <properties>
-    <property name="seatIndex" type="int" value="1"/>
+    <property name="seatIndex" type="int" value="0"/>
    </properties>
   </object>
   <object id="592" name="seat" gid="185" x="96.3636" y="254.667" width="32" height="32">
    <properties>
-    <property name="seatIndex" type="int" value="2"/>
+    <property name="seatIndex" type="int" value="1"/>
    </properties>
   </object>
   <object id="593" name="table" gid="201" x="96" y="273.939" width="32" height="32"/>
   <object id="594" name="seat" gid="185" x="160.727" y="286.542" width="32" height="32">
    <properties>
-    <property name="seatIndex" type="int" value="4"/>
+    <property name="seatIndex" type="int" value="3"/>
     <property name="tableId" type="int" value="1"/>
    </properties>
   </object>
   <object id="595" name="seat" gid="185" x="160.727" y="254.667" width="32" height="32">
    <properties>
-    <property name="seatIndex" type="int" value="3"/>
+    <property name="seatIndex" type="int" value="2"/>
     <property name="tableId" type="int" value="1"/>
    </properties>
   </object>
@@ -120,50 +120,49 @@
     <property name="tableId" type="int" value="1"/>
    </properties>
   </object>
-  <object id="597" name="seat" gid="185" x="224.852" y="286.667" width="32" height="32">
+  <object id="597" name="seat" gid="185" x="224.852" y="286.667" width="32" height="30.667">
+   <properties>
+    <property name="seatIndex" type="int" value="4"/>
+    <property name="tableId" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="598" name="seat" gid="185" x="224" y="256" width="32" height="32">
    <properties>
     <property name="seatIndex" type="int" value="5"/>
     <property name="tableId" type="int" value="2"/>
    </properties>
   </object>
-  <object id="598" name="seat" gid="185" x="224.852" y="254.667" width="32" height="32">
-   <properties>
-    <property name="seatIndex" type="int" value="4"/>
-    <property name="tableId" type="int" value="2"/>
-   </properties>
-  </object>
   <object id="599" name="table" gid="201" x="224.489" y="273.69" width="32" height="32">
    <properties>
-    <property name="seatIndex" type="int" value="4"/>
-    <property name="tableId" type="int" value="3"/>
+    <property name="tableId" type="int" value="2"/>
    </properties>
   </object>
   <object id="600" name="seat" gid="185" x="96.3636" y="190.667" width="32" height="32">
    <properties>
     <property name="seatIndex" type="int" value="11"/>
-    <property name="tableId" type="int" value="5"/>
+    <property name="tableId" type="int" value="3"/>
    </properties>
   </object>
   <object id="601" name="seat" gid="185" x="96.3636" y="158.667" width="32" height="32">
    <properties>
     <property name="seatIndex" type="int" value="10"/>
-    <property name="tableId" type="int" value="5"/>
+    <property name="tableId" type="int" value="3"/>
    </properties>
   </object>
   <object id="602" name="table" gid="201" x="96" y="177.94" width="32" height="32">
    <properties>
-    <property name="tableId" type="int" value="5"/>
+    <property name="tableId" type="int" value="3"/>
    </properties>
   </object>
   <object id="603" name="seat" gid="185" x="160.728" y="190.667" width="32" height="32">
    <properties>
-    <property name="seatIndex" type="int" value="9"/>
+    <property name="seatIndex" type="int" value="8"/>
     <property name="tableId" type="int" value="4"/>
    </properties>
   </object>
   <object id="604" name="seat" gid="185" x="160.728" y="158.667" width="32" height="32">
    <properties>
-    <property name="seatIndex" type="int" value="8"/>
+    <property name="seatIndex" type="int" value="9"/>
     <property name="tableId" type="int" value="4"/>
    </properties>
   </object>
@@ -174,19 +173,19 @@
   </object>
   <object id="606" name="seat" gid="185" x="224.728" y="190.667" width="32" height="32">
    <properties>
-    <property name="seatIndex" type="int" value="7"/>
-    <property name="tableId" type="int" value="3"/>
+    <property name="seatIndex" type="int" value="6"/>
+    <property name="tableId" type="int" value="5"/>
    </properties>
   </object>
   <object id="607" name="seat" gid="185" x="224.728" y="158.667" width="32" height="32">
    <properties>
-    <property name="seatIndex" type="int" value="6"/>
-    <property name="tableId" type="int" value="3"/>
+    <property name="seatIndex" type="int" value="7"/>
+    <property name="tableId" type="int" value="5"/>
    </properties>
   </object>
   <object id="608" name="table" gid="201" x="224.364" y="177.94" width="32" height="32">
    <properties>
-    <property name="tableId" type="int" value="3"/>
+    <property name="tableId" type="int" value="5"/>
    </properties>
   </object>
   <object id="544" name="chef_spawn" x="360.727" y="106.545">
