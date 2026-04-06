@@ -120,25 +120,24 @@ public class GameScreenUI {
                 if (pauseOverlay != null && pauseOverlay.isVisible()) return false;
 
                 if (powerUpOverlay != null && powerUpOverlay.isVisible()) {
-                    if (keycode == Input.Keys.LEFT || keycode == Input.Keys.A) {
+                    // FIX: Changed from LEFT/RIGHT arrows to A/D!
+                    if (keycode == Input.Keys.A) {
                         powerUpSelectedIndex = (powerUpSelectedIndex - 1 + 3) % 3;
                         updatePowerUpColors();
-                        if (audioService != null) audioService.playSound(SoundAsset.MENU_HOVER);
+                        if(audioService != null) audioService.playSound(SoundAsset.MENU_HOVER);
                         return true;
                     }
-                    if (keycode == Input.Keys.RIGHT || keycode == Input.Keys.D) {
+                    if (keycode == Input.Keys.D) {
                         powerUpSelectedIndex = (powerUpSelectedIndex + 1) % 3;
                         updatePowerUpColors();
-                        if (audioService != null) audioService.playSound(SoundAsset.MENU_HOVER);
+                        if(audioService != null) audioService.playSound(SoundAsset.MENU_HOVER);
                         return true;
                     }
-                    // FIX: Scroll Up with W or UP arrow!
-                    if (keycode == Input.Keys.UP || keycode == Input.Keys.W) {
+                    if (keycode == Input.Keys.W) {
                         scrollSelectedPowerUp(-30f);
                         return true;
                     }
-                    // FIX: Scroll Down with S or DOWN arrow!
-                    if (keycode == Input.Keys.DOWN || keycode == Input.Keys.S) {
+                    if (keycode == Input.Keys.S) {
                         scrollSelectedPowerUp(30f);
                         return true;
                     }
@@ -361,6 +360,10 @@ public class GameScreenUI {
     }
 
     public void togglePauseOverlay(boolean isPaused, Runnable onResume, Runnable onQuit) {
+        if (powerUpOverlay != null) {
+            powerUpOverlay.setTouchable(isPaused ? Touchable.disabled : (powerUpOverlay.isVisible() ? Touchable.enabled : Touchable.disabled));
+        }
+
         if (pauseOverlay == null) {
             pauseOverlay = new Table();
             pauseOverlay.setFillParent(true);
@@ -604,10 +607,10 @@ public class GameScreenUI {
         Table buttonsTable = new Table();
 
         TextButton yesBtn = createPauseButton("Yes", onQuit);
-        buttonsTable.add(yesBtn).minSize(150f, 60f).padRight(30f);
+        buttonsTable.add(yesBtn).minSize(200f, 60f).padRight(30f);
 
         TextButton noBtn = createPauseButton("No", () -> buildMainPauseScreen(onResume, onQuit));
-        buttonsTable.add(noBtn).minSize(150f, 60f);
+        buttonsTable.add(noBtn).minSize(200f, 60f).padLeft(30f);
 
         pauseOverlay.add(buttonsTable);
         pauseOverlay.pack();

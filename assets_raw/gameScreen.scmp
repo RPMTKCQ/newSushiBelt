@@ -2270,7 +2270,7 @@ jsonData: {
 						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
 						name: background
 						optional: true
-						value: null
+						value: rct-border
 					}
 					corner: {
 						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable

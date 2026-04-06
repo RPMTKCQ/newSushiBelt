@@ -102,9 +102,14 @@ public class BottomBarUI extends Table {
     }
 
     public void setXp(int xp, int xpToNext, int level) {
-        xpBar.setValue((float) xp / xpToNext * 100f);
-        // Automatically updates the text when you level up
-        if (levelLabel != null) levelLabel.setText("LV. " + level);
+        // FIX: Display LV. MAX when level 10 is reached!
+        if (level >= 10) {
+            if (levelLabel != null) levelLabel.setText("LV. 10 MAX");
+            xpBar.setValue(0f);
+        } else {
+            if (levelLabel != null) levelLabel.setText("LV. " + level);
+            xpBar.setValue((float) xp / xpToNext * 100f);
+        }
     }
 
     public void updateTimer(String timeText) {

@@ -13,6 +13,7 @@ import com.sushi.game.asset.AssetService;
 import com.sushi.game.asset.AtlasAsset;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class TopBarUI extends Table {
@@ -131,10 +132,8 @@ public class TopBarUI extends Table {
                 receiptKeyboardSelectedIndex = receiptCards.size() - 1;
             } else {
                 if (receiptIsGrabbed && receiptKeyboardSelectedIndex > lockedCount) {
-                    // This is the array shift for Insertion Sort via keyboard
-                    ReceiptCardData temp = receiptCards.remove(receiptKeyboardSelectedIndex);
+                    Collections.swap(receiptCards, receiptKeyboardSelectedIndex, receiptKeyboardSelectedIndex - 1);
                     receiptKeyboardSelectedIndex--;
-                    receiptCards.add(receiptKeyboardSelectedIndex, temp);
                     relayoutReceiptRow();
                 } else if (!receiptIsGrabbed) {
                     receiptKeyboardSelectedIndex--;
@@ -148,10 +147,8 @@ public class TopBarUI extends Table {
                 receiptKeyboardSelectedIndex = 0;
             } else {
                 if (receiptIsGrabbed && receiptKeyboardSelectedIndex < receiptCards.size() - 1) {
-                    // This is the array shift for Insertion Sort via keyboard
-                    ReceiptCardData temp = receiptCards.remove(receiptKeyboardSelectedIndex);
+                    Collections.swap(receiptCards, receiptKeyboardSelectedIndex, receiptKeyboardSelectedIndex + 1);
                     receiptKeyboardSelectedIndex++;
-                    receiptCards.add(receiptKeyboardSelectedIndex, temp);
                     relayoutReceiptRow();
                 } else if (!receiptIsGrabbed) {
                     receiptKeyboardSelectedIndex = (receiptKeyboardSelectedIndex + 1) % receiptCards.size();
@@ -159,16 +156,12 @@ public class TopBarUI extends Table {
             }
             updateCardColors();
             return true;
-        } else if (keycode == Input.Keys.UP) {
-            if (receiptKeyboardSelectedIndex >= lockedCount && !receiptIsGrabbed) {
-                receiptIsGrabbed = true;
+        } else if (keycode == Input.Keys.UP || keycode == Input.Keys.DOWN) {
+            // FIX: UP and DOWN now both toggle the grab state!
+            if (receiptKeyboardSelectedIndex >= lockedCount) {
+                receiptIsGrabbed = !receiptIsGrabbed;
                 updateCardColors();
             }
-            return true;
-        } else if (keycode == Input.Keys.DOWN) {
-            if (receiptIsGrabbed) receiptIsGrabbed = false;
-            else receiptKeyboardSelectedIndex = -1;
-            updateCardColors();
             return true;
         }
         return false;
