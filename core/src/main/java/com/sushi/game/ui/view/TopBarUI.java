@@ -1,6 +1,7 @@
 package com.sushi.game.ui.view;
 
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
@@ -33,6 +34,9 @@ public class TopBarUI extends Table {
     private boolean receiptIsGrabbed = false;
     private boolean lastSubmitSorted = false;
 
+    // The F4 Secret Toggle
+    private boolean showAlgorithmVisuals = false;
+
     private static class ReceiptCardData {
         Table card;
         Image dishImage;
@@ -40,18 +44,20 @@ public class TopBarUI extends Table {
         ProgressBar timerBar;
         ProgressBar cookingBar;
         Label secondsLabel;
+        Label keyLabel;
         String customerId;
         float timer;
         float maxTime;
         boolean cooked = false;
 
-        ReceiptCardData(Table card, Image img, Label label, ProgressBar bar, ProgressBar cookingBar, Label secondsLabel, String customerId, float maxTime) {
+        ReceiptCardData(Table card, Image img, Label label, ProgressBar bar, ProgressBar cookingBar, Label secondsLabel, Label keyLabel, String customerId, float maxTime) {
             this.card = card;
             this.dishImage = img;
             this.dishLabel = label;
             this.timerBar = bar;
             this.cookingBar = cookingBar;
             this.secondsLabel = secondsLabel;
+            this.keyLabel = keyLabel;
             this.customerId = customerId;
             this.maxTime = maxTime;
         }
@@ -68,6 +74,11 @@ public class TopBarUI extends Table {
 
         add(buildReceiptRow()).growX().align(Align.left);
         add(buildScorePanel()).padTop(30f).grow().align(Align.topRight);
+    }
+
+    public void toggleAlgorithmVisuals() {
+        this.showAlgorithmVisuals = !this.showAlgorithmVisuals;
+        relayoutReceiptRow();
     }
 
     private Table buildReceiptRow() {
@@ -102,23 +113,8 @@ public class TopBarUI extends Table {
         return scoreMoneyTable;
     }
 
-    // FIX: Now accepts the formatted String from LevelSystem
-    public void setMoney(String text) {
-        moneyLabel.setText(text);
-    }
-
-    // FIX: Now accepts the formatted String from LevelSystem
-    public void setScore(String text) {
-        scoreLabel.setText(text);
-    }
-
-    public void setMoney(int money) {
-        moneyLabel.setText(String.valueOf(money));
-    }
-
-    public void setScore(int score) {
-        scoreLabel.setText(String.valueOf(score));
-    }
+    public void setMoney(String text) { moneyLabel.setText(text); }
+    public void setScore(String text) { scoreLabel.setText(text); }
 
     public void setLastSubmitSorted(boolean sorted) { this.lastSubmitSorted = sorted; }
     public boolean wasLastSubmitSorted() { return lastSubmitSorted; }
@@ -157,7 +153,6 @@ public class TopBarUI extends Table {
             updateCardColors();
             return true;
         } else if (keycode == Input.Keys.UP || keycode == Input.Keys.DOWN) {
-            // FIX: UP and DOWN now both toggle the grab state!
             if (receiptKeyboardSelectedIndex >= lockedCount) {
                 receiptIsGrabbed = !receiptIsGrabbed;
                 updateCardColors();
@@ -238,24 +233,29 @@ public class TopBarUI extends Table {
     }
 
     public void addOrder(String dishId, String customerId, float maxTime) {
-        // The 8-card Hard Limit
         if (receiptCards.size() >= 8) return;
 
         Table card = new Table();
         card.setBackground(skin.getDrawable("rct-border"));
         card.align(Align.top);
         card.setTouchable(Touchable.enabled);
+        card.setTransform(true);
+
+        Label keyLabel = new Label("[ KEY ]", skin, "powerup");
+        keyLabel.setColor(Color.RED);
+        keyLabel.setVisible(false);
+        card.add(keyLabel).padTop(5f).row();
 
         Image img = new Image(assetService.get(AtlasAsset.OBJECTS).findRegion("Food/" + dishId.replace("_", "-")));
         img.setScaling(Scaling.fit);
-        card.add(img).padTop(10f).minSize(80f).row();
+        card.add(img).padTop(5f).minSize(70f).row();
 
         String[] parts = dishId.split("_");
         StringBuilder sb = new StringBuilder();
         for (String p : parts) sb.append(Character.toUpperCase(p.charAt(0))).append(p.substring(1)).append(" ");
         Label label = new Label(sb.toString().trim(), skin, "receipt");
         label.setColor(skin.getColor("black"));
-        card.add(label).spaceTop(10f).row();
+        card.add(label).spaceTop(5f).row();
 
         ProgressBar bar = new ProgressBar(0f, 100f, 1f, false, skin);
         bar.setValue(100f);
@@ -271,7 +271,7 @@ public class TopBarUI extends Table {
         secondsLabel.setAlignment(Align.center);
         card.add(secondsLabel).spaceTop(4f);
 
-        ReceiptCardData data = new ReceiptCardData(card, img, label, bar, cookingBar, secondsLabel, customerId, maxTime);
+        ReceiptCardData data = new ReceiptCardData(card, img, label, bar, cookingBar, secondsLabel, keyLabel, customerId, maxTime);
         receiptCards.add(data);
         attachDragListener(card, data);
         relayoutReceiptRow();
@@ -333,7 +333,6 @@ public class TopBarUI extends Table {
 
             int secondsLeft = Math.max(0, (int) (d.maxTime - d.timer));
             d.secondsLabel.setText(secondsLeft + "s");
-            // Hardcoded black for readability
             d.secondsLabel.setColor(skin.getColor("black"));
         }
     }
@@ -342,8 +341,14 @@ public class TopBarUI extends Table {
         receiptRow.clearChildren();
         for (ReceiptCardData d : receiptCards) {
             if (d == currentlyDraggingCard) {
-                // The "Empty Gap" shift for Insertion Sort
                 Table dummySpace = new Table();
+                if (showAlgorithmVisuals) {
+                    dummySpace.setBackground(skin.getDrawable("rct-border"));
+                    dummySpace.setColor(1f, 1f, 1f, 0.3f);
+                    Label shiftLabel = new Label("[SHIFTING...]", skin, "small");
+                    shiftLabel.setColor(Color.ORANGE);
+                    dummySpace.add(shiftLabel).align(Align.center);
+                }
                 receiptRow.add(dummySpace).padRight(10f).growY().align(Align.top).minSize(160f, 220f).maxSize(160f, 220f);
             } else {
                 receiptRow.add(d.card).padRight(10f).growY().align(Align.top).minSize(160f, 220f).maxSize(160f, 220f);
@@ -366,7 +371,11 @@ public class TopBarUI extends Table {
                 receiptKeyboardSelectedIndex = receiptCards.indexOf(data);
                 receiptIsGrabbed = true;
 
-                // 1. Extract the "Key" (Detaching the card to float)
+                if (showAlgorithmVisuals) {
+                    data.keyLabel.setVisible(true);
+                    card.addAction(Actions.scaleTo(1.15f, 1.15f, 0.1f));
+                }
+
                 Vector2 stagePos = card.localToStageCoordinates(new Vector2(0, 0));
                 dragStartStagePos.set(e.getStageX(), e.getStageY());
                 cardStartStagePos.set(stagePos);
@@ -385,7 +394,6 @@ public class TopBarUI extends Table {
             public void drag(InputEvent e, float x, float y, int ptr) {
                 if ((cookingCustomerId != null && data.customerId.equals(cookingCustomerId)) || data.cooked) return;
 
-                // Lock the Y axis to where the card started. Horizontal drag only!
                 float newX = cardStartStagePos.x + (e.getStageX() - dragStartStagePos.x);
                 card.setPosition(newX, cardStartStagePos.y);
 
@@ -394,7 +402,6 @@ public class TopBarUI extends Table {
                 int to = from;
                 int lockedCount = getLockedCount();
 
-                // 2. Scan the array to find the correct insertion point
                 for (int i = lockedCount; i < receiptCards.size(); i++) {
                     if (i == from) continue;
 
@@ -410,7 +417,6 @@ public class TopBarUI extends Table {
 
                 to = Math.max(lockedCount, Math.min(to, receiptCards.size() - 1));
 
-                // 3. Shift the array elements to make an empty gap for the insertion
                 if (to != from) {
                     receiptCards.remove(from);
                     receiptCards.add(to, data);
@@ -423,11 +429,13 @@ public class TopBarUI extends Table {
             public void dragStop(InputEvent e, float x, float y, int ptr) {
                 if ((cookingCustomerId != null && data.customerId.equals(cookingCustomerId)) || data.cooked) return;
 
+                data.keyLabel.setVisible(false);
+                card.addAction(Actions.scaleTo(1f, 1f, 0.1f));
+
                 currentlyDraggingCard = null;
                 receiptIsGrabbed = false;
                 receiptKeyboardSelectedIndex = -1;
 
-                // 4. Finalize the insertion into the Array
                 relayoutReceiptRow();
                 updateCardColors();
             }

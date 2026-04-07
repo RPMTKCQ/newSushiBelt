@@ -215,6 +215,7 @@ public class ControllerSystem extends IteratingSystem {
 
         customer.state      = Customer.CustomerState.LEAVING;
         customer.stateTimer = 0f;
+        levelSystem.addMoneyFromPickup(15);
         Gdx.app.log("PAYMENT", "collected from table " + customer.tableId);
     }
 

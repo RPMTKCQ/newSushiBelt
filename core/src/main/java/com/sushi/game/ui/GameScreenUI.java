@@ -34,7 +34,6 @@ public class GameScreenUI {
     private final AssetService assetService;
     private final AudioService audioService;
 
-    // --- SUB-COMPONENTS ---
     private TopBarUI topBarUI;
     private BottomBarUI bottomBarUI;
 
@@ -45,7 +44,6 @@ public class GameScreenUI {
     private boolean chefReady = false;
     private boolean chefCooking = false;
 
-    // FIX: Variables for the Level-Up Queue
     private int queuedLevelUps = 0;
     private PowerUpSystem activePowerUpSystem;
 
@@ -108,6 +106,7 @@ public class GameScreenUI {
 
         eventLogTable = new Table();
         eventLogTable.align(Align.bottomRight);
+        eventLogTable.setVisible(false); // Hidden by default!
         logRoot.add(eventLogTable).expand().align(Align.bottomRight).padBottom(150f).padRight(50f);
 
         stage.addActor(logRoot);
@@ -120,7 +119,6 @@ public class GameScreenUI {
                 if (pauseOverlay != null && pauseOverlay.isVisible()) return false;
 
                 if (powerUpOverlay != null && powerUpOverlay.isVisible()) {
-                    // FIX: Changed from LEFT/RIGHT arrows to A/D!
                     if (keycode == Input.Keys.A) {
                         powerUpSelectedIndex = (powerUpSelectedIndex - 1 + 3) % 3;
                         updatePowerUpColors();
@@ -168,6 +166,17 @@ public class GameScreenUI {
             if (actor instanceof PowerUpCardUI) {
                 ((PowerUpCardUI) actor).scroll(amount);
             }
+        }
+    }
+
+    public void toggleAlgorithmVisuals() {
+        topBarUI.toggleAlgorithmVisuals();
+        addLogEvent("Algorithm Visualizer Toggled", Color.CYAN);
+    }
+
+    public void toggleEventLog() {
+        if (eventLogTable != null) {
+            eventLogTable.setVisible(!eventLogTable.isVisible());
         }
     }
 
@@ -282,7 +291,6 @@ public class GameScreenUI {
         }
     }
 
-    // FIX: This method now adds the level-up to a queue instead of just overriding the screen!
     public void showPowerUpOverlay(PowerUpSystem powerUpSystem) {
         this.activePowerUpSystem = powerUpSystem;
         queuedLevelUps++;
@@ -292,7 +300,6 @@ public class GameScreenUI {
         }
     }
 
-    // FIX: This method renders the screen. When you pick a card, it checks if it should run again!
     private void displayNextPowerUp() {
         if (queuedLevelUps <= 0) return;
         queuedLevelUps--;
@@ -309,7 +316,6 @@ public class GameScreenUI {
             Runnable onSelected = () -> {
                 addLogEvent("Power-Up Activated: " + type.displayName(), Color.CYAN);
 
-                // NEW: Tell LevelSystem to apply any immediate corruptions!
                 if (activePowerUpSystem != null && activePowerUpSystem.getEngine() != null) {
                     activePowerUpSystem.getEngine().getSystem(com.sushi.game.system.LevelSystem.class).applyImmediateCorruption(type);
                 }
@@ -434,7 +440,7 @@ public class GameScreenUI {
 
                 @Override
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                    if (!isPaused || inputLocked) return true; // FIX: Prevent clicking through Pause Menu
+                    if (!isPaused || inputLocked) return true;
                     if (button == Input.Buttons.RIGHT) {
                         if (currentPauseState == PauseState.CONFIRM_QUIT) {
                             audioService.playSound(SoundAsset.MENU_BACK);
@@ -445,7 +451,7 @@ public class GameScreenUI {
                         }
                         return true;
                     }
-                    return true; // FIX: Prevent clicking through Pause Menu
+                    return true;
                 }
             });
             stage.addActor(pauseOverlay);
@@ -646,5 +652,4 @@ public class GameScreenUI {
     public boolean isPowerUpOverlayVisible() {
         return powerUpOverlay != null && powerUpOverlay.isVisible();
     }
-
 }

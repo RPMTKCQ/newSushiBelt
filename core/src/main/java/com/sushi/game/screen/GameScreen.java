@@ -100,13 +100,13 @@ public class GameScreen extends ScreenAdapter {
             () -> game.setScreen(new WinScreen(game, levelSystem.getScore(), levelSystem.getMoney(), this.currentStage, isEndlessMode)),
             () -> game.setScreen(new GameOverScreen(game, levelSystem.getScore(), this.currentStage, isEndlessMode)));
 
-        this.customerSpawner = new CustomerSpawner(customerFactory, tableManager, engine, levelSystem);
+        this.customerSpawner = new CustomerSpawner(customerFactory, tableManager, engine, levelSystem, currentStage, isEndlessMode);
 
         this.conveyorSystem = new ConveyorSystem();
         this.chefSystem     = new ChefSystem(gameScreenUI, engine, physicWorld, game.getAssetService(), conveyorSystem);
         this.customerRenderSystem = new CustomerRenderSystem(game.getCamera(), gameUISkin, game.getAssetService(), game.getBatch(), engine);
 
-        engine.addSystem(new CustomerSystem(physicWorld, tableManager, engine, gameScreenUI, levelSystem));
+        engine.addSystem(new CustomerSystem(physicWorld, tableManager, engine, gameScreenUI, levelSystem, currentStage));
         engine.addSystem(powerUpSystem);
         engine.addSystem(levelSystem);
         engine.addSystem(chefSystem);
@@ -161,19 +161,11 @@ public class GameScreen extends ScreenAdapter {
 
     public void resumeGame() {
         isPaused = false;
-        InputMultiplexer multiplexer = new InputMultiplexer();
-        multiplexer.addProcessor(keyboardController);
-        multiplexer.addProcessor(stage);
-        Gdx.input.setInputProcessor(multiplexer);
-
         gameScreenUI.togglePauseOverlay(false, null, null);
     }
 
     public void pauseGame() {
         isPaused = true;
-        keyboardController.reset();
-        Gdx.input.setInputProcessor(stage);
-
         gameScreenUI.togglePauseOverlay(true, this::resumeGame, () -> {
             game.setScreen(new MenuScreen(game));
         });
@@ -190,7 +182,12 @@ public class GameScreen extends ScreenAdapter {
         if (Gdx.input.isKeyJustPressed(Input.Keys.F3)) {
             if (levelSystem != null) levelSystem.addDebugXp(10);
         }
-
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F4)) {
+            gameScreenUI.toggleAlgorithmVisuals();
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.L)) {
+            gameScreenUI.toggleEventLog();
+        }
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) && !isPaused) {
             pauseGame();
         }
@@ -199,7 +196,16 @@ public class GameScreen extends ScreenAdapter {
         boolean isPowerUpScreenOpen = gameScreenUI.isPowerUpOverlayVisible();
         boolean shouldFreeze = isPaused || isPowerUpScreenOpen;
 
-        // FIX: Forcefully disable/enable processing for all gameplay systems based on UI state!
+        if (shouldFreeze && Gdx.input.getInputProcessor() instanceof InputMultiplexer) {
+            keyboardController.reset();
+            Gdx.input.setInputProcessor(stage);
+        } else if (!shouldFreeze && !(Gdx.input.getInputProcessor() instanceof InputMultiplexer)) {
+            InputMultiplexer multiplexer = new InputMultiplexer();
+            multiplexer.addProcessor(keyboardController);
+            multiplexer.addProcessor(stage);
+            Gdx.input.setInputProcessor(multiplexer);
+        }
+
         for (EntitySystem system : engine.getSystems()) {
             if (!(system instanceof RenderSystem || system instanceof CameraSystem || system instanceof PhysicDebugRenderSystem)) {
                 system.setProcessing(!shouldFreeze);
@@ -208,7 +214,7 @@ public class GameScreen extends ScreenAdapter {
 
         if (shouldFreeze) {
             customerRenderSystem.update(0f);
-            engine.update(0f); // Still draws the frame without advancing logic
+            engine.update(0f);
             if (isPaused) {
                 gameScreenUI.updatePauseMenu(delta);
             } else {

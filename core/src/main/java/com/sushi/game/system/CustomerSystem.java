@@ -6,6 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
+import com.sushi.game.asset.MapAsset;
 import com.sushi.game.component.*;
 import com.sushi.game.factory.TableManager;
 import com.sushi.game.model.SeatData;
@@ -25,40 +26,37 @@ public class CustomerSystem extends IteratingSystem {
     private final Engine engine;
     private final LevelSystem levelSystem;
     private final GameScreenUI gameScreenUI;
+    private final MapAsset currentStage;
 
     public CustomerSystem(World world, TableManager tableManager, Engine engine,
-                          GameScreenUI gameScreenUI, LevelSystem levelSystem) {
+                          GameScreenUI gameScreenUI, LevelSystem levelSystem, MapAsset currentStage) {
         super(Family.all(Customer.class, Transform.class).get());
         this.world        = world;
         this.tableManager = tableManager;
         this.engine       = engine;
         this.levelSystem  = levelSystem;
         this.gameScreenUI = gameScreenUI;
+        this.currentStage = currentStage;
     }
 
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
         Customer customer = Customer.MAPPER.get(entity);
-
-        // Timer runs for all states
         customer.stateTimer += deltaTime;
 
         switch (customer.state) {
             case WAITING:
-                // FIX: Exploit patched! If left waiting at the door for 20 seconds, they leave angry.
                 if (customer.stateTimer >= 20f) {
                     customer.leftAngry = true;
                     customer.state = Customer.CustomerState.LEAVING;
                     customer.stateTimer = 0f;
-                    levelSystem.onCustomerLeftAngry(); // Burns reputation
+                    levelSystem.onCustomerLeftAngry();
                     Gdx.app.log("CUSTOMER", "Got tired of standing at the door and left angry!");
                 }
                 break;
-
             case SEATING:
                 handleSeating(entity, customer);
                 break;
-
             case ORDERING:
                 if (customer.stateTimer >= customer.maxPatience) {
                     customer.leftAngry  = true;
@@ -68,25 +66,21 @@ public class CustomerSystem extends IteratingSystem {
                     Gdx.app.log("CUSTOMER", "left angry during ordering");
                 }
                 break;
-
             case WAITING_FOR_FOOD:
                 if (!customer.leftAngry && customer.stateTimer >= customer.maxPatience) {
                     customer.leftAngry = true;
                     levelSystem.onCustomerLeftAngry();
-                    Gdx.app.log("CUSTOMER", "patience ran out — satisfaction hit, still waiting");
+                    Gdx.app.log("CUSTOMER", "patience ran out!");
                 }
                 break;
-
             case EATING:
                 if (customer.stateTimer >= 5f) {
                     customer.state      = Customer.CustomerState.PAYING;
                     customer.stateTimer = 0f;
                 }
                 break;
-
             case PAYING:
                 break;
-
             case LEAVING:
                 removeCustomer(entity, customer);
                 break;
@@ -99,8 +93,7 @@ public class CustomerSystem extends IteratingSystem {
             if (table == null) {
                 customer.state      = Customer.CustomerState.WAITING;
                 customer.clickable  = true;
-                customer.stateTimer = 0f; // Reset wait timer so they don't instantly leave if a table frees up
-                Gdx.app.log("SEATING", "no free table!");
+                customer.stateTimer = 0f;
                 return;
             }
 
@@ -127,18 +120,23 @@ public class CustomerSystem extends IteratingSystem {
 
                     Animation2D anim = Animation2D.MAPPER.get(entity);
                     if (anim != null) anim.paused = true;
-
                     break;
                 }
             }
             customer.orderItemId = POSSIBLE_ORDERS[MathUtils.random(0, POSSIBLE_ORDERS.length - 1)];
-            customer.maxPatience = MathUtils.random(20f, 40f);
+
+            float patience = switch (currentStage) {
+                case STAGE_1 -> MathUtils.random(30f, 50f);
+                case STAGE_2 -> MathUtils.random(20f, 35f);
+                case STAGE_3 -> MathUtils.random(15f, 25f);
+                default -> 40f;
+            };
+            customer.maxPatience = patience;
         }
 
         if (customer.stateTimer >= ORDER_DELAY) {
             customer.state      = Customer.CustomerState.ORDERING;
             customer.stateTimer = 0f;
-            Gdx.app.log("CUSTOMER", "ready to order: " + customer.orderItemId);
         }
     }
 

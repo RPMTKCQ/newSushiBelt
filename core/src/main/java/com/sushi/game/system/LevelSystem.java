@@ -11,12 +11,12 @@ public class LevelSystem extends EntitySystem {
     private static final int MAX_LEVEL        = 10;
     private static final int BASE_XP_TO_NEXT  = 30;
     private static final int XP_INCREMENT     = 20;
-    private static final int XP_PER_SERVE     = 10;
+    private static final int XP_PER_SERVE     = 15;
 
     private static final int SCORE_ON_TIME    = 10;
     private static final int SCORE_LATE       = 0;
-    private static final int MONEY_ON_TIME    = 5;
-    private static final int MONEY_LATE       = 3;
+    private static final int MONEY_ON_TIME    = 15;
+    private static final int MONEY_LATE       = 8;
     private static final int SORT_SCORE_BONUS = 5;
     private static final int SORT_MONEY_BONUS = 2;
 
@@ -30,15 +30,13 @@ public class LevelSystem extends EntitySystem {
     private int xp            = 0;
     private int xpToNextLevel = BASE_XP_TO_NEXT;
     private int score         = 0;
-    private int money         = 0; // FIX: Starts at $0!
+    private int money         = 0;
 
     private int lastScoreBracket = 0;
 
-    // Timer & Game Modes
-    private float timeLeft = 180f; // 3 minutes
-    private static final int FINANCIAL_QUOTA = 100; // FIX: Lowered to 100 for Easy Mode balancing
+    private float timeLeft = 180f;
+    private static final int FINANCIAL_QUOTA = 100;
 
-    // Reputation Tracking
     private int reputationHp = 100;
     private static final int MAX_HP = 100;
     private int hpPenalty = 5;
@@ -104,8 +102,24 @@ public class LevelSystem extends EntitySystem {
             gameScreenUI.addLogEvent("Sugar Rush penalty: -5 HP", com.badlogic.gdx.graphics.Color.RED);
         }
         if (type == PowerUpType.GREEDY_ALGORITHM) {
-            hpPenalty = 10; // 2x damage from angry customers!
+            hpPenalty = 10;
         }
+        updateStatsUI();
+    }
+
+    public void addMoneyFromPickup(int amount) {
+        float moneyMultiplier = powerUpSystem.getDoubleTipsMultiplier();
+        if (powerUpSystem.hasPristineKitchen && reputationHp == 100 && pristineCooldown <= 0) {
+            moneyMultiplier *= 2f;
+        }
+        if (powerUpSystem.hasGreedyAlgorithm) {
+            moneyMultiplier *= 1.5f;
+        }
+
+        int gained = (int) (amount * moneyMultiplier);
+        money += gained;
+        gameScreenUI.addLogEvent("Collected $" + gained + "!", com.badlogic.gdx.graphics.Color.GREEN);
+
         updateStatsUI();
     }
 
@@ -115,7 +129,6 @@ public class LevelSystem extends EntitySystem {
         if (!lateDelivery) {
             reputationHp = Math.min(MAX_HP, reputationHp + HP_HEAL);
 
-            // Green Tea Logic
             if (powerUpSystem.hasGreenTea && MathUtils.randomBoolean(0.25f)) {
                 reputationHp = Math.min(MAX_HP, reputationHp + 2);
                 gameScreenUI.addLogEvent("Green Tea healed 2 HP!", com.badlogic.gdx.graphics.Color.GREEN);
@@ -160,7 +173,7 @@ public class LevelSystem extends EntitySystem {
 
     public void onCustomerLeftAngry() {
         totalProcessed++;
-        reputationHp -= hpPenalty; // Applies Greedy Algorithm 2x damage if active
+        reputationHp -= hpPenalty;
 
         gameScreenUI.addLogEvent("A customer left in anger! (-" + hpPenalty + " HP)", com.badlogic.gdx.graphics.Color.RED);
 
@@ -199,7 +212,6 @@ public class LevelSystem extends EntitySystem {
         gameScreenUI.setScore(String.valueOf(score));
         gameScreenUI.setXp(xp, xpToNextLevel, level);
 
-        // FIX: Shows the beautiful formatted Quota!
         if (isEndlessMode) {
             gameScreenUI.setMoney(money + "$");
         } else {
