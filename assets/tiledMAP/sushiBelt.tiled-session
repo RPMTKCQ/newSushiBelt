@@ -85,34 +85,36 @@
                 6,
                 2
             ],
-            "scale": 2,
+            "scale": 5.5,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 256.25,
-                "y": 159.75
+                "x": 342.4545454545455,
+                "y": 185
             }
         },
         "restaurant-2.tmx": {
             "expandedObjectLayers": [
                 14,
+                17,
                 13
             ],
-            "scale": 3,
+            "scale": 4,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 203.5,
-                "y": 118.16666666666669
+                "x": 357.375,
+                "y": 164.625
             }
         },
         "restaurant-3.tmx": {
             "expandedObjectLayers": [
-                13
+                14,
+                15
             ],
-            "scale": 1,
-            "selectedLayer": 0,
+            "scale": 8,
+            "selectedLayer": 3,
             "viewCenter": {
-                "x": 239.5,
-                "y": 159.5
+                "x": 223.6875,
+                "y": 90.9375
             }
         },
         "restaurant.tmx": {

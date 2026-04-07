@@ -201,15 +201,27 @@
    <point/>
   </object>
   <object id="555" name="belt_spawn" x="393.5" y="207.813">
+   <properties>
+    <property name="sequence" type="int" value="3"/>
+   </properties>
    <point/>
   </object>
   <object id="556" name="belt_waypoint" x="303.375" y="206.563">
+   <properties>
+    <property name="sequence" type="int" value="0"/>
+   </properties>
    <point/>
   </object>
   <object id="557" name="belt_waypoint" x="304" y="239.813">
+   <properties>
+    <property name="sequence" type="int" value="1"/>
+   </properties>
    <point/>
   </object>
   <object id="558" name="belt_waypoint" x="392.125" y="240.125">
+   <properties>
+    <property name="sequence" type="int" value="0"/>
+   </properties>
    <point/>
   </object>
   <object id="559" name="belt_waypoint" x="393.438" y="207.75">

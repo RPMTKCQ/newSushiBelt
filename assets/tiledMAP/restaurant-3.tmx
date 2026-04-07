@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="15" height="10" tilewidth="32" tileheight="32" infinite="0" nextlayerid="14" nextobjectid="422">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="15" height="10" tilewidth="32" tileheight="32" infinite="0" nextlayerid="16" nextobjectid="582">
  <properties>
   <property name="music" value="L3_MUSIC"/>
  </properties>
@@ -22,8 +22,8 @@
  </layer>
  <layer id="11" name="wall" width="15" height="10">
   <data encoding="csv">
-2147483874,0,0,0,0,0,0,0,0,0,0,0,0,0,226,
-2147483874,0,0,0,0,0,0,0,0,0,0,0,0,0,226,
+2147483874,0,240,0,0,237,238,238,238,239,238,239,0,240,226,
+2147483874,0,256,0,0,253,254,254,254,255,254,255,0,256,226,
 2147483874,0,0,0,0,0,0,0,0,0,0,0,0,0,226,
 2147483874,0,0,0,0,0,0,0,0,0,0,0,0,0,226,
 2147483874,0,0,0,0,0,0,0,0,0,0,0,0,0,226,
@@ -34,6 +34,249 @@
 2147483874,0,0,0,0,0,0,0,0,0,0,0,0,0,226
 </data>
  </layer>
+ <objectgroup id="14" name="small-objects">
+  <object id="436" gid="57" x="96" y="40" width="32" height="32"/>
+  <object id="437" gid="57" x="32" y="40" width="32" height="32"/>
+  <object id="438" gid="73" x="128" y="40" width="32" height="32"/>
+  <object id="439" gid="73" x="384" y="40" width="32" height="32"/>
+  <object id="440" gid="73" x="232" y="40" width="32" height="32"/>
+  <object id="441" gid="73" x="264" y="40" width="32" height="32"/>
+  <object id="443" gid="73" x="296" y="40" width="32" height="32"/>
+  <object id="444" gid="55" x="232" y="64" width="32" height="32"/>
+  <object id="445" gid="40" x="264" y="64" width="32" height="32"/>
+  <object id="448" gid="38" x="296" y="64" width="32" height="32"/>
+  <object id="449" gid="72" x="24" y="80" width="32" height="32"/>
+  <object id="450" gid="72" x="24" y="312" width="32" height="32"/>
+  <object id="451" gid="70" x="296" y="240" width="32" height="32"/>
+  <object id="452" gid="71" x="424" y="312" width="32" height="32"/>
+  <object id="453" gid="71" x="360" y="72" width="32" height="32"/>
+  <object id="454" gid="71" x="408" y="72" width="32" height="32"/>
+  <object id="455" gid="52" x="384" y="64" width="32" height="32"/>
+  <object id="457" gid="69" x="136" y="80" width="32" height="32"/>
+  <object id="458" gid="69" x="112" y="80" width="32" height="32"/>
+  <object id="459" gid="69" x="88" y="80" width="32" height="32"/>
+  <object id="460" gid="54" x="112" y="64" width="32" height="32"/>
+  <object id="461" gid="37" x="136" y="64" width="32" height="32"/>
+  <object id="462" gid="39" x="88" y="64" width="32" height="32"/>
+  <object id="463" gid="56" x="32" y="64" width="32" height="32"/>
+  <object id="557" gid="46" x="48.7273" y="183.636" width="32" height="32"/>
+  <object id="558" gid="46" x="48.5455" y="151.636" width="32" height="32"/>
+  <object id="559" gid="30" x="48" y="120" width="32" height="32"/>
+  <object id="560" gid="31" x="77.8182" y="120.364" width="32" height="32"/>
+  <object id="561" gid="31" x="109.818" y="120.364" width="32" height="32"/>
+  <object id="562" gid="32" x="141.818" y="120.364" width="32" height="32"/>
+  <object id="563" gid="64" x="142" y="152.682" width="32" height="32"/>
+  <object id="564" gid="63" x="109.818" y="152.364" width="32" height="32"/>
+  <object id="565" gid="30" x="77.8182" y="152.364" width="32" height="32"/>
+  <object id="566" gid="46" x="77.8182" y="184.364" width="32" height="32"/>
+  <object id="567" gid="64" x="79.7273" y="216.091" width="32" height="32"/>
+  <object id="568" gid="62" x="48.6136" y="216" width="32" height="32"/>
+ </objectgroup>
+ <objectgroup id="15" name="objects">
+  <object id="422" gid="203" x="416" y="232" width="32" height="32"/>
+  <object id="423" gid="203" x="384" y="232" width="32" height="32"/>
+  <object id="426" gid="86" x="424" y="240" width="32" height="32"/>
+  <object id="428" gid="203" x="320" y="232" width="32" height="32"/>
+  <object id="429" gid="170" x="288" y="232" width="32" height="32"/>
+  <object id="430" gid="186" x="288" y="264" width="32" height="32"/>
+  <object id="432" gid="202" x="288" y="296" width="32" height="32"/>
+  <object id="434" name="customer_spawn" x="184" y="80">
+   <point/>
+  </object>
+  <object id="486" name="customer_spawn" x="216" y="80">
+   <point/>
+  </object>
+  <object id="487" name="customer_spawn" x="248" y="80">
+   <point/>
+  </object>
+  <object id="488" name="customer_spawn" x="280" y="80">
+   <point/>
+  </object>
+  <object id="489" name="customer_spawn" x="312" y="80">
+   <point/>
+  </object>
+  <object id="495" gid="185" x="136" y="264" width="32" height="32">
+   <properties>
+    <property name="seatIndex" type="int" value="4"/>
+    <property name="tableId" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="496" gid="201" x="136" y="280" width="32" height="32">
+   <properties>
+    <property name="tableId" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="497" gid="185" x="136" y="296" width="32" height="32">
+   <properties>
+    <property name="seatIndex" type="int" value="5"/>
+    <property name="tableId" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="498" gid="185" x="136" y="200" width="32" height="32"/>
+  <object id="499" gid="201" x="136" y="216" width="32" height="32"/>
+  <object id="500" gid="185" x="136" y="232" width="32" height="32">
+   <properties>
+    <property name="seatIndex" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="513" gid="185" x="208" y="264" width="32" height="32">
+   <properties>
+    <property name="seatIndex" type="int" value="6"/>
+    <property name="tableId" type="int" value="3"/>
+   </properties>
+  </object>
+  <object id="514" gid="201" x="208" y="280" width="32" height="32">
+   <properties>
+    <property name="seats" type="int" value="2"/>
+    <property name="tableId" type="int" value="3"/>
+   </properties>
+  </object>
+  <object id="515" gid="185" x="208" y="296" width="32" height="32">
+   <properties>
+    <property name="seatIndex" type="int" value="7"/>
+   </properties>
+  </object>
+  <object id="516" gid="185" x="208" y="200" width="32" height="32">
+   <properties>
+    <property name="seatIndex" type="int" value="2"/>
+    <property name="tableId" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="517" gid="201" x="208" y="216" width="32" height="32">
+   <properties>
+    <property name="tableId" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="518" gid="185" x="208" y="232" width="32" height="32">
+   <properties>
+    <property name="seatIndex" type="int" value="3"/>
+    <property name="tableId" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="531" gid="185" x="328" y="168" width="32" height="32">
+   <properties>
+    <property name="seatIndex" type="int" value="8"/>
+    <property name="tableId" type="int" value="4"/>
+   </properties>
+  </object>
+  <object id="532" gid="201" x="328" y="184" width="32" height="32">
+   <properties>
+    <property name="tableId" type="int" value="4"/>
+   </properties>
+  </object>
+  <object id="533" gid="185" x="328" y="200" width="32" height="32">
+   <properties>
+    <property name="seatIndex" type="int" value="9"/>
+    <property name="tableId" type="int" value="4"/>
+   </properties>
+  </object>
+  <object id="534" gid="185" x="328" y="104" width="32" height="32">
+   <properties>
+    <property name="seatIndex" type="int" value="14"/>
+    <property name="tableId" type="int" value="7"/>
+   </properties>
+  </object>
+  <object id="535" gid="201" x="328" y="120" width="32" height="32">
+   <properties>
+    <property name="tableId" type="int" value="7"/>
+   </properties>
+  </object>
+  <object id="536" gid="185" x="328" y="136" width="32" height="32">
+   <properties>
+    <property name="seatIndex" type="int" value="15"/>
+    <property name="tableId" type="int" value="7"/>
+   </properties>
+  </object>
+  <object id="537" gid="185" x="400" y="168" width="32" height="32">
+   <properties>
+    <property name="seatIndex" type="int" value="11"/>
+    <property name="tableId" type="int" value="5"/>
+   </properties>
+  </object>
+  <object id="538" gid="201" x="400" y="184" width="32" height="32">
+   <properties>
+    <property name="tableId" type="int" value="5"/>
+   </properties>
+  </object>
+  <object id="539" gid="185" x="400" y="200" width="32" height="32">
+   <properties>
+    <property name="seatIndex" type="int" value="10"/>
+    <property name="tableId" type="int" value="5"/>
+   </properties>
+  </object>
+  <object id="540" gid="185" x="400" y="104" width="32" height="32">
+   <properties>
+    <property name="seatIndex" type="int" value="13"/>
+    <property name="tableId" type="int" value="6"/>
+   </properties>
+  </object>
+  <object id="541" gid="201" x="400" y="120" width="32" height="32">
+   <properties>
+    <property name="tableId" type="int" value="6"/>
+   </properties>
+  </object>
+  <object id="542" gid="185" x="400" y="136" width="32" height="32">
+   <properties>
+    <property name="seatIndex" type="int" value="12"/>
+    <property name="tableId" type="int" value="6"/>
+   </properties>
+  </object>
+  <object id="555" name="belt_spawn" x="154.25" y="139.125">
+   <point/>
+  </object>
+  <object id="556" name="belt_waypoint" x="154.5" y="111.25">
+   <properties>
+    <property name="sequence" type="int" value="0"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="569" name="belt_waypoint" x="68.5" y="110.75">
+   <properties>
+    <property name="sequence" type="int" value="1"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="570" name="belt_waypoint" x="66.5" y="202.75">
+   <properties>
+    <property name="sequence" type="int" value="2"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="571" name="belt_waypoint" x="93" y="202.75">
+   <properties>
+    <property name="sequence" type="int" value="3"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="572" name="belt_waypoint" x="97.25" y="140.75">
+   <properties>
+    <property name="sequence" type="int" value="4"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="574" name="belt_waypoint" x="154.75" y="139.5">
+   <properties>
+    <property name="sequence" type="int" value="4"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="576" name="buzzer_table" gid="204" x="352" y="232" width="32" height="32"/>
+  <object id="577" gid="171" x="352" y="272" width="32" height="32"/>
+  <object id="578" gid="171" x="416" y="272" width="32" height="32"/>
+  <object id="579" gid="203" x="384" y="272" width="32" height="32"/>
+  <object id="580" name="chef_spawn" x="367.727" y="285.045">
+   <point/>
+  </object>
+  <object id="581" name="Player" gid="257" x="64" y="280" width="32" height="32">
+   <properties>
+    <property name="animationSpeed" type="float" value="2"/>
+    <property name="camFollow" type="bool" value="true"/>
+    <property name="controller" type="bool" value="true"/>
+    <property name="friction" type="float" value="1"/>
+    <property name="speed" type="float" value="4"/>
+   </properties>
+  </object>
+ </objectgroup>
  <objectgroup id="13" name="wall-object">
   <object id="405" gid="227" x="416" y="320" width="32" height="32"/>
   <object id="407" gid="227" x="384" y="320" width="32" height="32"/>
