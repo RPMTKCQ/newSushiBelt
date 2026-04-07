@@ -3,6 +3,7 @@ package com.sushi.game.lwjgl3;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.sushi.game.SushiGame;
+import com.sushi.game.screen.LoadingScreen;
 
 /**
  * Launches the desktop (LWJGL3) application.
