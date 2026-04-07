@@ -125,12 +125,15 @@ public class CustomerSystem extends IteratingSystem {
             }
             customer.orderItemId = POSSIBLE_ORDERS[MathUtils.random(0, POSSIBLE_ORDERS.length - 1)];
 
-            float patience = switch (currentStage) {
-                case STAGE_1 -> MathUtils.random(30f, 50f);
-                case STAGE_2 -> MathUtils.random(20f, 35f);
-                case STAGE_3 -> MathUtils.random(15f, 25f);
-                default -> 40f;
-            };
+            // FIX: Bulletproof null check to prevent hidden ECS crashes!
+            float patience = 40f;
+            if (currentStage != null) {
+                patience = switch (currentStage) {
+                    case STAGE_1 -> MathUtils.random(30f, 50f);
+                    case STAGE_2 -> MathUtils.random(20f, 35f);
+                    case STAGE_3 -> MathUtils.random(15f, 25f);
+                };
+            }
             customer.maxPatience = patience;
         }
 

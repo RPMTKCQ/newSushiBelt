@@ -131,7 +131,7 @@ public class MenuView extends View<MenuViewModel> {
     private void buildLevelSelectMenu() {
         Table level1 = createLevelButton("Level 1 (Easy)", "level-1", () -> viewModel.startGame(selectedIsEndless, MapAsset.STAGE_1));
         Table level2 = createLevelButton("Level 2 (Medium)", "level-2", () -> viewModel.startGame(selectedIsEndless, MapAsset.STAGE_2));
-        Table level3 = createLevelButton("Level 3 (Hard)", "level-1", () -> viewModel.startGame(selectedIsEndless, MapAsset.STAGE_3));
+        Table level3 = createLevelButton("Level 3 (Hard)", "level-3", () -> viewModel.startGame(selectedIsEndless, MapAsset.STAGE_3));
 
         levelMenuItems.add(level1);
         levelMenuItems.add(level2);

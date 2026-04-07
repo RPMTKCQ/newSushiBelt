@@ -71,7 +71,7 @@
   <object id="609" gid="73" x="128.333" y="44.3333" width="32" height="32"/>
  </objectgroup>
  <objectgroup id="14" name="objects">
-  <object id="561" name="Player" gid="257" x="386.5" y="160.5" width="32" height="32">
+  <object id="561" name="Player" gid="257" x="192" y="208" width="32" height="32">
    <properties>
     <property name="animationSpeed" type="float" value="2"/>
     <property name="camFollow" type="bool" value="true"/>

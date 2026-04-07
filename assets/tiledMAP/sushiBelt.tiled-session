@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "restaurant-2.tmx",
+    "activeFile": "restaurant-3.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -68,7 +68,7 @@
             "scaleInEditor": 1
         },
         "Interior.tsx": {
-            "scaleInDock": 3,
+            "scaleInDock": 1.5,
             "scaleInEditor": 1.5
         },
         "Main_Spritesheet.tsx": {
@@ -85,11 +85,11 @@
                 6,
                 2
             ],
-            "scale": 5.5,
+            "scale": 2,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 342.4545454545455,
-                "y": 185
+                "x": 195.25,
+                "y": 163.75
             }
         },
         "restaurant-2.tmx": {
@@ -98,11 +98,11 @@
                 17,
                 13
             ],
-            "scale": 4,
+            "scale": 2,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 357.375,
-                "y": 164.625
+                "x": 236.25,
+                "y": 179.25
             }
         },
         "restaurant-3.tmx": {
@@ -110,11 +110,11 @@
                 14,
                 15
             ],
-            "scale": 8,
+            "scale": 1.5,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 223.6875,
-                "y": 90.9375
+                "x": 188.33333333333331,
+                "y": 177.66666666666663
             }
         },
         "restaurant.tmx": {
@@ -144,8 +144,8 @@
     "property.type": "int",
     "recentFiles": [
         "restaurant-1.tmx",
-        "restaurant-3.tmx",
         "restaurant-2.tmx",
+        "restaurant-3.tmx",
         "Player.tsx",
         "Chef.tsx",
         "Interior.tsx",

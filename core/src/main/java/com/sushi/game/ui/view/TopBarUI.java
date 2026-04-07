@@ -241,7 +241,7 @@ public class TopBarUI extends Table {
         card.setTouchable(Touchable.enabled);
         card.setTransform(true);
 
-        Label keyLabel = new Label("[ KEY ]", skin, "powerup");
+        Label keyLabel = new Label("[ KEY ]", skin, "default");
         keyLabel.setColor(Color.RED);
         keyLabel.setVisible(false);
         card.add(keyLabel).padTop(5f).row();

@@ -65,7 +65,7 @@
   <object id="560" gid="31" x="77.8182" y="120.364" width="32" height="32"/>
   <object id="561" gid="31" x="109.818" y="120.364" width="32" height="32"/>
   <object id="562" gid="32" x="141.818" y="120.364" width="32" height="32"/>
-  <object id="563" gid="64" x="142" y="152.682" width="32" height="32"/>
+  <object id="563" gid="64" x="141.818" y="152.318" width="32" height="32"/>
   <object id="564" gid="63" x="109.818" y="152.364" width="32" height="32"/>
   <object id="565" gid="30" x="77.8182" y="152.364" width="32" height="32"/>
   <object id="566" gid="46" x="77.8182" y="184.364" width="32" height="32"/>
@@ -95,166 +95,166 @@
   <object id="489" name="customer_spawn" x="312" y="80">
    <point/>
   </object>
-  <object id="495" gid="185" x="136" y="264" width="32" height="32">
+  <object id="495" name="seat" gid="185" x="136" y="264" width="32" height="32">
    <properties>
     <property name="seatIndex" type="int" value="4"/>
     <property name="tableId" type="int" value="2"/>
    </properties>
   </object>
-  <object id="496" gid="201" x="136" y="280" width="32" height="32">
+  <object id="496" name="table" gid="201" x="136" y="280" width="32" height="32">
    <properties>
     <property name="tableId" type="int" value="2"/>
    </properties>
   </object>
-  <object id="497" gid="185" x="136" y="296" width="32" height="32">
+  <object id="497" name="seat" gid="185" x="136" y="296" width="32" height="32">
    <properties>
     <property name="seatIndex" type="int" value="5"/>
     <property name="tableId" type="int" value="2"/>
    </properties>
   </object>
-  <object id="498" gid="185" x="136" y="200" width="32" height="32"/>
-  <object id="499" gid="201" x="136" y="216" width="32" height="32"/>
-  <object id="500" gid="185" x="136" y="232" width="32" height="32">
+  <object id="498" name="seat" gid="185" x="136" y="200" width="32" height="32"/>
+  <object id="499" name="table" gid="201" x="136" y="216" width="32" height="32"/>
+  <object id="500" name="seat" gid="185" x="136" y="232" width="32" height="32">
    <properties>
     <property name="seatIndex" type="int" value="1"/>
    </properties>
   </object>
-  <object id="513" gid="185" x="208" y="264" width="32" height="32">
+  <object id="513" name="seat" gid="185" x="208" y="264" width="32" height="32">
    <properties>
     <property name="seatIndex" type="int" value="6"/>
     <property name="tableId" type="int" value="3"/>
    </properties>
   </object>
-  <object id="514" gid="201" x="208" y="280" width="32" height="32">
+  <object id="514" name="table" gid="201" x="208" y="280" width="32" height="32">
    <properties>
     <property name="seats" type="int" value="2"/>
     <property name="tableId" type="int" value="3"/>
    </properties>
   </object>
-  <object id="515" gid="185" x="208" y="296" width="32" height="32">
+  <object id="515" name="seat" gid="185" x="208" y="296" width="32" height="32">
    <properties>
     <property name="seatIndex" type="int" value="7"/>
    </properties>
   </object>
-  <object id="516" gid="185" x="208" y="200" width="32" height="32">
+  <object id="516" name="seat" gid="185" x="208" y="200" width="32" height="32">
    <properties>
     <property name="seatIndex" type="int" value="2"/>
     <property name="tableId" type="int" value="1"/>
    </properties>
   </object>
-  <object id="517" gid="201" x="208" y="216" width="32" height="32">
+  <object id="517" name="table" gid="201" x="208" y="216" width="32" height="32">
    <properties>
     <property name="tableId" type="int" value="1"/>
    </properties>
   </object>
-  <object id="518" gid="185" x="208" y="232" width="32" height="32">
+  <object id="518" name="seat" gid="185" x="208" y="232" width="32" height="32">
    <properties>
     <property name="seatIndex" type="int" value="3"/>
     <property name="tableId" type="int" value="1"/>
    </properties>
   </object>
-  <object id="531" gid="185" x="328" y="168" width="32" height="32">
+  <object id="531" name="seat" gid="185" x="328" y="168" width="32" height="32">
    <properties>
     <property name="seatIndex" type="int" value="8"/>
     <property name="tableId" type="int" value="4"/>
    </properties>
   </object>
-  <object id="532" gid="201" x="328" y="184" width="32" height="32">
+  <object id="532" name="table" gid="201" x="328" y="184" width="32" height="32">
    <properties>
     <property name="tableId" type="int" value="4"/>
    </properties>
   </object>
-  <object id="533" gid="185" x="328" y="200" width="32" height="32">
+  <object id="533" name="seat" gid="185" x="328" y="200" width="32" height="32">
    <properties>
     <property name="seatIndex" type="int" value="9"/>
     <property name="tableId" type="int" value="4"/>
    </properties>
   </object>
-  <object id="534" gid="185" x="328" y="104" width="32" height="32">
+  <object id="534" name="seat" gid="185" x="328" y="104" width="32" height="32">
    <properties>
     <property name="seatIndex" type="int" value="14"/>
     <property name="tableId" type="int" value="7"/>
    </properties>
   </object>
-  <object id="535" gid="201" x="328" y="120" width="32" height="32">
+  <object id="535" name="table" gid="201" x="328" y="120" width="32" height="32">
    <properties>
     <property name="tableId" type="int" value="7"/>
    </properties>
   </object>
-  <object id="536" gid="185" x="328" y="136" width="32" height="32">
+  <object id="536" name="seat" gid="185" x="328" y="136" width="32" height="32">
    <properties>
     <property name="seatIndex" type="int" value="15"/>
     <property name="tableId" type="int" value="7"/>
    </properties>
   </object>
-  <object id="537" gid="185" x="400" y="168" width="32" height="32">
+  <object id="537" name="seat" gid="185" x="400" y="168" width="32" height="32">
    <properties>
     <property name="seatIndex" type="int" value="11"/>
     <property name="tableId" type="int" value="5"/>
    </properties>
   </object>
-  <object id="538" gid="201" x="400" y="184" width="32" height="32">
+  <object id="538" name="table" gid="201" x="400" y="184" width="32" height="32">
    <properties>
     <property name="tableId" type="int" value="5"/>
    </properties>
   </object>
-  <object id="539" gid="185" x="400" y="200" width="32" height="32">
+  <object id="539" name="seat" gid="185" x="400" y="200" width="32" height="32">
    <properties>
     <property name="seatIndex" type="int" value="10"/>
     <property name="tableId" type="int" value="5"/>
    </properties>
   </object>
-  <object id="540" gid="185" x="400" y="104" width="32" height="32">
+  <object id="540" name="seat" gid="185" x="400" y="104" width="32" height="32">
    <properties>
     <property name="seatIndex" type="int" value="13"/>
     <property name="tableId" type="int" value="6"/>
    </properties>
   </object>
-  <object id="541" gid="201" x="400" y="120" width="32" height="32">
+  <object id="541" name="table" gid="201" x="400" y="120" width="32" height="32">
    <properties>
     <property name="tableId" type="int" value="6"/>
    </properties>
   </object>
-  <object id="542" gid="185" x="400" y="136" width="32" height="32">
+  <object id="542" name="seat" gid="185" x="400" y="136" width="32" height="32">
    <properties>
     <property name="seatIndex" type="int" value="12"/>
     <property name="tableId" type="int" value="6"/>
    </properties>
   </object>
-  <object id="555" name="belt_spawn" x="154.25" y="139.125">
+  <object id="555" name="belt_spawn" x="150.75" y="139.5">
    <point/>
   </object>
-  <object id="556" name="belt_waypoint" x="154.5" y="111.25">
+  <object id="556" name="belt_waypoint" x="148.5" y="110.583">
    <properties>
     <property name="sequence" type="int" value="0"/>
    </properties>
    <point/>
   </object>
-  <object id="569" name="belt_waypoint" x="68.5" y="110.75">
+  <object id="569" name="belt_waypoint" x="60.5" y="110.417">
    <properties>
     <property name="sequence" type="int" value="1"/>
    </properties>
    <point/>
   </object>
-  <object id="570" name="belt_waypoint" x="66.5" y="202.75">
+  <object id="570" name="belt_waypoint" x="61.8333" y="205.75">
    <properties>
     <property name="sequence" type="int" value="2"/>
    </properties>
    <point/>
   </object>
-  <object id="571" name="belt_waypoint" x="93" y="202.75">
+  <object id="571" name="belt_waypoint" x="90.3333" y="202.083">
    <properties>
     <property name="sequence" type="int" value="3"/>
    </properties>
    <point/>
   </object>
-  <object id="572" name="belt_waypoint" x="97.25" y="140.75">
+  <object id="572" name="belt_waypoint" x="90.5833" y="141.417">
    <properties>
     <property name="sequence" type="int" value="4"/>
    </properties>
    <point/>
   </object>
-  <object id="574" name="belt_waypoint" x="154.75" y="139.5">
+  <object id="574" name="belt_waypoint" x="150.083" y="139.833">
    <properties>
     <property name="sequence" type="int" value="4"/>
    </properties>
@@ -267,7 +267,7 @@
   <object id="580" name="chef_spawn" x="367.727" y="285.045">
    <point/>
   </object>
-  <object id="581" name="Player" gid="257" x="64" y="280" width="32" height="32">
+  <object id="581" name="Player" gid="257" x="240" y="168" width="32" height="32">
    <properties>
     <property name="animationSpeed" type="float" value="2"/>
     <property name="camFollow" type="bool" value="true"/>
