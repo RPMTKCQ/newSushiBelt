@@ -33,8 +33,9 @@ public class PowerUpSystem extends IteratingSystem {
         switch (type) {
             case MOVEMENT_SPEED -> applyMovementSpeed(type.multiplier());
             case COOKING_SPEED -> applyCookingSpeed(type.multiplier());
-            case SUGAR_RUSH -> applyMovementSpeed(type.multiplier()); // Corruption handled in LevelSystem
-            case HEAVY_LIFTER -> applyMovementSpeed(type.multiplier());
+            case SUGAR_RUSH -> applyMovementSpeed(type.multiplier());
+            case BIONIC_LEGS -> applyMovementSpeed(type.multiplier()); // FIX: New Speed Boost
+            case SOUS_CHEF -> applyCookingSpeed(type.multiplier()); // FIX: Doubles the cook speed!
             case DOUBLE_TIPS -> {
                 doubleTipsServesLeft += 3;
                 doubleTipsMultiplier = type.multiplier();
@@ -64,7 +65,7 @@ public class PowerUpSystem extends IteratingSystem {
     }
 
     public float getDoubleTipsMultiplier() { return doubleTipsMultiplier; }
-    public float getRushHourMultiplier() { return 1f; } // Failsafe for legacy calls
+    public float getRushHourMultiplier() { return 1f; }
 
     public void consumeServePowerUps() {
         if (doubleTipsServesLeft > 0) {
@@ -77,5 +78,7 @@ public class PowerUpSystem extends IteratingSystem {
     }
 
     @Override
-    protected void processEntity(Entity entity, float deltaTime) {}
+    protected void processEntity(Entity entity, float deltaTime) {
+        // Continuous logic for active powerups if needed
+    }
 }

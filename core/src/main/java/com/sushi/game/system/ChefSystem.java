@@ -49,9 +49,9 @@ public class ChefSystem extends IteratingSystem {
                         chef.cookTimer = 0f;
 
                         // FIX: Varying the cooking times for balancing!
-                        if (dishToCook.equals("maguro_nigiri")) chef.cookDuration = 5f;
+                        if (dishToCook.equals("maguro_nigiri")) chef.cookDuration = 4f;
                         else if (dishToCook.equals("salmon_nigiri")) chef.cookDuration = 3.5f;
-                        else chef.cookDuration = 2f; // tuna_roll
+                        else chef.cookDuration = 3f; // tuna_roll
 
                         chef.state = Chef.ChefState.COOKING;
 

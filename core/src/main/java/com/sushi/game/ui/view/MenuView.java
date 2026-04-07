@@ -110,7 +110,7 @@ public class MenuView extends View<MenuViewModel> {
         TextButton stageBtn = createButton("Stage", () -> showLevelSelectMenu(false));
         modeStageTable.add(stageBtn).padBottom(10.0f).minWidth(150.0f).maxWidth(150.0f).row();
 
-        Label stageDesc = new Label("Reach the quota within a limited amount of time!", skin, "small");
+        Label stageDesc = new Label("Reach the quota the restaurant needs for the day!!", skin, "small");
         stageDesc.setAlignment(Align.center);
         stageDesc.setWrap(true);
         modeStageTable.add(stageDesc).padTop(10.0f).minWidth(150.0f);

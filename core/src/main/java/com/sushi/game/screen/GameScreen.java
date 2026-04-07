@@ -98,7 +98,8 @@ public class GameScreen extends ScreenAdapter {
 
         this.levelSystem = new LevelSystem(gameScreenUI, powerUpSystem, isEndlessMode,
             () -> game.setScreen(new WinScreen(game, levelSystem.getScore(), levelSystem.getMoney(), this.currentStage, isEndlessMode)),
-            () -> game.setScreen(new GameOverScreen(game, levelSystem.getScore(), this.currentStage, isEndlessMode)));
+            () -> game.setScreen(new GameOverScreen(game, levelSystem.getScore(), this.currentStage, isEndlessMode)),
+            currentStage);
 
         this.customerSpawner = new CustomerSpawner(customerFactory, tableManager, engine, levelSystem, currentStage, isEndlessMode);
 

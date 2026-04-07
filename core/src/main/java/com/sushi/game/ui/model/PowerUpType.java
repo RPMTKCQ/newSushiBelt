@@ -23,27 +23,37 @@ public enum PowerUpType {
         @Override public String iconName()     { return "playerIcon"; }
         @Override public float  multiplier()   { return 1.20f; }
         @Override public String category()     { return "[Player]"; }
-        @Override public String corruption()   { return "Take 20 damage to Reputation immediately upon choosing."; }
+        @Override public String corruption()   { return "Take 5 damage to Reputation immediately upon choosing."; }
     },
-    HEAVY_LIFTER {
-        @Override public String displayName()  { return "Heavy Lifter"; }
-        @Override public String description()  { return "Allows you to carry more items."; }
+    // FIX: New Player PowerUp!
+    BIONIC_LEGS {
+        @Override public String displayName()  { return "Bionic Legs"; }
+        @Override public String description()  { return "+25% Movement Speed."; }
         @Override public String iconName()     { return "playerIcon"; }
-        @Override public float  multiplier()   { return 0.85f; } // Slows you down!
+        @Override public float  multiplier()   { return 1.25f; }
         @Override public String category()     { return "[Player]"; }
-        @Override public String corruption()   { return "Permanent -15% Movement Speed."; }
+        @Override public String corruption()   { return "Take 10 damage to Reputation immediately upon choosing."; }
+    },
+    // FIX: New Kitchen PowerUp!
+    SOUS_CHEF {
+        @Override public String displayName()  { return "Sous-Chef"; }
+        @Override public String description()  { return "Hire an automated assistant. Cooking speed is permanently doubled!"; }
+        @Override public String iconName()     { return "kitchenIcon"; }
+        @Override public float  multiplier()   { return 2.0f; }
+        @Override public String category()     { return "[Kitchen]"; }
+        @Override public String corruption()   { return "None. He just wants to help!"; }
     },
     DOUBLE_TIPS {
         @Override public String displayName()  { return "Double Tips"; }
-        @Override public String description()  { return "Next 3 serves grant 2x Money."; }
-        @Override public String iconName()     { return "serviceIcon"; }
-        @Override public float  multiplier()   { return 2.00f; }
+        @Override public String description()  { return "The next 3 successful serves grant 2x money."; }
+        @Override public String iconName()     { return "servicePowerUpIcon"; }
+        @Override public float  multiplier()   { return 2.0f; }
         @Override public String category()     { return "[Service]"; }
         @Override public String corruption()   { return ""; }
     },
     PRISTINE_KITCHEN {
         @Override public String displayName()  { return "Pristine Kitchen"; }
-        @Override public String description()  { return "All money gained is doubled while Reputation is at 100/100."; }
+        @Override public String description()  { return "While at MAX Reputation, all money gained is doubled."; }
         @Override public String iconName()     { return "kitchenIcon"; }
         @Override public float  multiplier()   { return 1.0f; }
         @Override public String category()     { return "[Kitchen]"; }
@@ -52,7 +62,7 @@ public enum PowerUpType {
     GREEN_TEA {
         @Override public String displayName()  { return "Green Tea"; }
         @Override public String description()  { return "25% chance to restore 2 Reputation HP on every successful serve."; }
-        @Override public String iconName()     { return "serviceIcon"; }
+        @Override public String iconName()     { return "servicePowerUpIcon"; }
         @Override public float  multiplier()   { return 1.0f; }
         @Override public String category()     { return "[Service]"; }
         @Override public String corruption()   { return "Base money from serves is reduced to $0."; }
@@ -60,7 +70,7 @@ public enum PowerUpType {
     GREEDY_ALGORITHM {
         @Override public String displayName()  { return "Greedy Algorithm"; }
         @Override public String description()  { return "All money payouts are permanently increased by 50%."; }
-        @Override public String iconName()     { return "algorithmIcon"; }
+        @Override public String iconName()     { return "powerUpIconBG"; }
         @Override public float  multiplier()   { return 1.50f; }
         @Override public String category()     { return "[Anomaly]"; }
         @Override public String corruption()   { return "Angry customers deal 2x Reputation damage."; }

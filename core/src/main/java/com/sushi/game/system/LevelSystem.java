@@ -1,8 +1,8 @@
 package com.sushi.game.system;
 
 import com.badlogic.ashley.core.EntitySystem;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
+import com.sushi.game.asset.MapAsset;
 import com.sushi.game.ui.GameScreenUI;
 import com.sushi.game.ui.model.PowerUpType;
 
@@ -25,6 +25,7 @@ public class LevelSystem extends EntitySystem {
     private final boolean isEndlessMode;
     private final Runnable onWin;
     private final Runnable onGameOver;
+    private final MapAsset currentStage;
 
     private int level         = 1;
     private int xp            = 0;
@@ -34,29 +35,44 @@ public class LevelSystem extends EntitySystem {
 
     private int lastScoreBracket = 0;
 
-    private float timeLeft = 180f;
-    private static final int FINANCIAL_QUOTA = 100;
+    // FIX: Starts at 0 for the Stopwatch!
+    private float timeElapsed = 0f;
+    private final int financialQuota;
+    private final int baseHpPenalty;
 
     private int reputationHp = 100;
     private static final int MAX_HP = 100;
-    private int hpPenalty = 5;
     private static final int HP_HEAL = 1;
 
     private float pristineCooldown = 0f;
     private int totalProcessed = 0;
 
-    public LevelSystem(GameScreenUI gameScreenUI, PowerUpSystem powerUpSystem, boolean isEndlessMode, Runnable onWin, Runnable onGameOver) {
+    public LevelSystem(GameScreenUI gameScreenUI, PowerUpSystem powerUpSystem, boolean isEndlessMode, Runnable onWin, Runnable onGameOver, MapAsset currentStage) {
         this.gameScreenUI  = gameScreenUI;
         this.powerUpSystem = powerUpSystem;
         this.isEndlessMode = isEndlessMode;
         this.onWin = onWin;
         this.onGameOver = onGameOver;
+        this.currentStage = currentStage;
+
+        // FIX: Dynamic Quotas based on Level!
+        this.financialQuota = switch (currentStage) {
+            case STAGE_1 -> 150;
+            case STAGE_2 -> 300;
+            case STAGE_3 -> 500;
+            default -> 150;
+        };
+
+        // FIX: Dynamic HP Damage based on Level!
+        this.baseHpPenalty = switch (currentStage) {
+            case STAGE_1 -> 10;
+            case STAGE_2 -> 15;
+            case STAGE_3 -> 25;
+            default -> 10;
+        };
 
         updateStatsUI();
-
-        if (isEndlessMode) {
-            gameScreenUI.updateTimer("ENDLESS");
-        }
+        gameScreenUI.updateTimer("00:00");
     }
 
     public int getScore() { return score; }
@@ -72,27 +88,17 @@ public class LevelSystem extends EntitySystem {
             }
         }
 
+        // FIX: Stopwatch increments for BOTH modes!
+        timeElapsed += deltaTime;
+        int minutes = (int) (timeElapsed / 60);
+        int seconds = (int) (timeElapsed % 60);
+        gameScreenUI.updateTimer(String.format("%02d:%02d", minutes, seconds)); // Accommodates 20:00+ safely!
+
         if (!isEndlessMode) {
-            timeLeft -= deltaTime;
-            if (timeLeft < 0) timeLeft = 0;
-
-            int minutes = (int) (timeLeft / 60);
-            int seconds = (int) (timeLeft % 60);
-            gameScreenUI.updateTimer(String.format("%d:%02d", minutes, seconds));
-
-            if (timeLeft <= 0) {
-                if (money >= FINANCIAL_QUOTA) {
-                    onWin.run();
-                } else {
-                    gameScreenUI.addLogEvent("FAILED TO MEET QUOTA!", com.badlogic.gdx.graphics.Color.RED);
-                    onGameOver.run();
-                }
+            // TIME ATTACK: Win immediately when quota is reached!
+            if (money >= financialQuota) {
+                onWin.run();
             }
-        } else {
-            timeLeft += deltaTime;
-            int minutes = (int) (timeLeft / 60);
-            int seconds = (int) (timeLeft % 60);
-            gameScreenUI.updateTimer(String.format("%d:%02d", minutes, seconds));
         }
     }
 
@@ -101,10 +107,12 @@ public class LevelSystem extends EntitySystem {
             reputationHp -= 5;
             gameScreenUI.addLogEvent("Sugar Rush penalty: -5 HP", com.badlogic.gdx.graphics.Color.RED);
         }
-        if (type == PowerUpType.GREEDY_ALGORITHM) {
-            hpPenalty = 10;
+        if (type == PowerUpType.BIONIC_LEGS) {
+            reputationHp -= 10;
+            gameScreenUI.addLogEvent("Bionic Legs penalty: -10 HP", com.badlogic.gdx.graphics.Color.RED);
         }
         updateStatsUI();
+        if (reputationHp <= 0) onGameOver.run();
     }
 
     public void addMoneyFromPickup(int amount) {
@@ -173,9 +181,13 @@ public class LevelSystem extends EntitySystem {
 
     public void onCustomerLeftAngry() {
         totalProcessed++;
-        reputationHp -= hpPenalty;
+        int penalty = baseHpPenalty;
+        if (powerUpSystem.hasGreedyAlgorithm) {
+            penalty *= 2;
+        }
 
-        gameScreenUI.addLogEvent("A customer left in anger! (-" + hpPenalty + " HP)", com.badlogic.gdx.graphics.Color.RED);
+        reputationHp -= penalty;
+        gameScreenUI.addLogEvent("A customer left in anger! (-" + penalty + " HP)", com.badlogic.gdx.graphics.Color.RED);
 
         if (powerUpSystem.hasPristineKitchen) {
             pristineCooldown = 30f;
@@ -215,7 +227,7 @@ public class LevelSystem extends EntitySystem {
         if (isEndlessMode) {
             gameScreenUI.setMoney(money + "$");
         } else {
-            gameScreenUI.setMoney(money + "$ / " + FINANCIAL_QUOTA + "$");
+            gameScreenUI.setMoney(money + "$ / " + financialQuota + "$");
         }
     }
 }

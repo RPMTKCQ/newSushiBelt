@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "restaurant-3.tmx",
+    "activeFile": "restaurant-2.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -88,8 +88,8 @@
             "scale": 2,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 195.25,
-                "y": 163.75
+                "x": 256.25,
+                "y": 159.75
             }
         },
         "restaurant-2.tmx": {
@@ -101,8 +101,8 @@
             "scale": 2,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 236.25,
-                "y": 179.25
+                "x": 270,
+                "y": 169.75
             }
         },
         "restaurant-3.tmx": {
@@ -110,11 +110,11 @@
                 14,
                 15
             ],
-            "scale": 1.5,
+            "scale": 3,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 188.33333333333331,
-                "y": 177.66666666666663
+                "x": 157.33333333333331,
+                "y": 5.5
             }
         },
         "restaurant.tmx": {
@@ -144,8 +144,8 @@
     "property.type": "int",
     "recentFiles": [
         "restaurant-1.tmx",
-        "restaurant-2.tmx",
         "restaurant-3.tmx",
+        "restaurant-2.tmx",
         "Player.tsx",
         "Chef.tsx",
         "Interior.tsx",
